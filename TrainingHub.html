@@ -396,7 +396,7 @@ let currentTab='dashboard',searchVal='',editId=null,modalMode=null;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let openPlans=new Set();
 
-const SC={"On Track":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"At Risk":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Completed":{bg:"#dbeafe",text:"#1e40af",dot:"#3b82f6"},"Scheduled":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Full":{bg:"#ede9fe",text:"#5b21b6",dot:"#8b5cf6"},"Approved":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"Pending":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Under Review":{bg:"#e0e7ff",text:"#3730a3",dot:"#6366f1"},"Declined":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Did Not Attend":{bg:"#fef2f2",text:"#991b1b",dot:"#dc2626"},"High":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Medium":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Low":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"}};
+const SC={"On Track":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"At Risk":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Completed":{bg:"#dbeafe",text:"#1e40af",dot:"#3b82f6"},"Scheduled":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Full":{bg:"#ede9fe",text:"#5b21b6",dot:"#8b5cf6"},"Approved":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"Pending":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Under Review":{bg:"#e0e7ff",text:"#3730a3",dot:"#6366f1"},"Declined":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Did Not Attend":{bg:"#fef2f2",text:"#991b1b",dot:"#dc2626"},"High":{bg:"#ef4444",text:"#fff",dot:"#fecaca"},"Medium":{bg:"#d97706",text:"#fff",dot:"#fde68a"},"Low":{bg:"#16a34a",text:"#fff",dot:"#bbf7d0"}};
 function bdg(l){const c=SC[l]||{bg:"#f3f4f6",text:"#374151",dot:"#9ca3af"};return `<span class="badge" style="background:${c.bg};color:${c.text}"><span class="badge-dot" style="background:${c.dot}"></span>${l}</span>`;}
 function pb(v){const col=v>=75?'#10b981':v>=40?'#f59e0b':'#ef4444';return `<div class="progress-wrap"><div class="progress-bar" style="width:${v}%;background:${col}"></div></div>`;}
 function getProgress(a){if(!a.courses||!a.courses.length)return 0;return Math.round(a.courses.filter(c=>c.done).length/a.courses.length*100);}
@@ -567,7 +567,7 @@ function render(){
  {icon:'AP',label:'Apprentices',value:apprentices.length,sub:`${atRisk} at risk`,color:'#1e40af'},
  {icon:'CS',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
  {icon:'RQ',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
- {icon:'$',label:'Cost to Business',value:`$${closedCostBusiness.toLocaleString()}`,sub:`${claims.filter(c=>c.status==='Closed').length} closed claims`,color:'#059669'},
+ {icon:'$',label:'Cost to Business',value:`$${(closedCostBusiness+getCommitted()).toLocaleString()}`,sub:'Total',color:'#dc2626'},
  ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18;color:${s.color};font-size:11px;font-weight:800;font-family:'JetBrains Mono','Courier New',monospace;letter-spacing:-.5px;flex-shrink:0">${s.icon}</div><div style="min-width:0;flex:1"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
  const atRiskBanner=atRisk>0?`<div class="alert-banner"> <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
  content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
@@ -685,9 +685,21 @@ function render(){
  </button>`).join('')}
  <button onclick="openModal('manage-claim-types')" style="padding:7px 14px;border-radius:20px;border:2px solid #e5e7eb;background:#fff;color:#6b7280;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit;margin-left:auto">Manage Claim Types</button>
  </div>`;
- const fil=claims
- .filter(c=>claimTab==='all'||c.status===claimTab)
- .filter(c=>c.title?.toLowerCase().includes(q)||c.participantName?.toLowerCase().includes(q)||c.claimType?.toLowerCase().includes(q)||c.internalClaimId?.toLowerCase().includes(q));
+ const claimSort=window._claimSort||'date-desc';
+  const claimFilter=window._claimFilter||'';
+  let fil=[...claims]
+    .filter(c=>claimTab==='all'||c.status===claimTab)
+    .filter(c=>!claimFilter||c.claimType===claimFilter)
+    .filter(c=>c.title?.toLowerCase().includes(q)||c.participantName?.toLowerCase().includes(q)||c.claimType?.toLowerCase().includes(q)||c.internalClaimId?.toLowerCase().includes(q));
+  fil.sort((a,b)=>{
+    if(claimSort==='date-desc')return(b.createdOn||'').localeCompare(a.createdOn||'');
+    if(claimSort==='date-asc')return(a.createdOn||'').localeCompare(b.createdOn||'');
+    if(claimSort==='amount-desc')return parseFloat(b.claimAmount||0)-parseFloat(a.claimAmount||0);
+    if(claimSort==='amount-asc')return parseFloat(a.claimAmount||0)-parseFloat(b.claimAmount||0);
+    if(claimSort==='name-asc')return(a.participantName||'').localeCompare(b.participantName||'');
+    if(claimSort==='status')return(a.status||'').localeCompare(b.status||'');
+    return 0;
+  });
  const totalClaimed=fil.reduce((s,c)=>s+(parseFloat(c.claimAmount)||0),0);
  const totalApproved=fil.reduce((s,c)=>s+(parseFloat(c.acceptedAmount)||0),0);
  const totalCost=fil.filter(c=>c.status==='Closed').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
@@ -722,7 +734,8 @@ function render(){
  </td>
  </tr>`;
  }).join('');
- content=tabBar+summaryBar+`<div class="table-wrap"><table><thead><tr><th>ID / Title</th><th>CTF Claim ID</th><th>Participant</th><th>Invoice No</th><th>Created On</th><th>Claim Amount</th><th>Accepted</th><th>Cost to Business</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ const filterBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap"><label style="font-size:12px;font-weight:600;color:var(--text-muted)">Sort:</label><select onchange="window._claimSort=this.value;render()" style="border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer"><option value="date-desc" ${claimSort==="date-desc"?"selected":""}>Date — Newest</option><option value="date-asc" ${claimSort==="date-asc"?"selected":""}>Date — Oldest</option><option value="amount-desc" ${claimSort==="amount-desc"?"selected":""}>Amount — High to low</option><option value="amount-asc" ${claimSort==="amount-asc"?"selected":""}>Amount — Low to high</option><option value="name-asc" ${claimSort==="name-asc"?"selected":""}>Participant — A to Z</option><option value="status" ${claimSort==="status"?"selected":""}>Status</option></select><label style="font-size:12px;font-weight:600;color:var(--text-muted);margin-left:4px">Filter:</label><select onchange="window._claimFilter=this.value;render()" style="border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer"><option value="" ${!claimFilter?"selected":""}>All claim types</option>${(claimTypes||[]).map(t=>`<option value="${t}" ${claimFilter===t?"selected":""}>${t}</option>`).join("")}</select></div>`;
+ content=tabBar+filterBar+summaryBar+`<div class="table-wrap"><table><thead><tr><th>ID / Title</th><th>CTF Claim ID</th><th>Participant</th><th>Invoice No</th><th>Created On</th><th>Claim Amount</th><th>Accepted</th><th>Cost to Business</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }
 
  // ── EXPORT ────────────────────────────────────────────────────────────────
@@ -792,36 +805,52 @@ function sendReminderEmail(courseId){
 }
 
 function exportTrainingPlan(pid){
- const p=participants.find(x=>x.id===pid);if(!p)return;
- const plan=getTrainingPlan(pid);
- const done=plan.filter(x=>x.status==='Completed');
- const upcoming=plan.filter(x=>x.status!=='Completed'&&x.status!=='Did Not Attend');
- const dna=plan.filter(x=>x.status==='Did Not Attend');
- if(plan.length===0){const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Training Plan — ${p.name}</title></head><body style="font-family:Arial,sans-serif;padding:32px"><h2>${p.name}</h2><p style="color:#6b7280">No courses or units on this training plan yet.</p></body></html>`);win.document.close();return;}
- const rows=plan.map(x=>{
- const isDNA=x.status==='Did Not Attend';
- const isComp=x.status==='Completed';
- const bg=isDNA?'#fff8f8':isComp?'#f0fdf4':'#eff6ff';
- const statusBadge=isDNA?'<span style="background:#fef2f2;color:#991b1b;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">Did Not Attend</span>':isComp?'<span style="background:#d1fae5;color:#065f46;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600"> Completed</span>':'<span style="background:#dbeafe;color:#1e40af;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">Upcoming</span>';
- return `<tr style="background:${bg}"><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-weight:600">${x.name}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280">${x.type}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280">${x.provider||''}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280">${x.date||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${statusBadge}</td>${x.cert?'<td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">CERT</td>':'<td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#d1d5db">—</td>'}</tr>`;
- }).join('');
- const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Training Plan — ${p.name}</title>
- <style>body{font-family:Arial,sans-serif;padding:32px;color:#111827;max-width:900px;margin:0 auto}h1{color:#0f172a;font-size:24px;margin-bottom:4px}h2{color:#1e40af;font-size:14px;font-weight:600;margin-bottom:24px}.meta{display:flex;gap:24px;background:#f8fafc;padding:14px;border-radius:8px;margin-bottom:24px;font-size:13px}.meta div span{font-weight:700;display:block;font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}table{width:100%;border-collapse:collapse;font-size:13px}th{background:#0f172a;color:#fff;padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px}.footer{margin-top:24px;font-size:11px;color:#9ca3af;text-align:right}@media print{button{display:none}}</style></head>
- <body>
- <h1>${p.name}</h1><h2>Training Plan — Printed ${new Date().toLocaleDateString('en-AU')}</h2>
- <div class="meta">
- <div><span>Department</span>${p.department||'—'}</div>
- <div><span>Role</span>${p.role||'—'}</div>
- <div><span>Email</span>${p.email||'—'}</div>
- <div><span>Completed</span>${done.length} courses</div>
- <div><span>Upcoming</span>${upcoming.length} courses</div>
- ${dna.length>0?`<div><span>Did Not Attend</span>${dna.length} courses</div>`:''}
- </div>
- <table><thead><tr><th>Course / Unit</th><th>Type</th><th>Provider</th><th>Date</th><th>Status</th><th>Cert</th></tr></thead><tbody>${rows}</tbody></table>
- <div class="footer">Generated by Training Hub · ${new Date().toLocaleDateString('en-AU')}</div>
- <script>window.onload=function(){window.print()}<\/script>
- </body></html>`;
- const win=window.open('','_blank');win.document.write(html);win.document.close();
+  const p=participants.find(x=>x.id===pid);if(!p)return;
+  const plan=getTrainingPlan(pid);
+  const done=plan.filter(x=>x.status==='Completed');
+  const upcoming=plan.filter(x=>x.status!=='Completed'&&x.status!=='Did Not Attend');
+  const dna=plan.filter(x=>x.status==='Did Not Attend');
+  if(plan.length===0){const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Training Plan — ${p.name}</title></head><body style="font-family:'Inter',sans-serif;padding:48px"><h2>${p.name}</h2><p style="color:#6b7280">No courses on this training plan yet.</p></body></html>`);win.document.close();return;}
+  const rows=plan.map(x=>{
+    const isDNA=x.status==='Did Not Attend';
+    const isComp=x.status==='Completed';
+    const bg=isDNA?'#fff8f8':isComp?'#f0fdf4':'#f8fafc';
+    const badge=isDNA?'<span style="background:#fef2f2;color:#991b1b;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700">Did Not Attend</span>':isComp?'<span style="background:#d1fae5;color:#065f46;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700">Complete</span>':'<span style="background:#e5e7eb;color:#6b7280;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">Upcoming</span>';
+    const certBadge=x.cert?'<span style="background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">Cert</span>':'—';
+    return `<tr style="background:${bg}"><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-family:monospace;font-size:12px;white-space:nowrap">${x.type||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-weight:600">${x.name}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-size:12px">${x.provider||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-size:12px">${x.date||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${badge}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${certBadge}</td></tr>`;
+  }).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Training Plan — ${p.name}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter','Segoe UI',sans-serif;background:#fff;color:#0d1117;-webkit-font-smoothing:antialiased}
+    .page{max-width:900px;margin:0 auto;padding:48px 40px}
+    .header{border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:28px}
+    .header h1{font-size:28px;font-weight:800;letter-spacing:-.5px}
+    .header h2{font-size:12px;font-weight:600;color:#6b7280;margin-top:5px;text-transform:uppercase;letter-spacing:.8px}
+    .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:#f8f9fb;border-radius:8px;padding:18px;margin-bottom:28px;border:1px solid #e4e7ec}
+    .meta-item span{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:3px;font-family:'JetBrains Mono',monospace}
+    .meta-item strong{font-size:15px;font-weight:700}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead tr{background:#0d1117}
+    th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.6px;font-family:'JetBrains Mono',monospace}
+    .footer{margin-top:28px;font-size:11px;color:#9ca3af;display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;padding-top:14px}
+    @media print{.no-print{display:none}body{padding:0}.page{padding:28px 32px}}
+  </style></head>
+  <body><div class="page">
+    <div class="header"><h1>${p.name}</h1><h2>Training Plan</h2></div>
+    <div class="meta-grid">
+      <div class="meta-item"><span>Department</span><strong>${p.department||'—'}</strong></div>
+      <div class="meta-item"><span>Role</span><strong>${p.role||'—'}</strong></div>
+      <div class="meta-item"><span>Email</span><strong>${p.email||'—'}</strong></div>
+      <div class="meta-item"><span>Completed</span><strong>${done.length} courses</strong></div>
+      <div class="meta-item"><span>Upcoming</span><strong>${upcoming.length} courses</strong></div>
+      ${dna.length>0?`<div class="meta-item"><span>Did Not Attend</span><strong>${dna.length} courses</strong></div>`:'<div class="meta-item"><span>Phone</span><strong>${p.phone||"—"}</strong></div>'}
+    </div>
+    <table><thead><tr><th>Type</th><th>Course / Unit</th><th>Provider</th><th>Date</th><th>Status</th><th>Cert</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="footer"><span>Generated by Training Hub</span><span>${new Date().toLocaleDateString('en-AU')}</span></div>
+  </div><script>window.onload=function(){window.print()}<\/script></body></html>`;
+  const win=window.open('','_blank');win.document.write(html);win.document.close();
 }
 
 function exportApprenticeTranscript(aid){
