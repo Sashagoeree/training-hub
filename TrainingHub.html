@@ -722,6 +722,7 @@ function sendReminderEmail(courseId){
   const subject=encodeURIComponent(`Training Reminder: ${c.name} — ${c.date}`);
   const notesLine=c.courseNotes?`\n\nImportant Information:\n${c.courseNotes}`:'';
   const body=encodeURIComponent(`Hi,\n\nThis is a friendly reminder that you are booked in for the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${c.date}${notesLine}\n\nPlease confirm your attendance and let us know if you have any questions.\n\nKind regards,\nTraining Team`);
+  if(!emails.length){showToast('⚠ No email addresses on enrolled participants');return;}
   window.location.href=`mailto:${emails.join(';')}?subject=${subject}&body=${body}`;
   showToast('Opening email client…');
 }
@@ -732,6 +733,7 @@ function exportTrainingPlan(pid){
   const done=plan.filter(x=>x.status==='Completed');
   const upcoming=plan.filter(x=>x.status!=='Completed'&&x.status!=='Did Not Attend');
   const dna=plan.filter(x=>x.status==='Did Not Attend');
+  if(plan.length===0){const win=window.open('','_blank');win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Training Plan — ${p.name}</title></head><body style="font-family:Arial,sans-serif;padding:32px"><h2>${p.name}</h2><p style="color:#6b7280">No courses or units on this training plan yet.</p></body></html>`);win.document.close();return;}
   const rows=plan.map(x=>{
     const isDNA=x.status==='Did Not Attend';
     const isComp=x.status==='Completed';
@@ -947,7 +949,6 @@ function openModal(mode,idOrData){
         </select>
       </div>
       <div id="claim-extra-fields"></div>
-      <script>setTimeout(()=>updateClaimStatusFields(${JSON.stringify(curStatus)},${JSON.stringify(d.claimAmount||0)}),10);<\/script>
       <div class="form-group"><label class="form-label">Statement of Attainment / Equivalent</label>
         ${d.soaPdfName?`<div class="pdf-preview"><span>🎓</span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
         <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
@@ -972,6 +973,8 @@ function openModal(mode,idOrData){
       </div>
       <button class="btn-save" id="claim-submit-btn" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
     window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;window._claimData=d;
+    // Trigger extra fields immediately for existing status
+    updateClaimStatusFields(curStatus, d.claimAmount||0);
   }
 
   // ── MANAGE CLAIM TYPES ────────────────────────────────────────────────────
@@ -1240,6 +1243,12 @@ function submitClaim(){
     newNotes.push({text:`❌ Written off. Full claim ($${parseFloat(d.claimAmount||0).toLocaleString()}) = cost to business.`,author:'System',date:today,status:'Closed'});
   }
 
+  // Rejected with no next steps — warn user
+  if(d.status==='Rejected'&&!nextAction){
+    showToast('⚠ Please select Next Steps for this rejection (Resubmit or Write Off)');
+    return;
+  }
+
   // Resubmitted → log updated date
   if(d.status==='Resubmitted'){
     d.lastUpdated=today;
@@ -1253,6 +1262,8 @@ function submitClaim(){
     claims=claims.map(c=>c.id!==editId?c:{...existing,...d,
       internalClaimId:c.internalClaimId,
       createdDate:c.createdDate,
+      closedDate:d.closedDate||c.closedDate,
+      closedType:d.closedType||c.closedType,
       invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,
       soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,
       notes:mergedNotes
@@ -1274,7 +1285,7 @@ function removePdf(){window._tempPdf=null;window._tempPdfName=null;const prev=do
 function toggleEnrol(pid,cid){const c=courses.find(x=>x.id===cid);if(!c)return;if(!c.participantIds)c.participantIds=[];const idx=c.participantIds.indexOf(pid);if(idx>=0)c.participantIds.splice(idx,1);else c.participantIds.push(pid);const isOn=c.participantIds.includes(pid);document.getElementById('enrol-'+pid)?.classList.toggle('selected',isOn);const chk=document.getElementById('echk-'+pid);if(chk){chk.classList.toggle('on',isOn);chk.textContent=isOn?'✓':'';}}
 function saveEnrolment(cid){const c=courses.find(x=>x.id===cid);if(!c)return;c.enrolled=(c.participantIds||[]).length;persist('courses',courses);closeModal();render();}
 function submitParticipant(){const d=getForm();if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);closeModal();render();}
-function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);persist('participants',participants);render();}
+function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);courses=courses.map(c=>({...c,participantIds:(c.participantIds||[]).filter(pid=>pid!==id)}));persist('participants',participants);persist('courses',courses);render();}
 function submitApprentice(){const d=getForm(),units=getUnits();if(modalMode==='add-apprentice'){apprentices.push({...d,id:Date.now(),courses:units});}else{apprentices=apprentices.map(a=>{if(a.id!==editId)return a;const ex=a.courses||[];return{...a,...d,courses:units.map(u=>{const e=ex.find(c=>c.name===u.name);return e?{...e,date:u.date}:u;})};});}persist('apprentices',apprentices);closeModal();render();}
 function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;apprentices=apprentices.filter(a=>a.id!==id);persist('apprentices',apprentices);render();}
 function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;d.certificates={};d.dnaMap={};d.invoiceNo='';d.invoiceNotes='';d.invoicePdf=null;d.invoicePdfName=null;courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d,invoiceNo:c.invoiceNo,invoiceNotes:c.invoiceNotes,invoicePdf:c.invoicePdf,invoicePdfName:c.invoicePdfName,certificates:c.certificates||{},dnaMap:c.dnaMap||{}});}persist('courses',courses);closeModal();render();}
