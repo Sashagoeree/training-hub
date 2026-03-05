@@ -877,6 +877,40 @@ function openModal(mode,idOrData){
     body.innerHTML=`${inp('Projected Budget ($)','projected',budget.projected,'number')}${inp('Expected Spend ($)','expected',budget.expected,'number')}<div style="background:#d1fae5;border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;margin-bottom:3px">Committed (auto)</div><div style="font-size:21px;font-weight:800;color:#065f46">$${getCommitted().toLocaleString()}</div><div style="font-size:10px;color:#065f46;margin-top:2px">Scheduled + Full courses</div></div><button class="btn-save" onclick="submitBudget()">Save Budget</button>`;
   }
 
+  // ── ADD/EDIT CLAIM MODAL ──────────────────────────────────────────────────
+  if(mode==='add-claim'||mode==='edit-claim'){
+    const d=mode==='edit-claim'?claims.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
+    title.textContent=mode==='add-claim'?'Add Claim':'Edit Claim';
+    const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
+    body.innerHTML=`
+      ${inp('Title','title',d.title,'text','e.g. Apprenticeship Wages Subsidy')}
+      <div class="form-row">
+        ${inp('Claim Type','claimType',d.claimType,'text','e.g. AASN, Incentive, Subsidy')}
+        ${inp('Employer Claim ID','employerClaimId',d.employerClaimId,'text','e.g. EC-2025-001')}
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Participant</label><select class="form-select" name="participantName"><option value="">— Select —</option>${pOpts}</select></div>
+        ${inp('Invoice No #','invoiceNo',d.invoiceNo,'text','INV-2025-001')}
+      </div>
+      <div class="form-row">
+        ${inp('Created On','createdOn',d.createdOn,'date')}
+        ${inp('Claim Amount ($)','claimAmount',d.claimAmount,'number','0')}
+      </div>
+      <div class="form-row">
+        ${inp('Accepted Amount ($)','acceptedAmount',d.acceptedAmount,'number','0')}
+        ${inp('Cost Incurred to Business ($)','costIncurred',d.costIncurred,'number','0')}
+      </div>
+      <div class="form-group"><label class="form-label">Invoice PDF</label>
+        ${d.invoicePdfName?`<div class="pdf-preview"><span>📄</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
+        <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
+          <div style="font-size:18px;margin-bottom:4px">📄</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF</div>
+        </div>
+        <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
+      </div>
+      <button class="btn-save" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
+    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;
+  }
+
   document.getElementById('modal').classList.remove('hidden');
 }
 
@@ -955,39 +989,7 @@ function removeDocInvoice(courseId){
   openModal('manage-certs',courseId);
 }
 
-  // ── ADD/EDIT CLAIM MODAL ──────────────────────────────────────────────────
-  if(mode==='add-claim'||mode==='edit-claim'){
-    const d=mode==='edit-claim'?claims.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
-    title.textContent=mode==='add-claim'?'Add Claim':'Edit Claim';
-    const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
-    body.innerHTML=`
-      ${inp('Title','title',d.title,'text','e.g. Apprenticeship Wages Subsidy')}
-      <div class="form-row">
-        ${inp('Claim Type','claimType',d.claimType,'text','e.g. AASN, Incentive, Subsidy')}
-        ${inp('Employer Claim ID','employerClaimId',d.employerClaimId,'text','e.g. EC-2025-001')}
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Participant</label><select class="form-select" name="participantName"><option value="">— Select —</option>${pOpts}</select></div>
-        ${inp('Invoice No #','invoiceNo',d.invoiceNo,'text','INV-2025-001')}
-      </div>
-      <div class="form-row">
-        ${inp('Created On','createdOn',d.createdOn,'date')}
-        ${inp('Claim Amount ($)','claimAmount',d.claimAmount,'number','0')}
-      </div>
-      <div class="form-row">
-        ${inp('Accepted Amount ($)','acceptedAmount',d.acceptedAmount,'number','0')}
-        ${inp('Cost Incurred to Business ($)','costIncurred',d.costIncurred,'number','0')}
-      </div>
-      <div class="form-group"><label class="form-label">Invoice PDF</label>
-        ${d.invoicePdfName?`<div class="pdf-preview"><span>📄</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
-        <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
-          <div style="font-size:18px;margin-bottom:4px">📄</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF</div>
-        </div>
-        <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
-      </div>
-      <button class="btn-save" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
-    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;
-  }
+
 
 function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;}
 function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
