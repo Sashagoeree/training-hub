@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
  --bg:#f4f6f9;
@@ -39,26 +39,26 @@
  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
  --shadow-lg:0 20px 48px rgba(0,0,0,.14),0 8px 16px rgba(0,0,0,.06);
 }
-body{font-family:'Figtree','Segoe UI',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
-.layout{display:flex;min-height:100vh}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
+.layout{display:flex;height:100vh;overflow:hidden}
 
 /* ── SIDEBAR ── */
 .sidebar{width:232px;background:var(--sidebar-bg);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;flex-shrink:0;overflow-y:auto}
 .brand{padding:20px 18px 16px;border-bottom:1px solid var(--sidebar-border)}
 .brand h1{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2}
 .brand p{font-size:11px;color:var(--sidebar-text);margin-top:3px;letter-spacing:.2px}
-.nav-section{font-size:10px;font-weight:700;color:#3d4a5c;text-transform:uppercase;letter-spacing:1.2px;padding:18px 18px 6px;font-family:'IBM Plex Mono',monospace}
-.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 18px;border:none;cursor:pointer;background:transparent;color:var(--sidebar-text);font-weight:500;font-size:13px;text-align:left;width:100%;font-family:'Figtree',sans-serif;transition:all .12s;position:relative}
+.nav-section{font-size:10px;font-weight:700;color:#3d4a5c;text-transform:uppercase;letter-spacing:1.2px;padding:18px 18px 6px;font-family:'JetBrains Mono','Courier New',monospace}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 18px;border:none;cursor:pointer;background:transparent;color:var(--sidebar-text);font-weight:500;font-size:13px;text-align:left;width:100%;font-family:'Inter',sans-serif;transition:all .12s;position:relative}
 .nav-btn:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}
 .nav-btn.active{color:#fff;background:rgba(26,86,219,.15)}
 .nav-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);height:60%;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
 .nav-icon{font-size:11px;width:16px;text-align:center;flex-shrink:0;opacity:.6;font-family:serif}
 .nav-btn.active .nav-icon{opacity:1}
-.badge-red{margin-left:auto;background:#e53e3e;color:#fff;border-radius:20px;font-size:9px;padding:1px 6px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.badge-red{margin-left:auto;background:#e53e3e;color:#fff;border-radius:20px;font-size:9px;padding:1px 6px;font-weight:700;font-family:'JetBrains Mono','Courier New',monospace}
 .sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--sidebar-border);font-size:10px;color:#3d4a5c;line-height:1.6}
 
 /* ── MAIN ── */
-.main{flex:1;padding:28px 32px;overflow:auto;min-width:0}
+.main{flex:1;padding:28px 32px;overflow-y:auto;min-width:0;height:100vh}
 .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;gap:12px;flex-wrap:wrap}
 .page-title{font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-.3px}
 .page-sub{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500}
@@ -72,10 +72,10 @@ body{font-family:'Figtree','Segoe UI',sans-serif;background:var(--bg);color:var(
 .btn-secondary:hover{background:var(--surface-2);border-color:var(--border-strong)}
 
 /* ── STAT CARDS ── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:20px}
-.stat-card{background:var(--surface);border-radius:var(--radius-lg);padding:16px 18px;border:1px solid var(--border);display:flex;gap:13px;align-items:center;box-shadow:var(--shadow)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border);display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);overflow:hidden;min-width:0}
 .stat-icon{border-radius:var(--radius);width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:700}
-.stat-value{font-size:21px;font-weight:800;line-height:1;letter-spacing:-.5px}
+.stat-value{font-size:clamp(14px,2vw,20px);font-weight:800;line-height:1;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 .stat-sub{font-size:10px;font-weight:600;margin-top:3px}
 
@@ -96,7 +96,7 @@ body{font-family:'Figtree','Segoe UI',sans-serif;background:var(--bg);color:var(
 .table-wrap{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse}
 thead tr{background:var(--surface-2);border-bottom:1.5px solid var(--border)}
-th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;font-family:'JetBrains Mono','Courier New',monospace}
 td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px;color:var(--text-primary)}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--surface-2)}
@@ -131,7 +131,7 @@ tr:hover td{background:var(--surface-2)}
 .tp-item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:var(--radius);margin-bottom:4px;font-size:12px;font-weight:500}
 .tp-done{background:var(--success-light)}
 .tp-upcoming{background:var(--accent-light)}
-.tp-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+.tp-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;font-family:'JetBrains Mono','Courier New',monospace}
 
 /* ── CALENDAR ── */
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
@@ -141,7 +141,7 @@ tr:hover td{background:var(--surface-2)}
 .cal-nav-btn:hover{background:var(--surface-2);border-color:var(--border-strong)}
 .cal-grid{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
 .cal-day-headers{display:grid;grid-template-columns:repeat(7,1fr);background:var(--surface-2);border-bottom:1.5px solid var(--border)}
-.cal-day-header{padding:10px 0;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;font-family:'IBM Plex Mono',monospace}
+.cal-day-header{padding:10px 0;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;font-family:'JetBrains Mono','Courier New',monospace}
 .cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
 .cal-day{min-height:100px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;position:relative}
 .cal-day:nth-child(7n){border-right:none}
@@ -173,7 +173,7 @@ tr:hover td{background:var(--surface-2)}
 .modal-close{background:var(--surface-2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .modal-close:hover{background:var(--danger-light);color:var(--danger);border-color:#fecaca}
 .form-group{margin-bottom:14px}
-.form-label{display:block;font-size:10px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;font-family:'IBM Plex Mono',monospace}
+.form-label{display:block;font-size:10px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;font-family:'JetBrains Mono','Courier New',monospace}
 .form-input,.form-select,.form-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 11px;font-size:13px;outline:none;background:var(--surface);font-family:inherit;color:var(--text-primary);transition:border-color .15s}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);background:#fff}
 .form-textarea{resize:vertical;min-height:60px}
@@ -184,8 +184,8 @@ tr:hover td{background:var(--surface-2)}
 
 /* ── CHECKLIST ── */
 .checklist-builder{border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;background:var(--surface-2);margin-bottom:12px}
-.checklist-builder-title{font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace}
-.cli-row{display:grid;grid-template-columns:1fr 120px 28px;gap:5px;margin-bottom:5px;align-items:center}
+.checklist-builder-title{font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-family:'JetBrains Mono','Courier New',monospace}
+.cli-row{display:grid;grid-template-columns:100px 1fr 120px 28px;gap:5px;margin-bottom:5px;align-items:center}
 .cli-input{border:1.5px solid var(--border);border-radius:6px;padding:6px 9px;font-size:12px;font-family:inherit;outline:none;background:#fff;width:100%;transition:border-color .15s}
 .cli-input:focus{border-color:var(--accent)}
 .cli-remove{background:var(--danger-light);color:var(--danger);border:none;border-radius:5px;padding:5px;cursor:pointer;font-family:inherit;width:100%;text-align:center;font-size:12px}
@@ -207,7 +207,7 @@ tr:hover td{background:var(--surface-2)}
 /* ── DASH ── */
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 .dash-card{background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.dash-card h3{margin:0 0 13px;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;font-family:'IBM Plex Mono',monospace}
+.dash-card h3{margin:0 0 13px;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;font-family:'JetBrains Mono','Courier New',monospace}
 .app-row{margin-bottom:12px}
 .app-row-header{display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;gap:8px}
 .req-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -286,7 +286,8 @@ const DEFAULTS={
  ],
  budget:{projected:25000,expected:18000},
  claims:[],
- claimTypes:['AASN Wage Subsidy','Apprenticeship Incentive','Training Supplement','Completion Bonus','Other']
+ claimTypes:['AASN Wage Subsidy','Apprenticeship Incentive','Training Supplement','Completion Bonus','Other'],
+ departments:['Engineering','Electrical','Mechanical','Warehouse','Admin','HR','Operations','Finance']
 };
 
 // ── GOOGLE DRIVE SYNC ─────────────────────────────────────────────────────────
@@ -359,7 +360,7 @@ async function loadFromGoogleDrive() {
 async function saveToGoogleDrive() {
  if (!gdToken) return;
  setSaveStatus('Saving to Google Drive…');
- const body = JSON.stringify({ participants, apprentices, courses, requests, budget, claims, claimTypes });
+ const body = JSON.stringify({ participants, apprentices, courses, requests, budget, claims, claimTypes, departments });
  try {
  if (gdFileId) {
  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${gdFileId}?uploadType=media`, { method:'PATCH', headers:{ Authorization:`Bearer ${gdToken}`,'Content-Type':'application/json' }, body });
@@ -390,7 +391,7 @@ function updateSyncUI() {
 function ld(k){try{const v=localStorage.getItem('th5_'+k);return v?JSON.parse(v):JSON.parse(JSON.stringify(DEFAULTS[k]));}catch{return JSON.parse(JSON.stringify(DEFAULTS[k]));}}
 function sd(k,d){try{localStorage.setItem('th5_'+k,JSON.stringify(d));}catch(e){}}
 
-let participants=ld('participants'),apprentices=ld('apprentices'),courses=ld('courses'),requests=ld('requests'),budget=ld('budget'),claims=ld('claims'),claimTypes=ld('claimTypes');
+let participants=ld('participants'),apprentices=ld('apprentices'),courses=ld('courses'),requests=ld('requests'),budget=ld('budget'),claims=ld('claims'),claimTypes=ld('claimTypes'),departments=ld('departments');
 let currentTab='dashboard',searchVal='',editId=null,modalMode=null;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let openPlans=new Set();
@@ -548,7 +549,7 @@ function render(){
  if(currentTab==='courses')addBtn=`<button class="btn-primary" onclick="openModal('add-course')">+ Add Course</button>`;
  if(currentTab==='completed')addBtn='';
  if(currentTab==='claims')addBtn=`<button class="btn-primary" onclick="openModal('add-claim')">+ Add Claim</button>`;
- if(currentTab==='requests')addBtn=`<button class="btn-primary" onclick="openModal('add-request')">+ New Request</button>`;
+ if(currentTab==='requests')addBtn=`<button class="btn-secondary" onclick="openModal('manage-departments')" style="margin-right:6px">Manage Departments</button><button class="btn-primary" onclick="openModal('add-request')">+ New Request</button>`;
  if(currentTab!=='dashboard'&&currentTab!=='export'&&currentTab!=='calendar')sb=`<input class="search-input" placeholder="Search…" value="${searchVal}" oninput="searchVal=this.value;render()"/>`;
 
  let content='';
@@ -567,7 +568,7 @@ function render(){
  {icon:'CS',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
  {icon:'RQ',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
  {icon:'$',label:'Cost to Business',value:`$${closedCostBusiness.toLocaleString()}`,sub:`${claims.filter(c=>c.status==='Closed').length} closed claims`,color:'#059669'},
- ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18;color:${s.color};font-size:11px;font-weight:800;font-family:'IBM Plex Mono',monospace;letter-spacing:-.5px">${s.icon}</div><div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
+ ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18;color:${s.color};font-size:11px;font-weight:800;font-family:'JetBrains Mono','Courier New',monospace;letter-spacing:-.5px;flex-shrink:0">${s.icon}</div><div style="min-width:0;flex:1"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
  const atRiskBanner=atRisk>0?`<div class="alert-banner"> <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
  content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
  <div class="budget-card">
@@ -641,7 +642,7 @@ function render(){
  return `<tr><td><span style="font-weight:700;cursor:pointer;color:#1e40af;text-decoration:underline;text-underline-offset:2px" onclick="openModal('view-apprentice',${a.id})">${a.name}</span></td><td style="color:#6b7280">${a.department||''}</td><td style="font-size:12px">${a.qualification||''}</td><td style="color:#6b7280">${a.supervisor||''}</td>
  <td style="width:130px"><div style="display:flex;align-items:center;gap:5px">${pb(p)}<span style="font-weight:700;font-size:11px;min-width:24px">${p}%</span></div><div style="font-size:10px;color:#6b7280;margin-top:2px">${a.courses?a.courses.filter(c=>c.done).length+'/'+a.courses.length+' units':''}</div></td>
  <td style="font-size:12px;color:#6b7280">${a.endDate||''}<br><span style="font-size:10px">${d>0?d+'d left':'Overdue'}</span></td><td>${bdg(s)}</td>
- <td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('view-apprentice',${a.id})">Checklist</button><button class="btn-sm btn-edit" onclick="openModal('edit-apprentice',${a.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteApprentice(${a.id})">Del</button></div></td></tr>`;}).join('');
+ <td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('view-apprentice',${a.id})">Checklist</button><button class="btn-sm btn-green" onclick="exportApprenticeTranscript(${a.id})">Export</button><button class="btn-sm btn-edit" onclick="openModal('edit-apprentice',${a.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteApprentice(${a.id})">Del</button></div></td></tr>`;}).join('');
  content=`${banner}<div class="table-wrap"><table><thead><tr><th>Name</th><th>Dept</th><th>Qualification</th><th>Supervisor</th><th>Progress</th><th>End Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }
 
@@ -733,10 +734,10 @@ function render(){
  <div class="export-grid">${[
  {icon:'PR',label:'Participants',desc:'Directory with training summary',data:flatP,file:'participants.csv'},
  {icon:'AP',label:'Apprentices',desc:'Progress, status & units — auto-calculated',data:flatA,file:'apprentices.csv'},
- {icon:'',label:'Short Courses',desc:'Details, enrollment, costs & invoices',data:flatC,file:'short_courses.csv'},
- {icon:'',label:'Requests',desc:'All requests with priority & approval',data:requests.map(r=>({Employee:r.employee,Department:r.department,Course:r.course,Reason:r.reason,Priority:r.priority,Status:r.status,Submitted:r.submitted,Approver:r.approver})),file:'training_requests.csv'},
- {icon:'',label:'Claims',desc:'All claims with amounts and status',data:claims.map(c=>({Title:c.title,ClaimType:c.claimType,EmployerClaimID:c.employerClaimId,Participant:c.participantName,InvoiceNo:c.invoiceNo,CreatedOn:c.createdOn,ClaimAmount:c.claimAmount,AcceptedAmount:c.acceptedAmount,CostIncurred:c.costIncurred})),file:'claims.csv'},
- ].map(e=>`<div class="export-card"><div style="font-size:26px;margin-bottom:8px">${e.icon}</div><div style="font-weight:800;font-size:14px;margin-bottom:3px">${e.label}</div><div style="font-size:12px;color:#6b7280;margin-bottom:8px">${e.desc}</div><div style="font-size:11px;color:#374151;margin-bottom:12px">${e.data.length} records</div><button class="btn-download" onclick='exportCSV(${JSON.stringify(e.data)},"${e.file}")'>Download CSV</button></div>`).join('')}</div>`;
+ {icon:'SC',label:'Short Courses',desc:'Details, enrollment, costs & invoices',data:flatC,file:'short_courses.csv'},
+ {icon:'RQ',label:'Requests',desc:'All requests with priority & approval',data:requests.map(r=>({Employee:r.employee,Department:r.department,Course:r.course,Reason:r.reason,Priority:r.priority,Status:r.status,Submitted:r.submitted,Approver:r.approver})),file:'training_requests.csv'},
+ {icon:'CL',label:'Claims',desc:'All claims with amounts and status',data:claims.map(c=>({Title:c.title,ClaimType:c.claimType,EmployerClaimID:c.employerClaimId,Participant:c.participantName,InvoiceNo:c.invoiceNo,CreatedOn:c.createdOn,ClaimAmount:c.claimAmount,AcceptedAmount:c.acceptedAmount,CostIncurred:c.costIncurred})),file:'claims.csv'},
+ ].map(e=>`<div class="export-card"><div style="font-size:13px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:10px;letter-spacing:.5px">${e.icon}</div><div style="font-weight:800;font-size:14px;margin-bottom:3px">${e.label}</div><div style="font-size:12px;color:#6b7280;margin-bottom:8px">${e.desc}</div><div style="font-size:11px;color:#374151;margin-bottom:12px">${e.data.length} records</div><button class="btn-download" onclick='exportCSV(${JSON.stringify(e.data)},"${e.file}")'>Download CSV</button></div>`).join('')}</div>`;
  }
 
  main.innerHTML=`<div class="page-header"><div><div class="page-title">${titles[currentTab]}</div><div class="page-sub">${subs[currentTab]}</div></div><div class="header-right">${sb}${addBtn}</div></div>${content}`;
@@ -768,10 +769,10 @@ function renderCourseCard(c, isCompleted) {
  <div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(c.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div>
  </div>
  <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">
- ${!isCompleted?`<button class="btn-sm btn-green" onclick="openModal('enrol-course',${c.id})"> Enrol</button>`:''}
- ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${c.id})"> Email</button>`:''}
- ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${c.id})"> Remind</button>`:''}
- ${isCompleted?`<button class="btn-sm btn-green" onclick="openModal('manage-certs',${c.id})">Docs Documents</button>`:''}
+ ${!isCompleted?`<button class="btn-sm btn-green" onclick="openModal('enrol-course',${c.id})">Enrol Participants</button>`:''}
+ ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${c.id})">Email</button>`:''}
+ ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${c.id})">Remind</button>`:''}
+ ${isCompleted?`<button class="btn-sm btn-green" onclick="openModal('manage-certs',${c.id})">Documents</button>`:''}
  <button class="btn-sm btn-edit" onclick="openModal('edit-course',${c.id})">Edit</button>
  <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Del</button>
  </div>
@@ -823,6 +824,60 @@ function exportTrainingPlan(pid){
  const win=window.open('','_blank');win.document.write(html);win.document.close();
 }
 
+function exportApprenticeTranscript(aid){
+  const a=apprentices.find(x=>x.id===aid);if(!a)return;
+  const units=a.courses||[];
+  const done=units.filter(u=>u.done).length;
+  const pct=units.length?Math.round(done/units.length*100):0;
+  const daysRem=a.endDate?Math.ceil((new Date(a.endDate)-new Date())/86400000):null;
+  const rows=units.map(u=>{
+    const bg=u.done?'#f0fdf4':'#f8fafc';
+    const badge=u.done?'<span style="background:#d1fae5;color:#065f46;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700">Complete</span>':'<span style="background:#e5e7eb;color:#6b7280;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">Pending</span>';
+    return `<tr style="background:${bg}"><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-family:monospace;font-size:12px;color:#6b7280;white-space:nowrap">${u.code||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-weight:600">${u.name}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280">${u.date||'—'}</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${badge}</td></tr>`;
+  }).join('');
+  const barW=pct+'%';
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Apprentice Transcript — ${a.name}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter','Segoe UI',sans-serif;background:#fff;color:#0d1117;padding:0}
+    .page{max-width:860px;margin:0 auto;padding:48px 40px}
+    .header{border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:28px}
+    .header h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
+    .header h2{font-size:13px;font-weight:500;color:#6b7280;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+    .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:#f8fafc;border-radius:8px;padding:18px;margin-bottom:28px;border:1px solid #e4e7ec}
+    .meta-item span{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:3px;font-family:'JetBrains Mono',monospace}
+    .meta-item strong{font-size:15px;font-weight:700}
+    .progress-section{margin-bottom:28px}
+    .progress-label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#374151;margin-bottom:7px}
+    .progress-bar-outer{background:#e5e7eb;border-radius:6px;height:10px;overflow:hidden}
+    .progress-bar-inner{background:#1a56db;height:100%;border-radius:6px;width:${barW}}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead tr{background:#0d1117}
+    th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.6px;font-family:'JetBrains Mono',monospace}
+    .footer{margin-top:28px;font-size:11px;color:#9ca3af;display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;padding-top:14px}
+    @media print{.no-print{display:none}body{padding:0}.page{padding:28px 32px}}
+  </style></head>
+  <body><div class="page">
+    <div class="header"><h1>${a.name}</h1><h2>Apprentice Training Transcript</h2></div>
+    <div class="meta-grid">
+      <div class="meta-item"><span>Qualification</span><strong>${a.qualification||'—'}</strong></div>
+      <div class="meta-item"><span>Department</span><strong>${a.department||'—'}</strong></div>
+      <div class="meta-item"><span>Supervisor</span><strong>${a.supervisor||'—'}</strong></div>
+      <div class="meta-item"><span>Start Date</span><strong>${a.startDate||'—'}</strong></div>
+      <div class="meta-item"><span>End Date</span><strong>${a.endDate||'—'}</strong></div>
+      <div class="meta-item"><span>Days Remaining</span><strong>${daysRem!==null?(daysRem>0?daysRem+' days':'Overdue'):'—'}</strong></div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-label"><span>Unit Completion</span><span>${done} of ${units.length} units complete</span></div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner"></div></div>
+    </div>
+    <table><thead><tr><th>Unit Code</th><th>Unit Name</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="padding:20px;text-align:center;color:#9ca3af">No units recorded</td></tr>'}</tbody></table>
+    <div class="footer"><span>Generated by Training Hub</span><span>${new Date().toLocaleDateString('en-AU')}</span></div>
+  </div><script>window.onload=function(){window.print()}<\/script></body></html>`;
+  const win=window.open('','_blank');win.document.write(html);win.document.close();
+}
+
 function exportCSV(data,filename){if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(row=>keys.map(k=>`"${String(row[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=filename;a.click();}
 
 function sendCourseEmail(courseId){
@@ -857,7 +912,7 @@ function openModal(mode,idOrData){
  const ec=d.courses||[{name:'WHS Induction',done:false,date:''}];
  title.textContent=mode==='add-apprentice'?'Add Apprentice':'Edit Apprentice';
  body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Supervisor','supervisor',d.supervisor,'text','Mike Chen')}</div>${inp('Qualification','qualification',d.qualification,'text','Cert III Engineering')}${inp('Email','email',d.email,'email','jane@company.com')}<div class="form-row">${inp('Start Date','startDate',d.startDate,'date')}${inp('End Date','endDate',d.endDate,'date')}</div>
- <div class="checklist-builder"><div class="checklist-builder-title">Required Course Units</div><div style="display:grid;grid-template-columns:1fr 120px 28px;gap:5px;margin-bottom:5px"><span style="font-size:10px;color:#9ca3af;padding:0 3px">Unit Name</span><span style="font-size:10px;color:#9ca3af;padding:0 3px">Booked / Done Date</span><span></span></div><div id="cli-wrap">${ec.map(c=>`<div class="cli-row"><input class="cli-input" value="${c.name||''}" placeholder="e.g. WHS Induction"/><input class="cli-input" type="date" value="${c.date||''}"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button></div>`).join('')}</div><button class="btn-add-item" onclick="addUnit()">+ Add Unit</button></div>
+ <div class="checklist-builder"><div class="checklist-builder-title">Required Course Units</div><div style="display:grid;grid-template-columns:100px 1fr 120px 28px;gap:5px;margin-bottom:5px"><span style="font-size:10px;color:#9ca3af;padding:0 3px">Unit Code</span><span style="font-size:10px;color:#9ca3af;padding:0 3px">Unit Name</span><span style="font-size:10px;color:#9ca3af;padding:0 3px">Booked / Done Date</span><span></span></div><div id="cli-wrap">${ec.map(c=>`<div class="cli-row"><input class="cli-input" value="${c.code||''}" placeholder="e.g. CPCCWHS1001"/><input class="cli-input" value="${c.name||''}" placeholder="e.g. WHS Induction"/><input class="cli-input" type="date" value="${c.date||''}"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button></div>`).join('')}</div><button class="btn-add-item" onclick="addUnit()">+ Add Unit</button></div>
  <button class="btn-save" onclick="submitApprentice()">${mode==='add-apprentice'?'Add Apprentice':'Save Changes'}</button>`;
  }
 
@@ -865,7 +920,7 @@ function openModal(mode,idOrData){
  const a=apprentices.find(x=>x.id===idOrData);if(!a)return;editId=a.id;
  const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);
  title.textContent=a.name+' — Checklist';
- const items=(a.courses||[]).map((c,i)=>`<div class="chk-row"><div class="chk ${c.done?'done':''}" onclick="toggleCourse(${a.id},${i})">${c.done?'':''}</div><span style="${c.done?'text-decoration:line-through;color:#9ca3af':''}font-size:13px">${c.name}</span>${c.date?`<span style="font-size:10px;color:#6b7280;margin-left:auto"> ${c.date}</span>`:''}</div>`).join('');
+ const items=(a.courses||[]).map((c,i)=>`<div class="chk-row"><div class="chk ${c.done?'done':''}" onclick="toggleCourse(${a.id},${i})">${c.done?'✓':''}</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px"><span style="${c.done?'text-decoration:line-through;color:#9ca3af;':''}font-weight:600;font-size:13px">${c.name}</span>${c.code?`<span style="font-size:10px;font-weight:600;color:#6b7280;background:#f1f5f9;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace">${c.code}</span>`:''}</div>${c.date?`<div style="font-size:11px;color:#9ca3af;margin-top:1px">${c.date}</div>`:''}</div></div>`).join('');
  body.innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;padding:12px;background:#f8fafc;border-radius:10px"><div style="flex:1">${pb(p)}</div><span style="font-weight:800;font-size:19px">${p}%</span>${bdg(s)}</div>${d<=180&&p<75?`<div class="alert-banner"> At Risk — ${d} days remaining, ${p}% complete.</div>`:''}<div style="font-size:11px;color:#6b7280;margin-bottom:9px">${(a.courses||[]).filter(c=>c.done).length} of ${(a.courses||[]).length} units · ${d>0?d+' days remaining':'Overdue'}</div><div>${items||'<div style="color:#9ca3af;font-size:13px">No units added.</div>'}</div><button class="btn-save" style="margin-top:13px" onclick="closeModal()">Done</button>`;
  }
 
@@ -887,481 +942,300 @@ function openModal(mode,idOrData){
  }
 
  if(mode==='add-request'){
- title.textContent='New Training Request';
- body.innerHTML=`${inp('Employee Name','employee','','text','Alex Brown')}${inp('Department','department','','text','Warehouse')}${inp('Course Requested','course','','text','Forklift Licence')}${ta('Reason','reason','','Why is this training needed?')}${sel('Priority','priority','Medium',['High','Medium','Low'])}<button class="btn-save" onclick="submitRequest()">Submit Request</button>`;
- }
+    title.textContent='New Training Request';
+    const pReqOpts=participants.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+    const dReqOpts=(departments||[]).sort().map(d=>`<option value="${d}">${d}</option>`).join('');
+    body.innerHTML=`<div class="form-group"><label class="form-label">Employee</label><select class="form-select" name="employee" onchange="reqAutoFillDept(this.value)"><option value="">— Select participant —</option>${pReqOpts}</select></div><div class="form-group"><label class="form-label">Department</label><select class="form-select" name="department" onchange="reqToggleOtherDept(this.value)" id="req-dept-sel"><option value="">— Select department —</option>${dReqOpts}<option value="__other__">Other…</option></select></div><div class="form-group" id="req-dept-other" style="display:none">${inp('Department (specify)','departmentOther','','text','Enter department name')}</div>${inp('Course Requested','course','','text','e.g. Forklift Licence')}${ta('Reason','reason','','Why is this training needed?')}${sel('Priority','priority','Medium',['High','Medium','Low'])}<button class="btn-save" onclick="submitRequest()">Submit Request</button>`;
+  }
 
- if(mode==='review-request'){
- const r=requests.find(x=>x.id===idOrData);editId=idOrData;
- title.textContent='Review Request';
- const comments=r.comments||[];
- const commentLog=comments.length===0?'<div style="font-size:12px;color:#9ca3af;padding:8px 0">No notes yet.</div>':comments.map(c=>`<div style="background:#f8fafc;border-radius:7px;padding:9px 11px;margin-bottom:7px"><div style="font-size:11px;font-weight:700;color:#374151">${c.author} <span style="color:#9ca3af;font-weight:400">${c.date}</span></div><div style="font-size:12px;color:#374151;margin-top:3px">${c.text}</div></div>`).join('');
- body.innerHTML=`<div style="background:#f8fafc;border-radius:8px;padding:11px;margin-bottom:12px;font-size:13px"><div style="font-weight:700;margin-bottom:3px">${r.employee} — ${r.course}</div><div style="color:#6b7280;font-size:12px">${r.reason||''}</div><div style="margin-top:5px">${bdg(r.priority)}</div></div>
- ${sel('Decision','status',r.status||'Pending',['Pending','Under Review','Approved','Declined'])}${inp('Approver','approver',r.approver,'text','Your name')}
- <div style="border:1.5px solid #e5e7eb;border-radius:9px;padding:12px;margin-bottom:12px">
- <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Notes & Comments</div>
- <div id="comment-log" style="max-height:200px;overflow-y:auto;margin-bottom:10px">${commentLog}</div>
- <div style="display:flex;gap:8px">
- <textarea class="form-textarea" id="new-comment" placeholder="Add a note or comment…" style="min-height:44px;flex:1;margin-bottom:0"></textarea>
- <button onclick="addComment(${r.id})" style="background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 13px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end;white-space:nowrap">Add Note</button>
- </div>
- </div>
- <button class="btn-save" onclick="submitReview()">Save Decision</button>`;
- }
+  if(mode==='review-request'){
+    const r=requests.find(x=>x.id===idOrData);editId=idOrData;
+    title.textContent='Review Request';
+    if(!r)return;
+    const noteCount=(r.comments||[]).length;
+    const commentLog=(r.comments||[]).map(c=>`<div style="background:#f8fafc;border-radius:7px;padding:8px 10px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:#374151">Admin <span style="color:#9ca3af;font-weight:400">${c.date}</span></div><div style="font-size:12px;color:#374151;margin-top:2px">${c.text}</div></div>`).join('');
+    body.innerHTML=`<div style="background:var(--surface-2);border-radius:8px;padding:11px;margin-bottom:12px;font-size:13px"><div style="font-weight:700;margin-bottom:3px">${r.employee} — ${r.course}</div><div style="color:#6b7280;font-size:12px">${r.reason||''}</div><div style="margin-top:5px">${bdg(r.priority)}</div></div>
+      ${sel('Status','status',r.status,['Pending','Under Review','Approved','Declined'])}
+      ${inp('Approver','approver',r.approver,'text','Name of approver')}
+      <div style="border:1.5px solid var(--border);border-radius:9px;padding:12px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Comments</div>
+        <div id="req-comment-log" style="max-height:140px;overflow-y:auto;margin-bottom:8px">${commentLog||'<div style="font-size:12px;color:#9ca3af">No comments yet.</div>'}</div>
+        <div style="display:flex;gap:8px"><textarea class="form-textarea" id="new-req-comment" placeholder="Add a comment…" style="min-height:38px;flex:1;margin-bottom:0"></textarea><button onclick="addComment(${r.id})" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end">Add</button></div>
+      </div>
+      <button class="btn-save" onclick="submitReview()">Save Review</button>`;
+  }
 
- if(mode==='manage-certs'){
- const c=courses.find(x=>x.id===idOrData);if(!c)return;editId=idOrData;
- title.textContent=`Documents — ${c.name}`;
- if(!c.certificates)c.certificates={};
- if(!c.dnaMap)c.dnaMap={};
+  if(mode==='manage-certs'){
+    const c=courses.find(x=>x.id===idOrData);if(!c)return;editId=idOrData;
+    title.textContent=`Documents — ${c.name}`;
+    const pList=(c.participantIds||[]).map(pid=>{
+      const p=participants.find(x=>x.id===pid);if(!p)return'';
+      const cert=c.certificates?.[pid];
+      const dna=c.dnaMap?.[pid];
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div>${dna?`<div style="font-size:11px;color:var(--danger);margin-top:3px">DNA: ${dna.reason||'No reason given'}</div>`:''}</div>
+        ${cert?`<div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;color:var(--success)">${cert.name}</span><button class="btn-sm btn-green" onclick="viewCert(${c.id},${pid})">View</button><button class="btn-sm btn-del" onclick="removeCert(${c.id},${pid})">Remove</button></div>`:`<button class="btn-sm btn-green" onclick="document.getElementById('cert-upload-${pid}').click()">+ Certificate</button>`}
+        <input type="file" id="cert-upload-${pid}" accept=".pdf" style="display:none" onchange="handleCertUpload(event,${c.id},${pid})">
+        ${!dna?`<button class="btn-sm btn-del" onclick="markDNA(${c.id},${pid})">DNA</button>`:''}
+      </div>`;
+    }).join('');
+    const certItems=pList||'<div class="empty">No participants enrolled yet.</div>';
+    body.innerHTML=`<div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Invoice</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px"><input class="form-input" id="doc-invNo" placeholder="Invoice No" value="${c.invoiceNo||''}" style="flex:1"><button class="btn-primary" onclick="saveDocInvoice(${c.id})">Save</button></div>
+      <textarea class="form-textarea" id="doc-invNotes" placeholder="Invoice notes…" style="min-height:38px">${c.invoiceNotes||''}</textarea>
+      ${c.invoicePdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${c.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeDocInvoice(${c.id})">Remove</button></div>`:
+      `<div class="pdf-upload-area" onclick="document.getElementById('doc-inv-file-${c.id}').click()" style="margin-top:8px"><div style="font-size:12px;font-weight:600;color:#374151">Click to attach invoice PDF</div></div><input type="file" id="doc-inv-file-${c.id}" accept=".pdf" style="display:none" onchange="handleDocInvoice(event,${c.id})">`}
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Participants</div>
+    ${certItems}
+    <button class="btn-save" style="margin-top:10px" onclick="closeModal()">Done</button>`;
+  }
 
- // ── Invoice section ──
- const invHtml=`
- <div style="background:#f8fafc;border-radius:10px;padding:13px;margin-bottom:14px;border:1px solid #e5e7eb">
- <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px"> Invoice</div>
- <div class="form-row" style="margin-bottom:8px">
- <div><label class="form-label">Invoice Number</label><input class="form-input" id="doc-invNo" value="${c.invoiceNo||''}" placeholder="INV-2025-001"/></div>
- <div><label class="form-label">Invoice Notes</label><input class="form-input" id="doc-invNotes" value="${c.invoiceNotes||''}" placeholder="e.g. Paid 15 Feb"/></div>
- </div>
- <label class="form-label">PDF Invoice</label>
- ${c.invoicePdfName?`<div class="pdf-preview"><span></span><span class="pdf-preview-name">${c.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeDocInvoice(${c.id})">Remove</button></div>`:''}
- <div class="pdf-upload-area" id="inv-drop" onclick="document.getElementById('inv-file').click()" ${c.invoicePdfName?'style="display:none"':''}>
- <div style="font-size:18px;margin-bottom:4px"></div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF invoice</div>
- </div>
- <input type="file" id="inv-file" accept=".pdf" style="display:none" onchange="handleDocInvoice(event,${c.id})">
- <button onclick="saveDocInvoice(${c.id})" style="margin-top:10px;background:#1e40af;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit">Save Invoice Details</button>
- </div>`;
+  if(mode==='edit-budget'){
+    title.textContent='Edit Budget';
+    body.innerHTML=`${inp('Projected Budget ($)','projected',budget.projected,'number')}${inp('Expected Spend ($)','expected',budget.expected,'number')}<div style="background:var(--success-light);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;margin-bottom:3px">Committed (auto)</div><div style="font-size:21px;font-weight:800;color:var(--success)">$${getCommitted().toLocaleString()}</div><div style="font-size:10px;color:var(--success);margin-top:2px">Scheduled + Full courses</div></div><button class="btn-save" onclick="submitBudget()">Save Budget</button>`;
+  }
 
- // ── Certificates section ──
- const certItems=(c.participantIds||[]).map(pid=>{
- const p=participants.find(x=>x.id===pid);if(!p)return'';
- const cert=c.certificates[pid];
- const dna=c.dnaMap[pid];
- return `<div style="background:${dna?'#fff8f8':'#fff'};border:1px solid ${dna?'#fecaca':'#e5e7eb'};border-radius:9px;padding:11px 13px;margin-bottom:8px">
- <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
- <div style="flex:1;min-width:120px">
- <div style="font-weight:700;font-size:13px">${p.name}</div>
- <div style="font-size:11px;color:#6b7280">${p.department||''}</div>
- ${dna?`<div style="font-size:11px;color:#dc2626;margin-top:3px">DNA: ${dna.reason||'No reason given'}</div>`:''}
- </div>
- <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
- ${dna
- ?`<button class="btn-sm btn-edit" onclick="removeDNA(${c.id},${pid})">↩ Undo DNA</button>`
- :`<button class="btn-sm" style="background:#fef2f2;color:#991b1b" onclick="markDNA(${c.id},${pid})">Did Not Attend</button>`}
- ${cert
- ?`<button class="btn-sm btn-purple" onclick="viewCert(${c.id},${pid})">CERT View Cert</button><button class="btn-sm btn-del" onclick="removeCert(${c.id},${pid})">Remove</button>`
- :`<button class="btn-sm btn-green" onclick="document.getElementById('cert-upload-${pid}').click()">+ Certificate</button>`}
- <input type="file" id="cert-upload-${pid}" accept=".pdf" style="display:none" onchange="handleCertUpload(event,${c.id},${pid})">
- </div>
- </div>
- </div>`;
- }).join('');
+  if(mode==='add-claim'||mode==='edit-claim'){
+    const d=mode==='edit-claim'?claims.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
+    title.textContent=mode==='add-claim'?'New Claim':'Edit Claim';
+    const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
+    const nextId='CLM-'+String(maxNum+1).padStart(4,'0');
+    const displayId=d.internalClaimId||nextId;
+    const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
+    const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
+    const curStatus=d.status||'Pending';
+    const isApproved=curStatus==='Approved'||(curStatus==='Closed'&&(d.closedType==='approved'));
+    const isRejected=curStatus==='Rejected'||(curStatus==='Closed'&&(d.closedType==='rejected'));
+    const isResubmitted=curStatus==='Resubmitted';
+    const showExtraFields=isApproved||isRejected||isResubmitted;
+    const notes=d.notes||[];
+    const noteLog=notes.length===0?'<div style="font-size:12px;color:#9ca3af;padding:4px 0">No notes yet.</div>':notes.map(n=>`<div style="background:var(--surface-2);border-radius:7px;padding:8px 10px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:#374151">${n.author} <span style="color:#9ca3af;font-weight:400">${n.date}</span> <span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:8px;padding:1px 6px">${n.status}</span></div><div style="font-size:12px;color:#374151;margin-top:2px">${n.text}</div></div>`).join('');
+    body.innerHTML=`
+      <div style="background:var(--success-light);border-radius:8px;padding:9px 13px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:11px;color:var(--success);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Internal Claim ID</div>
+        <div style="font-size:16px;font-weight:800;color:var(--success)">${displayId}</div>
+      </div>
+      ${inp('Title','title',d.title,'text','e.g. Apprenticeship Wages Subsidy')}
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Claim Type</label><select class="form-select" name="claimType"><option value="">— Select —</option>${ctOpts}</select></div>
+        ${inp('CTF Claim ID','ctfClaimId',d.ctfClaimId,'text','e.g. CTF-2025-001')}
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Participant</label><select class="form-select" name="participantName"><option value="">— Select —</option>${pOpts}</select></div>
+        ${inp('Invoice No #','invoiceNo',d.invoiceNo,'text','INV-2025-001')}
+      </div>
+      <div class="form-row">
+        ${inp('Created On','createdOn',d.createdOn,'date')}
+        ${inp('Claim Amount ($)','claimAmount',d.claimAmount,'number','0')}
+      </div>
+      <div class="form-group"><label class="form-label">Claim Status</label>
+        <select class="form-select" name="status" id="claim-status-sel" onchange="updateClaimStatusFields(this.value, parseFloat(document.querySelector('[name=claimAmount]')?.value||0))">
+          ${['Pending','Submitted','Resubmitted','Approved','Rejected'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div id="claim-extra-fields"></div>
+      <div class="form-group"><label class="form-label">Statement of Attainment</label>
+        ${d.soaPdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
+        <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
+          <div style="font-size:12px;font-weight:600;color:#374151">Click to attach Statement of Attainment</div>
+        </div>
+        <input type="file" id="claim-soa-file" accept=".pdf" style="display:none" onchange="handleClaimSoa(event)">
+      </div>
+      <div class="form-group"><label class="form-label">Invoice PDF</label>
+        ${d.invoicePdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
+        <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
+          <div style="font-size:12px;font-weight:600;color:#374151">Click to attach invoice PDF</div>
+        </div>
+        <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
+      </div>
+      <div style="border:1.5px solid var(--border);border-radius:9px;padding:12px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Notes</div>
+        <div id="claim-note-log" style="max-height:160px;overflow-y:auto;margin-bottom:8px">${noteLog}</div>
+        <div style="display:flex;gap:8px">
+          <textarea class="form-textarea" id="new-claim-note" placeholder="Add a note…" style="min-height:40px;flex:1;margin-bottom:0"></textarea>
+          <button onclick="addClaimNote()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end">Add</button>
+        </div>
+      </div>
+      <button class="btn-save" id="claim-submit-btn" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
+    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;window._claimData=d;
+    requestAnimationFrame(()=>updateClaimStatusFields(curStatus, d.claimAmount||0));
+  }
 
- body.innerHTML=`${invHtml}
- <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">CERT Certificates & Attendance</div>
- <div style="font-size:12px;color:#6b7280;margin-bottom:10px">Mark who did not attend and upload completion certificates per person.</div>
- ${certItems||'<div class="empty">No participants enrolled yet.</div>'}
- <button class="btn-save" style="margin-top:10px" onclick="closeModal()">Done</button>`;
- }
+  if(mode==='manage-departments'){
+    title.textContent='Manage Departments';
+    const renderDeptList=()=>(departments||[]).sort().map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px;font-weight:500">${d}</span><button class="btn-sm btn-del" onclick="removeDepartment(${i})">Remove</button></div>`).join('');
+    body.innerHTML=`<div id="dept-list">${renderDeptList()||'<div style="font-size:13px;color:var(--text-muted);padding:8px 0">No departments yet.</div>'}</div><div style="display:flex;gap:8px;margin-top:14px"><input class="form-input" id="new-dept-input" placeholder="New department name" style="flex:1" onkeydown="if(event.key==='Enter')addDepartment()"><button class="btn-primary" onclick="addDepartment()">Add</button></div>`;
+  }
 
- if(mode==='edit-budget'){
- title.textContent='Edit Budget';
- body.innerHTML=`${inp('Projected Budget ($)','projected',budget.projected,'number')}${inp('Expected Spend ($)','expected',budget.expected,'number')}<div style="background:#d1fae5;border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;margin-bottom:3px">Committed (auto)</div><div style="font-size:21px;font-weight:800;color:#065f46">$${getCommitted().toLocaleString()}</div><div style="font-size:10px;color:#065f46;margin-top:2px">Scheduled + Full courses</div></div><button class="btn-save" onclick="submitBudget()">Save Budget</button>`;
- }
+  if(mode==='manage-claim-types'){
+    title.textContent='Manage Claim Types';
+    const renderList=()=>(claimTypes||[]).map((t,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${i})">Remove</button></div>`).join('');
+    body.innerHTML=`<div id="ct-list">${renderList()}</div><div style="display:flex;gap:8px;margin-top:12px"><input class="form-input" id="new-ct-input" placeholder="New claim type" style="flex:1" onkeydown="if(event.key==='Enter')addClaimType()"><button class="btn-primary" onclick="addClaimType()">Add</button></div>`;
+  }
 
- // ── ADD/EDIT CLAIM MODAL ──────────────────────────────────────────────────
- if(mode==='add-claim'||mode==='edit-claim'){
- const d=mode==='edit-claim'?claims.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
- title.textContent=mode==='add-claim'?'New Claim':'Edit Claim';
- const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
- const nextId='CLM-'+String(maxNum+1).padStart(4,'0');
- const displayId=d.internalClaimId||nextId;
- const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
- const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
- const curStatus=d.status||'Pending';
- const isApproved=curStatus==='Approved'||(curStatus==='Closed'&&(d.closedType==='approved'));
- const isRejected=curStatus==='Rejected'||(curStatus==='Closed'&&(d.closedType==='rejected'));
- const isResubmitted=curStatus==='Resubmitted';
- const showExtraFields=isApproved||isRejected||isResubmitted;
-
- // Notes log
- const notes=d.notes||[];
- const noteLog=notes.length===0?'<div style="font-size:12px;color:#9ca3af;padding:4px 0">No notes yet.</div>':notes.map(n=>`<div style="background:#f8fafc;border-radius:7px;padding:8px 10px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:#374151">${n.author} <span style="color:#9ca3af;font-weight:400">${n.date}</span> <span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:8px;padding:1px 6px">${n.status}</span></div><div style="font-size:12px;color:#374151;margin-top:2px">${n.text}</div></div>`).join('');
-
- body.innerHTML=`
- <div style="background:#f0fdf4;border-radius:8px;padding:9px 13px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
- <div style="font-size:11px;color:#065f46;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Internal Claim ID</div>
- <div style="font-size:16px;font-weight:800;color:#065f46">${displayId}</div>
- </div>
- ${inp('Title','title',d.title,'text','e.g. Apprenticeship Wages Subsidy')}
- <div class="form-row">
- <div class="form-group"><label class="form-label">Claim Type</label><select class="form-select" name="claimType"><option value="">— Select —</option>${ctOpts}</select></div>
- ${inp('CTF Claim ID','ctfClaimId',d.ctfClaimId,'text','e.g. CTF-2025-001')}
- </div>
- <div class="form-row">
- <div class="form-group"><label class="form-label">Participant</label><select class="form-select" name="participantName"><option value="">— Select —</option>${pOpts}</select></div>
- ${inp('Invoice No #','invoiceNo',d.invoiceNo,'text','INV-2025-001')}
- </div>
- <div class="form-row">
- ${inp('Created On','createdOn',d.createdOn,'date')}
- ${inp('Claim Amount ($)','claimAmount',d.claimAmount,'number','0')}
- </div>
- <div class="form-group"><label class="form-label">Claim Status</label>
- <select class="form-select" name="status" id="claim-status-sel" onchange="updateClaimStatusFields(this.value, parseFloat(document.querySelector('[name=claimAmount]')?.value||0))">
- ${['Pending','Submitted','Resubmitted','Approved','Rejected'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
- </select>
- </div>
- <div id="claim-extra-fields"></div>
- <div class="form-group"><label class="form-label">Statement of Attainment / Equivalent</label>
- ${d.soaPdfName?`<div class="pdf-preview"><span></span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
- <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
- <div style="font-size:18px;margin-bottom:4px"></div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach Statement of Attainment</div>
- </div>
- <input type="file" id="claim-soa-file" accept=".pdf" style="display:none" onchange="handleClaimSoa(event)">
- </div>
- <div class="form-group"><label class="form-label">Invoice PDF</label>
- ${d.invoicePdfName?`<div class="pdf-preview"><span></span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
- <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
- <div style="font-size:18px;margin-bottom:4px"></div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF invoice</div>
- </div>
- <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
- </div>
- <div style="border:1.5px solid #e5e7eb;border-radius:9px;padding:12px;margin-bottom:12px">
- <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">Notes</div>
- <div id="claim-note-log" style="max-height:160px;overflow-y:auto;margin-bottom:8px">${noteLog}</div>
- <div style="display:flex;gap:8px">
- <textarea class="form-textarea" id="new-claim-note" placeholder="Add a note…" style="min-height:40px;flex:1;margin-bottom:0"></textarea>
- <button onclick="addClaimNote()" style="background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end">Add</button>
- </div>
- </div>
- <button class="btn-save" id="claim-submit-btn" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
- window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;window._claimData=d;
- // Trigger extra fields immediately for existing status
- // Use requestAnimationFrame to ensure DOM is painted before we update
- requestAnimationFrame(()=>updateClaimStatusFields(curStatus, d.claimAmount||0));
- }
-
- // ── MANAGE CLAIM TYPES ────────────────────────────────────────────────────
- if(mode==='manage-claim-types'){
- title.textContent='Manage Claim Types';
- const renderList=()=>(claimTypes||[]).map((t,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f3f4f6"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${i})">Remove</button></div>`).join('');
- body.innerHTML=`<div id="ct-list">${renderList()}</div>
- <div style="display:flex;gap:8px;margin-top:12px">
- <input class="form-input" id="new-ct-input" placeholder="New claim type…" style="flex:1">
- <button onclick="addClaimType()" style="background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit">Add</button>
- </div>
- <button class="btn-save" style="margin-top:12px" onclick="closeModal()">Done</button>`;
- }
-
- document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').classList.remove('hidden');
 }
 
-function addComment(requestId){
- const text=document.getElementById('new-comment')?.value?.trim();if(!text)return;
- const r=requests.find(x=>x.id===requestId);if(!r)return;
- if(!r.comments)r.comments=[];
- r.comments.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU')});
- persist('requests',requests);
- openModal('review-request',requestId);
+function closeModal(){
+  document.getElementById('modal').classList.add('hidden');
+  editId=null;modalMode=null;
+  window._tempPdf=null;window._tempPdfName=null;
+  window._claimPdf=null;window._claimPdfName=null;
+  window._claimSoa=null;window._claimSoaName=null;
+  window._claimDisplayId=null;window._claimNotes=null;window._claimData=null;
 }
 
-function handleCertUpload(event,courseId,participantId){
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=e=>{
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- if(!c.certificates)c.certificates={};
- c.certificates[participantId]={name:file.name,data:e.target.result};
- persist('courses',courses);
- openModal('manage-certs',courseId);
- };
- reader.readAsDataURL(file);
+function getForm(){const d={};document.querySelectorAll('#modal-body input,#modal-body select,#modal-body textarea').forEach(i=>{if(i.name)d[i.name]=i.value;});return d;}
+function addUnit(){const w=document.getElementById('cli-wrap');const d=document.createElement('div');d.className='cli-row';d.innerHTML=`<input class="cli-input" placeholder="e.g. CPCCWHS1001"/><input class="cli-input" placeholder="Unit name"/><input class="cli-input" type="date"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button>`;w.appendChild(d);}
+function getUnits(){return Array.from(document.querySelectorAll('#cli-wrap .cli-row')).map(row=>{const ins=row.querySelectorAll('input');const code=(ins[0]?.value||'').trim();const name=(ins[1]?.value||'').trim();return name?{code,name,date:ins[2]?.value||'',done:false}:null;}).filter(Boolean);}
+function toggleCourse(aid,idx){const a=apprentices.find(x=>x.id===aid);if(!a||!a.courses)return;a.courses[idx].done=!a.courses[idx].done;persist('apprentices',apprentices);openModal('view-apprentice',aid);}
+function handlePdfUpload(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._tempPdf=e.target.result;window._tempPdfName=file.name;document.getElementById('pdf-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.innerHTML=`<span>PDF</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removePdf()">Remove</button>`;document.getElementById('pdf-drop').parentNode.insertBefore(prev,document.getElementById('pdf-drop'));};reader.readAsDataURL(file);}
+function removePdf(){window._tempPdf=null;window._tempPdfName=null;const prev=document.querySelector('.pdf-preview');if(prev)prev.remove();document.getElementById('pdf-drop').style.display='';}
+function toggleEnrol(pid,cid){const c=courses.find(x=>x.id===cid);if(!c)return;if(!c.participantIds)c.participantIds=[];const idx=c.participantIds.indexOf(pid);if(idx>=0)c.participantIds.splice(idx,1);else c.participantIds.push(pid);const isOn=c.participantIds.includes(pid);document.getElementById('enrol-'+pid)?.classList.toggle('selected',isOn);const chk=document.getElementById('echk-'+pid);if(chk){chk.classList.toggle('on',isOn);chk.textContent=isOn?'✓':'';}}
+function saveEnrolment(cid){const c=courses.find(x=>x.id===cid);if(!c)return;c.enrolled=(c.participantIds||[]).length;persist('courses',courses);closeModal();render();}
+function submitParticipant(){const d=getForm();if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);closeModal();render();}
+function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);courses=courses.map(c=>({...c,participantIds:(c.participantIds||[]).filter(pid=>pid!==id)}));persist('participants',participants);persist('courses',courses);render();}
+function submitApprentice(){const d=getForm(),units=getUnits();if(modalMode==='add-apprentice'){apprentices.push({...d,id:Date.now(),courses:units});}else{apprentices=apprentices.map(a=>{if(a.id!==editId)return a;const ex=a.courses||[];return{...a,...d,courses:units.map(u=>{const e=ex.find(c=>c.name===u.name);return e?{...e,code:u.code,date:u.date}:u;})};});}persist('apprentices',apprentices);closeModal();render();}
+function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;apprentices=apprentices.filter(a=>a.id!==id);persist('apprentices',apprentices);render();}
+function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;d.certificates={};d.dnaMap={};d.invoiceNo='';d.invoiceNotes='';d.invoicePdf=null;d.invoicePdfName=null;courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d,invoiceNo:c.invoiceNo,invoiceNotes:c.invoiceNotes,invoicePdf:c.invoicePdf,invoicePdfName:c.invoicePdfName,certificates:c.certificates||{},dnaMap:c.dnaMap||{}});}persist('courses',courses);closeModal();render();}
+function deleteCourse(id){if(!confirm('Delete this course?'))return;courses=courses.filter(c=>c.id!==id);persist('courses',courses);render();}
+function submitRequest(){const d=getForm();if(d.department==='__other__')d.department=d.departmentOther||'';delete d.departmentOther;requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});persist('requests',requests);closeModal();render();}
+function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver,comments:r.comments||[]}:r);persist('requests',requests);closeModal();render();}
+function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=requests.filter(r=>r.id!==id);persist('requests',requests);render();}
+function addComment(requestId){const text=document.getElementById('new-req-comment')?.value?.trim();if(!text)return;const r=requests.find(x=>x.id===requestId);if(!r)return;if(!r.comments)r.comments=[];r.comments.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU')});persist('requests',requests);openModal('review-request',requestId);}
+function submitBudget(){const d=getForm();budget.projected=parseFloat(d.projected)||0;budget.expected=parseFloat(d.expected)||0;persist('budget',budget);closeModal();render();}
+function handleCertUpload(event,courseId,participantId){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const c=courses.find(x=>x.id===courseId);if(!c)return;if(!c.certificates)c.certificates={};c.certificates[participantId]={name:file.name,data:e.target.result};persist('courses',courses);openModal('manage-certs',courseId);};reader.readAsDataURL(file);}
+function removeCert(courseId,participantId){const c=courses.find(x=>x.id===courseId);if(!c||!c.certificates)return;delete c.certificates[participantId];persist('courses',courses);openModal('manage-certs',courseId);}
+function viewCert(courseId,participantId){const c=courses.find(x=>x.id===courseId);if(!c)return;const cert=c.certificates?.[participantId];if(!cert)return;const win=window.open();win.document.write(`<iframe src="${cert.data}" style="width:100%;height:100vh;border:none"></iframe>`);}
+function markDNA(courseId,participantId){const reason=prompt('Reason for Did Not Attend (optional):');if(reason===null)return;const c=courses.find(x=>x.id===courseId);if(!c)return;if(!c.dnaMap)c.dnaMap={};c.dnaMap[participantId]={reason:reason.trim(),date:new Date().toLocaleDateString('en-AU')};persist('courses',courses);openModal('manage-certs',courseId);}
+function saveDocInvoice(courseId){const c=courses.find(x=>x.id===courseId);if(!c)return;c.invoiceNo=document.getElementById('doc-invNo')?.value||'';c.invoiceNotes=document.getElementById('doc-invNotes')?.value||'';persist('courses',courses);showToast('Invoice details saved');}
+function handleDocInvoice(event,courseId){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const c=courses.find(x=>x.id===courseId);if(!c)return;c.invoicePdf=e.target.result;c.invoicePdfName=file.name;persist('courses',courses);openModal('manage-certs',courseId);};reader.readAsDataURL(file);}
+function removeDocInvoice(courseId){const c=courses.find(x=>x.id===courseId);if(!c)return;c.invoicePdf=null;c.invoicePdfName=null;persist('courses',courses);openModal('manage-certs',courseId);}
+function updateClaimStatusFields(status,claimAmount){
+  const extra=document.getElementById('claim-extra-fields');if(!extra)return;
+  const show=['Approved','Rejected','Resubmitted'].includes(status);
+  extra.style.display=show?'':'none';
+  if(!show)return;
+  const isApproved=status==='Approved';
+  const isRejected=status==='Rejected';
+  const isResubmitted=status==='Resubmitted';
+  const liveAmt=parseFloat(document.querySelector('[name="claimAmount"]')?.value||0);
+  const amt=liveAmt||parseFloat(claimAmount)||0;
+  const ed=window._claimData||{};
+  extra.innerHTML=isApproved?`
+    <div style="background:var(--success-light);border-radius:8px;padding:13px;margin-bottom:12px;border:2px solid #86efac">
+      <div style="font-size:12px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.3px;margin-bottom:12px">Approval Details — required to close</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Accepted Amount ($) <span style="color:var(--danger)">*</span></label>
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="Enter approved amount" oninput="calcCostToBusiness(${amt})" style="border-color:var(--success)">
+        </div>
+        <div class="form-group"><label class="form-label">Cost Incurred to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">auto-calculated</span></label>
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Claim amount − accepted" readonly style="background:var(--surface-2);font-weight:700">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
+      <div style="background:#dcfce7;border-radius:6px;padding:8px 11px;font-size:12px;color:var(--success);margin-top:4px">Saving will close this claim. Cost to business = Claim Amount − Accepted Amount.</div>
+    </div>`
+  :isRejected?`
+    <div style="background:var(--danger-light);border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #fecaca">
+      <div style="font-size:11px;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Rejection Details</div>
+      <div class="form-group"><label class="form-label">Rejection Reason</label><textarea class="form-textarea" name="rejectionReason" placeholder="Why was this claim rejected?">${ed.rejectionReason||''}</textarea></div>
+      <div class="form-group"><label class="form-label">Rejected On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
+      <div class="form-group"><label class="form-label">Next Steps</label>
+        <select class="form-select" name="nextAction" onchange="updateNextAction(this.value)">
+          <option value="">— Select next steps —</option>
+          <option value="Resubmit" ${ed.nextAction==='Resubmit'?'selected':''}>Resubmit Claim</option>
+          <option value="Write Off" ${ed.nextAction==='Write Off'?'selected':''}>Write Off (close out)</option>
+        </select>
+      </div>
+      <div id="resubmit-info" style="${ed.nextAction==='Resubmit'?'':'display:none'}">
+        <div style="background:var(--purple-light);border-radius:7px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:3px">Will move to Resubmitted</div>
+          <div style="font-size:12px;color:var(--purple)">Full history is copied across. Status becomes Resubmitted.</div>
+        </div>
+      </div>
+      <div id="final-decision-info" style="${ed.nextAction==='Write Off'?'':'display:none'}">
+        <div style="background:var(--surface-2);border-radius:7px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">Write Off</div>
+          <div style="font-size:11px;color:#6b7280">Claim will be Closed. Full claim amount becomes cost to business.</div>
+        </div>
+      </div>
+    </div>`
+  :`
+    <div style="background:var(--purple-light);border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #ddd6fe">
+      <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Resubmission Details</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="0" oninput="calcCostToBusiness(${amt})">
+        </div>
+        <div class="form-group"><label class="form-label">Cost to Business ($)</label>
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Auto-calculated" readonly style="background:var(--surface-2)">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Resubmitted On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
+    </div>`;
 }
-
-function viewCert(courseId,participantId){
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- const cert=c.certificates?.[participantId];if(!cert)return;
- const win=window.open();
- win.document.write(`<iframe src="${cert.data}" style="width:100%;height:100vh;border:none"></iframe>`);
-}
-
-function removeCert(courseId,participantId){
- const c=courses.find(x=>x.id===courseId);if(!c||!c.certificates)return;
- delete c.certificates[participantId];
- persist('courses',courses);
- openModal('manage-certs',courseId);
-}
-
-function markDNA(courseId, participantId){
- const reason=prompt('Reason for not attending (optional):') ?? '';
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- if(!c.dnaMap)c.dnaMap={};
- c.dnaMap[participantId]={reason:reason.trim(),date:new Date().toLocaleDateString('en-AU')};
- persist('courses',courses);
- openModal('manage-certs',courseId);
-}
-function removeDNA(courseId, participantId){
- const c=courses.find(x=>x.id===courseId);if(!c||!c.dnaMap)return;
- delete c.dnaMap[participantId];
- persist('courses',courses);
- openModal('manage-certs',courseId);
-}
-function saveDocInvoice(courseId){
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- c.invoiceNo=document.getElementById('doc-invNo')?.value||'';
- c.invoiceNotes=document.getElementById('doc-invNotes')?.value||'';
- persist('courses',courses);
- showToast('Invoice details saved');
-}
-function handleDocInvoice(event, courseId){
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=e=>{
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- c.invoicePdf=e.target.result;c.invoicePdfName=file.name;
- persist('courses',courses);
- openModal('manage-certs',courseId);
- };
- reader.readAsDataURL(file);
-}
-function removeDocInvoice(courseId){
- const c=courses.find(x=>x.id===courseId);if(!c)return;
- c.invoicePdf=null;c.invoicePdfName=null;
- persist('courses',courses);
- openModal('manage-certs',courseId);
-}
-
-
-
-function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;window._claimPdf=null;window._claimPdfName=null;window._claimSoa=null;window._claimSoaName=null;window._claimDisplayId=null;window._claimNotes=null;window._claimData=null;}
-function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
-function handleClaimPdf(event){
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=e=>{window._claimPdf=e.target.result;window._claimPdfName=file.name;
- document.getElementById('claim-pdf-drop').style.display='none';
- const prev=document.createElement('div');prev.className='pdf-preview';
- prev.innerHTML=`<span></span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button>`;
- document.getElementById('claim-pdf-drop').parentNode.insertBefore(prev,document.getElementById('claim-pdf-drop'));
- };reader.readAsDataURL(file);
-}
-function handleClaimSoa(event){
- const file=event.target.files[0];if(!file)return;
- const reader=new FileReader();
- reader.onload=e=>{window._claimSoa=e.target.result;window._claimSoaName=file.name;
- document.getElementById('claim-soa-drop').style.display='none';
- const prev=document.createElement('div');prev.className='pdf-preview';prev.id='soa-preview';
- prev.innerHTML=`<span></span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button>`;
- document.getElementById('claim-soa-drop').parentNode.insertBefore(prev,document.getElementById('claim-soa-drop'));
- };reader.readAsDataURL(file);
-}
-function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const p=document.getElementById('soa-preview');if(p)p.remove();document.getElementById('claim-soa-drop').style.display='';}
-function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
-function updateClaimStatusFields(status, claimAmount){
- const extra=document.getElementById('claim-extra-fields');if(!extra)return;
- const show=['Approved','Rejected','Resubmitted'].includes(status);
- extra.style.display=show?'':'none';
- if(!show)return;
- const isApproved=status==='Approved';
- const isRejected=status==='Rejected';
- const isResubmitted=status==='Resubmitted';
- const liveAmt=parseFloat(document.querySelector('[name="claimAmount"]')?.value||0);
- const amt=liveAmt||parseFloat(claimAmount)||0;
- const ed=window._claimData||{}; // existing data for pre-population
- extra.innerHTML=isApproved?`
- <div style="background:#f0fdf4;border-radius:8px;padding:13px;margin-bottom:12px;border:2px solid #86efac">
- <div style="font-size:12px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.3px;margin-bottom:12px">Approval Details — required to close</div>
- <div class="form-row">
- <div class="form-group">
- <label class="form-label">Accepted Amount ($) <span style="color:#dc2626">*</span></label>
- <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="Enter approved amount" oninput="calcCostToBusiness(${amt})" style="border-color:#16a34a">
- </div>
- <div class="form-group">
- <label class="form-label">Cost Incurred to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">auto-calculated</span></label>
- <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Claim amount − accepted" readonly style="background:#f1f5f9;color:#374151;font-weight:700">
- </div>
- </div>
- <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
- <div style="background:#dcfce7;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-top:4px">
- On save: status becomes <strong>Closed</strong> with a green approved tag. Cost to business = Claim Amount − Accepted Amount.
- </div>
- </div>`
- :isRejected?`
- <div style="background:#fef2f2;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #fecaca">
- <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Rejection Details</div>
- <div class="form-group"><label class="form-label">Rejection Reason</label><textarea class="form-textarea" name="rejectionReason" placeholder="Why was this claim rejected?">${ed.rejectionReason||''}</textarea></div>
- <div class="form-group"><label class="form-label">Rejected On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
- <div class="form-group"><label class="form-label">Next Steps</label>
- <select class="form-select" name="nextAction" onchange="updateNextAction(this.value)">
- <option value="">— Select next steps —</option>
- <option value="Resubmit" ${ed.nextAction==='Resubmit'?'selected':''}>Resubmit Claim</option>
- <option value="Write Off" ${ed.nextAction==='Write Off'?'selected':''}>Write Off (close out)</option>
- </select>
- </div>
- <div id="resubmit-info" style="${ed.nextAction==='Resubmit'?'':'display:none'}">
- <div style="background:#ede9fe;border-radius:7px;padding:10px;margin-bottom:8px">
- <div style="font-size:12px;font-weight:700;color:#5b21b6;margin-bottom:3px">Will move to Resubmitted</div>
- <div style="font-size:12px;color:#5b21b6">Full history is copied across. Status becomes <strong>Resubmitted</strong>.</div>
- </div>
- </div>
- <div id="final-decision-info" style="${ed.nextAction==='Write Off'?'':'display:none'}">
- <div style="background:#f3f4f6;border-radius:7px;padding:10px;margin-bottom:8px">
- <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">Write Off</div>
- <div style="font-size:11px;color:#6b7280">Claim will be <strong>Closed</strong>. Full claim amount becomes cost to business.</div>
- </div>
- </div>
- </div>`
- :`
- <div style="background:#ede9fe;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #ddd6fe">
- <div style="font-size:11px;font-weight:700;color:#5b21b6;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Resubmission Details</div>
- <div class="form-row">
- <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
- <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" placeholder="0" oninput="calcCostToBusiness(${amt})">
- </div>
- <div class="form-group"><label class="form-label">Cost to Business ($)</label>
- <input class="form-input" name="costIncurred" id="cost-business" type="number" placeholder="Auto-calculated" readonly style="background:#f1f5f9">
- </div>
- </div>
- <div class="form-group"><label class="form-label">Resubmitted On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
- </div>`;
-}
-function calcCostToBusiness(claimAmtFallback){
- const claimAmt=parseFloat(document.querySelector('[name="claimAmount"]')?.value||0)||parseFloat(claimAmtFallback||0);
- const acceptedAmt=parseFloat(document.getElementById('accepted-amt')?.value||0);
- const costField=document.getElementById('cost-business');
- if(costField) costField.value=Math.max(0,claimAmt-acceptedAmt).toFixed(2);
-}
-function updateNextAction(val){
- document.getElementById('resubmit-info').style.display=val==='Resubmit'?'':'none';
- document.getElementById('final-decision-info').style.display=val==='Final Decision'?'':'none';
-}
-function addClaimNote(){
- const text=document.getElementById('new-claim-note')?.value?.trim();if(!text)return;
- const status=document.getElementById('claim-status-sel')?.value||'Pending';
- // Store note in a temp array on window until save
- if(!window._claimNotes)window._claimNotes=[];
- window._claimNotes.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU'),status});
- document.getElementById('new-claim-note').value='';
- const log=document.getElementById('claim-note-log');
- if(log){
- const div=document.createElement('div');
- div.style.cssText='background:#f8fafc;border-radius:7px;padding:8px 10px;margin-bottom:6px';
- div.innerHTML=`<div style="font-size:11px;font-weight:700;color:#374151">Admin <span style="color:#9ca3af;font-weight:400">${new Date().toLocaleDateString('en-AU')}</span> <span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:8px;padding:1px 6px">${status}</span></div><div style="font-size:12px;color:#374151;margin-top:2px">${text}</div>`;
- log.appendChild(div);log.scrollTop=log.scrollHeight;
- }
-}
-function addClaimType(){
- const v=document.getElementById('new-ct-input')?.value?.trim();if(!v)return;
- if(!claimTypes.includes(v)){claimTypes.push(v);persist('claimTypes',claimTypes);}
- document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f3f4f6"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${i})">Remove</button></div>`).join('');
- document.getElementById('new-ct-input').value='';
-}
-function removeClaimType(i){
- claimTypes.splice(i,1);persist('claimTypes',claimTypes);
- document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f3f4f6"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${j})">Remove</button></div>`).join('');
-}
+function calcCostToBusiness(claimAmtFallback){const claimAmt=parseFloat(document.querySelector('[name="claimAmount"]')?.value||0)||parseFloat(claimAmtFallback||0);const acceptedAmt=parseFloat(document.getElementById('accepted-amt')?.value||0);const costField=document.getElementById('cost-business');if(costField)costField.value=Math.max(0,claimAmt-acceptedAmt).toFixed(2);}
+function updateNextAction(val){document.getElementById('resubmit-info').style.display=val==='Resubmit'?'':'none';document.getElementById('final-decision-info').style.display=val==='Write Off'?'':'none';}
+function addClaimNote(){const text=document.getElementById('new-claim-note')?.value?.trim();if(!text)return;const status=document.getElementById('claim-status-sel')?.value||'Pending';if(!window._claimNotes)window._claimNotes=[];window._claimNotes.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU'),status});document.getElementById('new-claim-note').value='';const log=document.getElementById('claim-note-log');if(log){const div=document.createElement('div');div.style.cssText='background:var(--surface-2);border-radius:7px;padding:8px 10px;margin-bottom:6px';div.innerHTML=`<div style="font-size:11px;font-weight:700;color:#374151">Admin <span style="color:#9ca3af;font-weight:400">${new Date().toLocaleDateString('en-AU')}</span> <span style="font-size:10px;background:#e0e7ff;color:#3730a3;border-radius:8px;padding:1px 6px">${status}</span></div><div style="font-size:12px;color:#374151;margin-top:2px">${text}</div>`;log.appendChild(div);log.scrollTop=log.scrollHeight;}}
+function addDepartment(){const v=document.getElementById('new-dept-input')?.value?.trim();if(!v)return;if(!departments.includes(v)){departments.push(v);persist('departments',departments);}document.getElementById('dept-list').innerHTML=(departments||[]).sort().map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px;font-weight:500">${d}</span><button class="btn-sm btn-del" onclick="removeDepartment(${i})">Remove</button></div>`).join('');document.getElementById('new-dept-input').value='';}
+function removeDepartment(i){const sorted=[...departments].sort();const val=sorted[i];departments=departments.filter(d=>d!==val);persist('departments',departments);document.getElementById('dept-list').innerHTML=(departments||[]).sort().map((d,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px;font-weight:500">${d}</span><button class="btn-sm btn-del" onclick="removeDepartment(${j})">Remove</button></div>`).join('');}
+function addClaimType(){const v=document.getElementById('new-ct-input')?.value?.trim();if(!v)return;if(!claimTypes.includes(v)){claimTypes.push(v);persist('claimTypes',claimTypes);}document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${i})">Remove</button></div>`).join('');document.getElementById('new-ct-input').value='';}
+function removeClaimType(i){claimTypes.splice(i,1);persist('claimTypes',claimTypes);document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${j})">Remove</button></div>`).join('');}
 function submitClaim(){
- const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
- const displayId=window._claimDisplayId||'CLM-'+String(maxNum+1).padStart(4,'0');
- const d=getForm();
- // Read readonly fields that getForm() skips
- const costBusinessEl=document.getElementById('cost-business');
- if(costBusinessEl&&costBusinessEl.value) d.costIncurred=costBusinessEl.value;
- d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;
- d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
- const today=new Date().toLocaleDateString('en-AU');
- const newNotes=window._claimNotes||[];
-
- // ── Status transition logic ──
- const nextAction=d.nextAction||'';
-
- // Approved → validate mandatory fields, calc cost, close
- if(d.status==='Approved'){
- const acceptedEl=document.getElementById('accepted-amt');
- if(!d.acceptedAmount&&(!acceptedEl||!acceptedEl.value)){
- showToast('Please enter Accepted Amount before saving');return;
- }
- const claimed=parseFloat(d.claimAmount||0);
- const accepted=parseFloat(d.acceptedAmount||0);
- d.costIncurred=parseFloat((claimed-accepted).toFixed(2));
- d.status='Closed';
- d.closedType='approved';
- d.closedDate=today;
- newNotes.push({text:`Approved. Accepted: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred.toLocaleString()}`,author:'System',date:today,status:'Closed'});
- }
-
- // Rejected + Resubmit → copy history, move to Resubmitted
- if(d.status==='Rejected'&&nextAction==='Resubmit'){
- d.status='Resubmitted';
- d.resubmittedDate=today;
- d.costIncurred=0;
- newNotes.push({text:`Resubmitted after rejection. Rejection reason: ${d.rejectionReason||'Not specified'}`,author:'System',date:today,status:'Resubmitted'});
- }
-
- // Rejected + Write Off → close, full claim = cost to business
- if(d.status==='Rejected'&&nextAction==='Write Off'){
- d.status='Closed';
- d.closedType='rejected';
- d.closedDate=today;
- d.costIncurred=parseFloat(d.claimAmount||0);
- d.acceptedAmount=0;
- newNotes.push({text:`Written off. Full claim ($${parseFloat(d.claimAmount||0).toLocaleString()}) = cost to business.`,author:'System',date:today,status:'Closed'});
- }
-
- // Rejected with no next steps — warn user
- if(d.status==='Rejected'&&!nextAction){
- showToast('Please select Next Steps for this rejection (Resubmit or Write Off)');
- return;
- }
-
- // Resubmitted → log updated date
- if(d.status==='Resubmitted'){
- d.lastUpdated=today;
- }
-
- if(modalMode==='add-claim'){
- claims.push({...d,id:Date.now(),internalClaimId:displayId,notes:newNotes,createdDate:today});
- } else {
- const existing=claims.find(c=>c.id===editId)||{};
- const mergedNotes=[...(existing.notes||[]),...newNotes];
- claims=claims.map(c=>c.id!==editId?c:{...existing,...d,
- internalClaimId:c.internalClaimId,
- createdDate:c.createdDate,
- closedDate:d.closedDate||c.closedDate,
- closedType:d.closedType||c.closedType,
- invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,
- soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,
- notes:mergedNotes
- });
- }
- window._claimNotes=null;window._pendingStatus=null;
- persist('claims',claims);closeModal();render();
+  const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
+  const displayId=window._claimDisplayId||'CLM-'+String(maxNum+1).padStart(4,'0');
+  const d=getForm();
+  const costBusinessEl=document.getElementById('cost-business');
+  if(costBusinessEl&&costBusinessEl.value)d.costIncurred=costBusinessEl.value;
+  d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;
+  d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
+  const today=new Date().toLocaleDateString('en-AU');
+  const newNotes=window._claimNotes||[];
+  const nextAction=d.nextAction||'';
+  if(d.status==='Approved'){
+    const acceptedEl=document.getElementById('accepted-amt');
+    if(!d.acceptedAmount&&(!acceptedEl||!acceptedEl.value)){showToast('Accepted Amount is required');return;}
+    const claimed=parseFloat(d.claimAmount||0);
+    const accepted=parseFloat(d.acceptedAmount||0);
+    d.costIncurred=parseFloat((claimed-accepted).toFixed(2));
+    d.status='Closed';d.closedType='approved';d.closedDate=today;
+    newNotes.push({text:`Approved. Accepted: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred.toLocaleString()}`,author:'System',date:today,status:'Closed'});
+  }
+  if(d.status==='Rejected'&&!nextAction){showToast('Select Next Steps: Resubmit or Write Off');return;}
+  if(d.status==='Rejected'&&nextAction==='Resubmit'){
+    d.status='Resubmitted';d.resubmittedDate=today;d.costIncurred=0;
+    newNotes.push({text:`Resubmitted after rejection. Rejection reason: ${d.rejectionReason||'Not specified'}`,author:'System',date:today,status:'Resubmitted'});
+  }
+  if(d.status==='Rejected'&&nextAction==='Write Off'){
+    d.status='Closed';d.closedType='rejected';d.closedDate=today;
+    d.costIncurred=parseFloat(d.claimAmount||0);d.acceptedAmount=0;
+    newNotes.push({text:`Written off. Full claim ($${parseFloat(d.claimAmount||0).toLocaleString()}) = cost to business.`,author:'System',date:today,status:'Closed'});
+  }
+  if(d.status==='Resubmitted')d.lastUpdated=today;
+  if(modalMode==='add-claim'){
+    claims.push({...d,id:Date.now(),internalClaimId:displayId,notes:newNotes,createdDate:today});
+  }else{
+    const existing=claims.find(c=>c.id===editId)||{};
+    const mergedNotes=[...(existing.notes||[]),...newNotes];
+    claims=claims.map(c=>c.id!==editId?c:{...existing,...d,internalClaimId:c.internalClaimId,createdDate:c.createdDate,closedDate:d.closedDate||c.closedDate,closedType:d.closedType||c.closedType,invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,notes:mergedNotes});
+  }
+  window._claimNotes=null;window._pendingStatus=null;
+  persist('claims',claims);closeModal();render();
 }
 function deleteClaim(id){if(!confirm('Delete this claim?'))return;claims=claims.filter(c=>c.id!==id);persist('claims',claims);render();}
 function viewClaimPdf(id){const c=claims.find(x=>x.id===id);if(!c||!c.invoicePdf)return;const win=window.open();win.document.write(`<iframe src="${c.invoicePdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
 function viewClaimSoa(id){const c=claims.find(x=>x.id===id);if(!c||!c.soaPdf)return;const win=window.open();win.document.write(`<iframe src="${c.soaPdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
-
-function getForm(){const d={};document.querySelectorAll('#modal-body input,#modal-body select,#modal-body textarea').forEach(i=>{if(i.name)d[i.name]=i.value;});return d;}
-function addUnit(){const w=document.getElementById('cli-wrap');const d=document.createElement('div');d.className='cli-row';d.innerHTML=`<input class="cli-input" placeholder="Unit name"/><input class="cli-input" type="date"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button>`;w.appendChild(d);}
-function getUnits(){return Array.from(document.querySelectorAll('#cli-wrap .cli-row')).map(row=>{const ins=row.querySelectorAll('input');const name=(ins[0]?.value||'').trim();return name?{name,date:ins[1]?.value||'',done:false}:null;}).filter(Boolean);}
-function toggleCourse(aid,idx){const a=apprentices.find(x=>x.id===aid);if(!a||!a.courses)return;a.courses[idx].done=!a.courses[idx].done;persist('apprentices',apprentices);openModal('view-apprentice',aid);}
-function handlePdfUpload(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._tempPdf=e.target.result;window._tempPdfName=file.name;document.getElementById('pdf-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.innerHTML=`<span style="font-size:16px"></span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removePdf()">Remove</button>`;document.getElementById('pdf-drop').parentNode.insertBefore(prev,document.getElementById('pdf-drop'));};reader.readAsDataURL(file);}
-function removePdf(){window._tempPdf=null;window._tempPdfName=null;const prev=document.querySelector('.pdf-preview');if(prev)prev.remove();document.getElementById('pdf-drop').style.display='';}
-function toggleEnrol(pid,cid){const c=courses.find(x=>x.id===cid);if(!c)return;if(!c.participantIds)c.participantIds=[];const idx=c.participantIds.indexOf(pid);if(idx>=0)c.participantIds.splice(idx,1);else c.participantIds.push(pid);const isOn=c.participantIds.includes(pid);document.getElementById('enrol-'+pid)?.classList.toggle('selected',isOn);const chk=document.getElementById('echk-'+pid);if(chk){chk.classList.toggle('on',isOn);chk.textContent=isOn?'':'';}}
-function saveEnrolment(cid){const c=courses.find(x=>x.id===cid);if(!c)return;c.enrolled=(c.participantIds||[]).length;persist('courses',courses);closeModal();render();}
-function submitParticipant(){const d=getForm();if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);closeModal();render();}
-function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);courses=courses.map(c=>({...c,participantIds:(c.participantIds||[]).filter(pid=>pid!==id)}));persist('participants',participants);persist('courses',courses);render();}
-function submitApprentice(){const d=getForm(),units=getUnits();if(modalMode==='add-apprentice'){apprentices.push({...d,id:Date.now(),courses:units});}else{apprentices=apprentices.map(a=>{if(a.id!==editId)return a;const ex=a.courses||[];return{...a,...d,courses:units.map(u=>{const e=ex.find(c=>c.name===u.name);return e?{...e,date:u.date}:u;})};});}persist('apprentices',apprentices);closeModal();render();}
-function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;apprentices=apprentices.filter(a=>a.id!==id);persist('apprentices',apprentices);render();}
-function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;d.certificates={};d.dnaMap={};d.invoiceNo='';d.invoiceNotes='';d.invoicePdf=null;d.invoicePdfName=null;courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d,invoiceNo:c.invoiceNo,invoiceNotes:c.invoiceNotes,invoicePdf:c.invoicePdf,invoicePdfName:c.invoicePdfName,certificates:c.certificates||{},dnaMap:c.dnaMap||{}});}persist('courses',courses);closeModal();render();}
-function deleteCourse(id){if(!confirm('Delete this course?'))return;courses=courses.filter(c=>c.id!==id);persist('courses',courses);render();}
-function submitRequest(){const d=getForm();requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});persist('requests',requests);closeModal();render();}
-function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver,comments:r.comments||[]}:r);persist('requests',requests);closeModal();render();}
-function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=requests.filter(r=>r.id!==id);persist('requests',requests);render();}
-function submitBudget(){const d=getForm();budget={projected:parseInt(d.projected)||0,expected:parseInt(d.expected)||0};persist('budget',budget);closeModal();render();}
+function handleClaimPdf(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._claimPdf=e.target.result;window._claimPdfName=file.name;document.getElementById('claim-pdf-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.innerHTML=`<span>PDF</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button>`;document.getElementById('claim-pdf-drop').parentNode.insertBefore(prev,document.getElementById('claim-pdf-drop'));};reader.readAsDataURL(file);}
+function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const prev=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(prev)prev.remove();document.getElementById('claim-pdf-drop').style.display='';}
+function handleClaimSoa(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._claimSoa=e.target.result;window._claimSoaName=file.name;document.getElementById('claim-soa-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.id='soa-preview';prev.innerHTML=`<span>PDF</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button>`;document.getElementById('claim-soa-drop').parentNode.insertBefore(prev,document.getElementById('claim-soa-drop'));};reader.readAsDataURL(file);}
+function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const prev=document.getElementById('soa-preview');if(prev)prev.remove();document.getElementById('claim-soa-drop').style.display='';}
+function reqAutoFillDept(empName){const p=participants.find(x=>x.name===empName);if(p&&p.department){const s=document.getElementById('req-dept-sel');if(s){s.value=p.department;reqToggleOtherDept(p.department);}}}
+function reqToggleOtherDept(val){const w=document.getElementById('req-dept-other');if(w)w.style.display=val==='__other__'?'':'none';}
 
 render();
-window.addEventListener("load", () => { updateSyncUI(); silentReconnect(); });
 </script>
 </body>
 </html>
