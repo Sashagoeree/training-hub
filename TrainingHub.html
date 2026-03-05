@@ -767,6 +767,7 @@ function sendCourseEmail(courseId){
   const subject=encodeURIComponent(`Training Confirmation: ${c.name} — ${c.date}`);
   const notesLine=c.courseNotes?`\n\nAdditional Information:\n${c.courseNotes}`:'';
   const body=encodeURIComponent(`Hi,\n\nThis is to confirm your enrolment in the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${c.date}${notesLine}\n\nPlease arrive on time and bring any required ID or materials.\n\nIf you have any questions please reach out.\n\nKind regards,\nTraining Team`);
+  if(!emails.length){showToast('⚠ No email addresses on enrolled participants');return;}
   window.location.href=`mailto:${emails.join(';')}?subject=${subject}&body=${body}`;showToast('Opening email client…');
 }
 
@@ -908,7 +909,8 @@ function openModal(mode,idOrData){
   if(mode==='add-claim'||mode==='edit-claim'){
     const d=mode==='edit-claim'?claims.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
     title.textContent=mode==='add-claim'?'New Claim':'Edit Claim';
-    const nextId='CLM-'+String(claims.length+1).padStart(4,'0');
+    const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
+    const nextId='CLM-'+String(maxNum+1).padStart(4,'0');
     const displayId=d.internalClaimId||nextId;
     const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
     const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
@@ -970,7 +972,7 @@ function openModal(mode,idOrData){
         </div>
       </div>
       <button class="btn-save" id="claim-submit-btn" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
-    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;
+    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;window._claimData=d;
   }
 
   // ── MANAGE CLAIM TYPES ────────────────────────────────────────────────────
@@ -1065,7 +1067,7 @@ function removeDocInvoice(courseId){
 
 
 
-function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;window._claimPdf=null;window._claimPdfName=null;window._claimSoa=null;window._claimSoaName=null;window._claimDisplayId=null;window._claimNotes=null;}
+function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;window._claimPdf=null;window._claimPdfName=null;window._claimSoa=null;window._claimSoaName=null;window._claimDisplayId=null;window._claimNotes=null;window._claimData=null;}
 function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
 function handleClaimPdf(event){
   const file=event.target.files[0];if(!file)return;
@@ -1098,18 +1100,19 @@ function updateClaimStatusFields(status, claimAmount){
   const isRejected=status==='Rejected'||status==='Closed — Rejected';
   const isResubmitted=status==='Resubmitted';
   const amt=parseFloat(claimAmount)||0;
+  const ed=window._claimData||{}; // existing data for pre-population
   extra.innerHTML=isApproved?`
     <div style="background:#f0fdf4;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #bbf7d0">
       <div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">✅ Approval Details</div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
-          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" placeholder="0" oninput="calcCostToBusiness(${amt})">
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="0" oninput="calcCostToBusiness(${amt})">
         </div>
         <div class="form-group"><label class="form-label">Cost to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">(claim − accepted)</span></label>
-          <input class="form-input" name="costIncurred" id="cost-business" type="number" placeholder="Auto-calculated" readonly style="background:#f1f5f9;color:#374151">
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Auto-calculated" readonly style="background:#f1f5f9;color:#374151">
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
       <div style="font-size:11px;color:#065f46;margin-top:4px">💡 Saving will close this claim as <strong>Closed — Approved</strong></div>
     </div>`
   :isRejected?`
@@ -1188,8 +1191,12 @@ function removeClaimType(i){
   document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f3f4f6"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${j})">Remove</button></div>`).join('');
 }
 function submitClaim(){
-  const displayId=window._claimDisplayId||'CLM-'+String(claims.length+1).padStart(4,'0');
+  const maxNum=claims.reduce((mx,c)=>{const n=parseInt((c.internalClaimId||'').replace('CLM-',''))||0;return Math.max(mx,n)},0);
+  const displayId=window._claimDisplayId||'CLM-'+String(maxNum+1).padStart(4,'0');
   const d=getForm();
+  // Read readonly fields that getForm() skips
+  const costBusinessEl=document.getElementById('cost-business');
+  if(costBusinessEl&&costBusinessEl.value) d.costIncurred=costBusinessEl.value;
   d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;
   d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
   const today=new Date().toLocaleDateString('en-AU');
@@ -1265,7 +1272,7 @@ function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;appr
 function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;d.certificates={};d.dnaMap={};d.invoiceNo='';d.invoiceNotes='';d.invoicePdf=null;d.invoicePdfName=null;courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d,invoiceNo:c.invoiceNo,invoiceNotes:c.invoiceNotes,invoicePdf:c.invoicePdf,invoicePdfName:c.invoicePdfName,certificates:c.certificates||{},dnaMap:c.dnaMap||{}});}persist('courses',courses);closeModal();render();}
 function deleteCourse(id){if(!confirm('Delete this course?'))return;courses=courses.filter(c=>c.id!==id);persist('courses',courses);render();}
 function submitRequest(){const d=getForm();requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});persist('requests',requests);closeModal();render();}
-function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver}:r);persist('requests',requests);closeModal();render();}
+function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver,comments:r.comments||[]}:r);persist('requests',requests);closeModal();render();}
 function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=requests.filter(r=>r.id!==id);persist('requests',requests);render();}
 function submitBudget(){const d=getForm();budget={projected:parseInt(d.projected)||0,expected:parseInt(d.expected)||0};persist('budget',budget);closeModal();render();}
 
