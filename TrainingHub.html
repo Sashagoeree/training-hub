@@ -596,45 +596,65 @@ function render(){
 
  // ── PARTICIPANTS ───────────────────────────────────────────────────────────
  if(currentTab==='participants'){
- const fil=participants.filter(p=>p.name?.toLowerCase().includes(q)||p.department?.toLowerCase().includes(q)||p.email?.toLowerCase().includes(q));
+  const partFilter=window._partFilter||'all';
+  const partSort=window._partSort||'name';
   const activeCount=participants.filter(p=>p.active!==false).length;
   const inactiveCount=participants.filter(p=>p.active===false).length;
-  const partControlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap"><button onclick="window._partFilter=\'all\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='all'?'var(--accent)':'var(--border)'};background:${partFilter==='all'?'var(--accent)':'var(--surface)'};color:${partFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${participants.length}</span></button><button onclick="window._partFilter=\'active\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='active'?'var(--success)':'var(--border)'};background:${partFilter==='active'?'var(--success)':'var(--surface)'};color:${partFilter==='active'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${activeCount}</span></button><button onclick="window._partFilter=\'inactive\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='inactive'?'var(--danger)':'var(--border)'};background:${partFilter==='inactive'?'var(--danger)':'var(--surface)'};color:${partFilter==='inactive'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Inactive <span style="opacity:.7">${inactiveCount}</span></button><select onchange="window._partSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer"><option value="name" ${partSort==='name'?'selected':''}>Name A–Z</option><option value="dept" ${partSort==='dept'?'selected':''}>Department</option><option value="role" ${partSort==='role'?'selected':''}>Role</option></select></div>`;
-   if(fil.length===0){content=partControlBar+`<div class="table-wrap"><div class="empty">No participants found.</div></div>`;}
- else{
- content=partControlBar+fil.map(p=>{
- const plan=getTrainingPlan(p.id);
- const done=plan.filter(x=>x.status==='Completed');
- const upcoming=plan.filter(x=>x.status!=='Completed');
- const isOpen=openPlans.has(p.id);
- const planHtml=plan.length===0?`<div style="font-size:12px;color:#9ca3af;padding:10px 0">No training recorded yet — enrol in a course to build training plan.</div>`:
- [...upcoming.map(x=>`<div class="tp-item tp-upcoming"><span style="font-size:14px"></span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.75">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#dbeafe;color:#1e40af">${x.status}</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`),
- ...done.map(x=>{const isDNA=x.status==='Did Not Attend';return `<div class="tp-item" style="background:${isDNA?'#fef2f2':'#f0fdf4'}"><span style="font-size:14px">${isDNA?'':''}</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div>${isDNA&&x.dnaReason?`<div style="font-size:10px;color:#dc2626;margin-top:1px">${x.dnaReason}</div>`:''}</div><div style="text-align:right"><span class="tp-badge" style="background:${isDNA?'#fef2f2':'#d1fae5'};color:${isDNA?'#991b1b':'#065f46'}">${isDNA?'DNA':'Done'}</span>${x.cert?' CERT':''} ${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`;})
- ].join('');
- return `<div class="participant-card">
- <div class="participant-header">
- <div>
- <div class="participant-name">${p.name}</div>
- <div class="participant-meta">${[p.role,p.department].filter(Boolean).join(' · ')}</div>
- <div style="font-size:11px;color:#94a3b8;margin-top:2px">${[p.email,p.phone].filter(Boolean).join(' · ')}</div>
- <div style="margin-top:5px"><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${p.active===false?'#fee2e2':'#d1fae5'};color:${p.active===false?'#991b1b':'#065f46'}">${p.active===false?'Inactive':'Active'}</span></div>
- </div>
- <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
- <button id="tp-btn-${p.id}" class="tp-toggle${isOpen?' open':''}" onclick="togglePlan(${p.id})">
- Training Plan <span style="font-size:11px;background:${isOpen?'#bfdbfe':'#e2e8f0'};border-radius:10px;padding:1px 6px;margin-left:2px">${done.length} ${upcoming.length}↗</span>
- <span id="tp-chev-${p.id}" class="tp-chevron${isOpen?' open':''}">▼</span>
- </button>
- <button class="btn-sm" style="background:#f0fdf4;color:#065f46" onclick="exportTrainingPlan(${p.id})">Export Plan</button>
- <button class="btn-sm btn-edit" onclick="openModal('edit-participant',${p.id})">Edit</button>
- <button class="btn-sm btn-del" onclick="deleteParticipant(${p.id})">Del</button>
- </div>
- </div>
- <div id="tp-body-${p.id}" class="training-plan-body${isOpen?' open':''}">
- <div class="training-plan-inner">${planHtml}</div>
- </div>
- </div>`;}).join('');
+  let fil=participants
+    .filter(p=>partFilter==='all'||(partFilter==='active'&&p.active!==false)||(partFilter==='inactive'&&p.active===false))
+    .filter(p=>p.name?.toLowerCase().includes(q)||p.department?.toLowerCase().includes(q)||p.email?.toLowerCase().includes(q));
+  fil=[...fil].sort((a,b)=>{
+    if(partSort==='name')return(a.name||'').localeCompare(b.name||'');
+    if(partSort==='dept')return(a.department||'').localeCompare(b.department||'');
+    if(partSort==='role')return(a.role||'').localeCompare(b.role||'');
+    return 0;
+  });
+  const partControlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+    <button onclick="window._partFilter=&apos;all&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='all'?'var(--accent)':'var(--border)'};background:${partFilter==='all'?'var(--accent)':'var(--surface)'};color:${partFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${participants.length}</span></button>
+    <button onclick="window._partFilter=&apos;active&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='active'?'var(--success)':'var(--border)'};background:${partFilter==='active'?'var(--success)':'var(--surface)'};color:${partFilter==='active'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${activeCount}</span></button>
+    <button onclick="window._partFilter=&apos;inactive&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='inactive'?'var(--danger)':'var(--border)'};background:${partFilter==='inactive'?'var(--danger)':'var(--surface)'};color:${partFilter==='inactive'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Inactive <span style="opacity:.7">${inactiveCount}</span></button>
+    <select onchange="window._partSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">
+      <option value="name" ${partSort==='name'?'selected':''}>Name A–Z</option>
+      <option value="dept" ${partSort==='dept'?'selected':''}>Department</option>
+      <option value="role" ${partSort==='role'?'selected':''}>Role</option>
+    </select>
+  </div>`;
+  if(fil.length===0){content=partControlBar+`<div class="table-wrap"><div class="empty">No participants found.</div></div>`;}
+  else{
+  content=partControlBar+fil.map(p=>{
+  const plan=getTrainingPlan(p.id);
+  const done=plan.filter(x=>x.status==='Completed');
+  const upcoming=plan.filter(x=>x.status!=='Completed');
+  const isOpen=openPlans.has(p.id);
+  const planHtml=plan.length===0?`<div style="font-size:12px;color:#9ca3af;padding:10px 0">No training recorded yet — enrol in a course to build training plan.</div>`:
+  [...upcoming.map(x=>`<div class="tp-item tp-upcoming"><span style="font-size:14px"></span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.75">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#dbeafe;color:#1e40af">${x.status}</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`),
+  ...done.map(x=>{const isDNA=x.status==='Did Not Attend';return `<div class="tp-item" style="background:${isDNA?'#fef2f2':'#f0fdf4'}"><span style="font-size:14px">${isDNA?'':''}</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div>${isDNA&&x.dnaReason?`<div style="font-size:10px;color:#dc2626;margin-top:1px">${x.dnaReason}</div>`:''}</div><div style="text-align:right"><span class="tp-badge" style="background:${isDNA?'#fef2f2':'#d1fae5'};color:${isDNA?'#991b1b':'#065f46'}">${isDNA?'DNA':'Done'}</span>${x.cert?' CERT':''} ${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`;})
+  ].join('');
+  return `<div class="participant-card">
+  <div class="participant-header">
+  <div>
+  <div class="participant-name">${p.name}</div>
+  <div class="participant-meta">${[p.role,p.department].filter(Boolean).join(' · ')}</div>
+  <div style="font-size:11px;color:#94a3b8;margin-top:2px">${[p.email,p.phone].filter(Boolean).join(' · ')}</div>
+  <div style="margin-top:5px"><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${p.active===false?'#fee2e2':'#d1fae5'};color:${p.active===false?'#991b1b':'#065f46'}">${p.active===false?'Inactive':'Active'}</span></div>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+  <button id="tp-btn-${p.id}" class="tp-toggle${isOpen?' open':''}" onclick="togglePlan(${p.id})">
+  Training Plan <span style="font-size:11px;background:${isOpen?'#bfdbfe':'#e2e8f0'};border-radius:10px;padding:1px 6px;margin-left:2px">${done.length} ${upcoming.length}↗</span>
+  <span id="tp-chev-${p.id}" class="tp-chevron${isOpen?' open':''}">▼</span>
+  </button>
+  <button class="btn-sm" style="background:#f0fdf4;color:#065f46" onclick="exportTrainingPlan(${p.id})">Export Plan</button>
+  <button class="btn-sm btn-edit" onclick="openModal('edit-participant',${p.id})">Edit</button>
+  <button class="btn-sm btn-del" onclick="deleteParticipant(${p.id})">Del</button>
+  </div>
+  </div>
+  <div id="tp-body-${p.id}" class="training-plan-body${isOpen?' open':''}">
+  <div class="training-plan-inner">${planHtml}</div>
+  </div>
+  </div>`;}).join('');
+  }
  }
- }
+
 
  // ── APPRENTICES ───────────────────────────────────────────────────────────
  if(currentTab==='apprentices'){
