@@ -612,7 +612,6 @@ function render(){
       {key:'Pending',label:'Pending',color:'#d97706'},
       {key:'Submitted',label:'Submitted',color:'#2563eb'},
       {key:'Resubmitted',label:'Resubmitted',color:'#7c3aed'},
-      {key:'Approved',label:'Approved',color:'#059669'},
       {key:'Rejected',label:'Rejected',color:'#dc2626'},
       {key:'Closed',label:'🔒 Closed',color:'#374151'},
     ];
@@ -638,9 +637,10 @@ function render(){
     const rows=fil.length===0
       ? `<tr><td colspan="10" class="empty">No claims in this category.</td></tr>`
       : fil.map(c=>{
-          const sc=STATUS_COLORS[c.status]||'#6b7280';
+          const sc=c.status==='Closed'?(c.closedType==='approved'?'#059669':c.closedType==='rejected'?'#dc2626':'#374151'):STATUS_COLORS[c.status]||'#6b7280';
+          const closedLabel=c.status==='Closed'?(c.closedType==='approved'?'✅ Closed':'❌ Closed'):'Closed';
           const isClosed=c.status==='Closed';
-          const rowBg=isClosed?'background:#f8fafc;opacity:.9':'';
+          const rowBg=isClosed&&c.closedType==='approved'?'background:#f0fdf4':isClosed&&c.closedType==='rejected'?'background:#fff5f5':'';
           return `<tr style="${rowBg}">
             <td><div style="font-size:10px;font-weight:700;color:#9ca3af">${c.internalClaimId||''}</div><div style="font-weight:700">${c.title||''}</div><div style="font-size:11px;color:#6b7280">${c.claimType||''}</div></td>
             <td style="color:#6b7280;font-size:12px">${c.ctfClaimId||'—'}</td>
@@ -650,7 +650,7 @@ function render(){
             <td style="font-weight:700;color:#1e40af">$${parseFloat(c.claimAmount||0).toLocaleString()}</td>
             <td style="font-weight:700;color:#059669">${c.acceptedAmount?'$'+parseFloat(c.acceptedAmount).toLocaleString():'—'}</td>
             <td style="font-weight:600;color:#dc2626">${c.costIncurred?'$'+parseFloat(c.costIncurred).toLocaleString():'—'}</td>
-            <td><span style="background:${sc}18;color:${sc};border-radius:10px;padding:2px 9px;font-size:11px;font-weight:700">${c.status||'Pending'}</span></td>
+            <td><span style="background:${sc}18;color:${sc};border-radius:10px;padding:2px 9px;font-size:11px;font-weight:700">${c.status==='Closed'?closedLabel:(c.status||'Pending')}</span></td>
             <td>
               ${c.soaPdfName?`<button class="btn-sm" style="background:#d1fae5;color:#065f46" onclick="viewClaimSoa(${c.id})">🎓</button> `:''} ${c.invoicePdfName?`<button class="btn-sm btn-purple" onclick="viewClaimPdf(${c.id})">📄</button> `:''}
               <button class="btn-sm btn-edit" onclick="openModal('edit-claim',${c.id})">Edit</button>
@@ -914,8 +914,8 @@ function openModal(mode,idOrData){
     const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
     const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
     const curStatus=d.status||'Pending';
-    const isApproved=curStatus==='Approved'||curStatus==='Closed';
-    const isRejected=curStatus==='Rejected';
+    const isApproved=curStatus==='Approved'||(curStatus==='Closed'&&(d.closedType==='approved'));
+    const isRejected=curStatus==='Rejected'||(curStatus==='Closed'&&(d.closedType==='rejected'));
     const isResubmitted=curStatus==='Resubmitted';
     const showExtraFields=isApproved||isRejected||isResubmitted;
 
@@ -943,7 +943,7 @@ function openModal(mode,idOrData){
       </div>
       <div class="form-group"><label class="form-label">Claim Status</label>
         <select class="form-select" name="status" id="claim-status-sel" onchange="updateClaimStatusFields(this.value,${JSON.stringify(d.claimAmount||0)})">
-          ${['Pending','Submitted','Approved','Rejected','Resubmitted','Closed'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
+          ${['Pending','Submitted','Resubmitted','Approved','Rejected'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
         </select>
       </div>
       <div id="claim-extra-fields"></div>
@@ -1092,27 +1092,31 @@ function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const 
 function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
 function updateClaimStatusFields(status, claimAmount){
   const extra=document.getElementById('claim-extra-fields');if(!extra)return;
-  const show=['Approved','Rejected','Resubmitted','Closed'].includes(status);
+  const show=['Approved','Rejected','Resubmitted'].includes(status);
   extra.style.display=show?'':'none';
   if(!show)return;
-  const isApproved=status==='Approved'||status==='Closed';
+  const isApproved=status==='Approved';
   const isRejected=status==='Rejected';
   const isResubmitted=status==='Resubmitted';
   const amt=parseFloat(claimAmount)||0;
   const ed=window._claimData||{}; // existing data for pre-population
   extra.innerHTML=isApproved?`
-    <div style="background:#f0fdf4;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #bbf7d0">
-      <div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">✅ Approval Details</div>
+    <div style="background:#f0fdf4;border-radius:8px;padding:13px;margin-bottom:12px;border:2px solid #86efac">
+      <div style="font-size:12px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.3px;margin-bottom:12px">✅ Approval Details — required to close</div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
-          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="0" oninput="calcCostToBusiness(${amt})">
+        <div class="form-group">
+          <label class="form-label">Accepted Amount ($) <span style="color:#dc2626">*</span></label>
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" value="${ed.acceptedAmount||''}" placeholder="Enter approved amount" oninput="calcCostToBusiness(${amt})" style="border-color:#16a34a">
         </div>
-        <div class="form-group"><label class="form-label">Cost to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">(claim − accepted)</span></label>
-          <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Auto-calculated" readonly style="background:#f1f5f9;color:#374151">
+        <div class="form-group">
+          <label class="form-label">Cost Incurred to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">auto-calculated</span></label>
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" value="${ed.costIncurred||''}" placeholder="Claim amount − accepted" readonly style="background:#f1f5f9;color:#374151;font-weight:700">
         </div>
       </div>
       <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
-      <div style="font-size:11px;color:#065f46;margin-top:4px">💡 Saving will close this claim as <strong>Closed</strong></div>
+      <div style="background:#dcfce7;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-top:4px">
+        💡 On save: status becomes <strong>Closed</strong> with a green approved tag. Cost to business = Claim Amount − Accepted Amount.
+      </div>
     </div>`
   :isRejected?`
     <div style="background:#fef2f2;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #fecaca">
@@ -1203,14 +1207,19 @@ function submitClaim(){
   // ── Status transition logic ──
   const nextAction=d.nextAction||'';
 
-  // Approved → auto-close, calc cost to business = claimed - accepted
+  // Approved → validate mandatory fields, calc cost, close
   if(d.status==='Approved'){
+    const acceptedEl=document.getElementById('accepted-amt');
+    if(!d.acceptedAmount&&(!acceptedEl||!acceptedEl.value)){
+      showToast('⚠ Please enter Accepted Amount before saving');return;
+    }
     const claimed=parseFloat(d.claimAmount||0);
     const accepted=parseFloat(d.acceptedAmount||0);
-    d.costIncurred=(claimed-accepted).toFixed(2);
+    d.costIncurred=parseFloat((claimed-accepted).toFixed(2));
     d.status='Closed';
+    d.closedType='approved';
     d.closedDate=today;
-    newNotes.push({text:`✅ Claim approved. Approved amount: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred}`,author:'System',date:today,status:'Closed'});
+    newNotes.push({text:`✅ Approved. Accepted: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred.toLocaleString()}`,author:'System',date:today,status:'Closed'});
   }
 
   // Rejected + Resubmit → copy history, move to Resubmitted
@@ -1224,10 +1233,11 @@ function submitClaim(){
   // Rejected + Write Off → close, full claim = cost to business
   if(d.status==='Rejected'&&nextAction==='Write Off'){
     d.status='Closed';
+    d.closedType='rejected';
     d.closedDate=today;
-    d.costIncurred=d.claimAmount;
+    d.costIncurred=parseFloat(d.claimAmount||0);
     d.acceptedAmount=0;
-    newNotes.push({text:`🔒 Written off. Full claim amount ($${parseFloat(d.claimAmount||0).toLocaleString()}) recorded as cost to business.`,author:'System',date:today,status:'Closed'});
+    newNotes.push({text:`❌ Written off. Full claim ($${parseFloat(d.claimAmount||0).toLocaleString()}) = cost to business.`,author:'System',date:today,status:'Closed'});
   }
 
   // Resubmitted → log updated date
