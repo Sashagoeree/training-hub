@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Training Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans','Segoe UI',sans-serif;background:#f1f5f9;color:#111827;min-height:100vh}
@@ -222,105 +222,102 @@ const DEFAULTS={
   budget:{projected:25000,expected:18000}
 };
 
-// ── ONEDRIVE SYNC ─────────────────────────────────────────────────────────────
-// Replace YOUR_CLIENT_ID below with your Azure App Registration client ID
-const MSAL_CLIENT_ID = 'YOUR_CLIENT_ID';
-const MSAL_SCOPES    = ['Files.ReadWrite', 'User.Read'];
-const DATA_FILENAME  = 'TrainingHub_Data.json';
+// ── GOOGLE DRIVE SYNC ─────────────────────────────────────────────────────────
+const GD_CLIENT_ID  = '800892219023-gu9gnl132lf1gmdbudlbo9u3i5bmnp24.apps.googleusercontent.com';
+const GD_SCOPE      = 'https://www.googleapis.com/auth/drive.appdata';
+const DATA_FILENAME = 'TrainingHub_Data.json';
 
-let msalApp = null, odToken = null, odConnected = false, odSyncing = false;
+let gdToken = null, gdConnected = false, gdFileId = null, _tokenClient = null;
 
-async function initMsal() {
-  if (!window.msal) return;
-  msalApp = new msal.PublicClientApplication({
-    auth: { clientId: MSAL_CLIENT_ID, authority: 'https://login.microsoftonline.com/common', redirectUri: window.location.href.split('?')[0] },
-    cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: false }
+function getTokenClient() {
+  if (_tokenClient) return _tokenClient;
+  _tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GD_CLIENT_ID,
+    scope: GD_SCOPE,
+    callback: async (resp) => {
+      if (resp.error) { showToast('Google sign-in failed'); return; }
+      gdToken = resp.access_token; gdConnected = true;
+      localStorage.setItem('th5_gd_connected','1');
+      await loadFromGoogleDrive();
+      updateSyncUI(); render();
+    }
   });
-  await msalApp.initialize();
-  // Silent sign-in on load
-  const accounts = msalApp.getAllAccounts();
-  if (accounts.length > 0) {
-    try {
-      const res = await msalApp.acquireTokenSilent({ scopes: MSAL_SCOPES, account: accounts[0] });
-      odToken = res.accessToken; odConnected = true;
-      await loadFromOneDrive();
-    } catch(e) { odConnected = false; }
-  }
-  updateSyncUI();
+  return _tokenClient;
 }
 
-async function connectOneDrive() {
-  if (!msalApp) { showToast('⚠ MSAL not loaded'); return; }
+async function connectGoogleDrive() {
+  if (!window.google) { showToast('Loading Google — try again in a moment'); return; }
+  getTokenClient().requestAccessToken();
+}
+
+function disconnectGoogleDrive() {
+  if (gdToken) google.accounts.oauth2.revoke(gdToken, ()=>{});
+  gdToken=null; gdConnected=false; gdFileId=null;
+  localStorage.removeItem('th5_gd_connected'); localStorage.removeItem('th5_gd_fileid');
+  updateSyncUI(); render(); showToast('Disconnected from Google Drive');
+}
+
+async function silentReconnect() {
+  if (!localStorage.getItem('th5_gd_connected')) return;
+  if (!window.google) { setTimeout(silentReconnect, 800); return; }
+  try { getTokenClient().requestAccessToken({ prompt:'' }); } catch(e) {}
+}
+
+async function loadFromGoogleDrive() {
+  if (!gdToken) return;
+  setSaveStatus('☁ Loading from Google Drive…');
   try {
-    const res = await msalApp.loginPopup({ scopes: MSAL_SCOPES });
-    const tok = await msalApp.acquireTokenSilent({ scopes: MSAL_SCOPES, account: res.account });
-    odToken = tok.accessToken; odConnected = true;
-    await loadFromOneDrive();
-    updateSyncUI(); render();
-  } catch(e) { showToast('Sign-in cancelled or failed'); }
-}
-
-async function disconnectOneDrive() {
-  if (msalApp) { msalApp.getAllAccounts().forEach(a => msalApp.logoutRedirect({ account: a }).catch(()=>{})); }
-  odToken = null; odConnected = false; updateSyncUI(); render();
-}
-
-async function loadFromOneDrive() {
-  if (!odToken) return;
-  try {
-    setSaveStatus('☁ Loading from OneDrive…');
-    const res = await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${DATA_FILENAME}:/content`, {
-      headers: { Authorization: `Bearer ${odToken}` }
-    });
-    if (res.status === 404) { await saveToOneDrive(); return; } // first time — write defaults
-    if (!res.ok) throw new Error('Load failed');
+    let fileId = gdFileId || localStorage.getItem('th5_gd_fileid');
+    if (!fileId) {
+      const list = await gdFetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${DATA_FILENAME}'&fields=files(id)`);
+      fileId = list.files?.[0]?.id || null;
+    }
+    if (!fileId) { await saveToGoogleDrive(); return; }
+    gdFileId = fileId; localStorage.setItem('th5_gd_fileid', fileId);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, { headers:{ Authorization:`Bearer ${gdToken}` } });
+    if (!res.ok) throw new Error('fetch failed');
     const data = await res.json();
     if (data.participants) participants = data.participants;
     if (data.apprentices)  apprentices  = data.apprentices;
     if (data.courses)      courses      = data.courses;
     if (data.requests)     requests     = data.requests;
     if (data.budget)       budget       = data.budget;
-    // Also mirror to localStorage as fallback
-    ['participants','apprentices','courses','requests','budget'].forEach(k => localStorage.setItem('th5_'+k, JSON.stringify(eval(k))));
-    setSaveStatus('✓ Synced with OneDrive');
-    showToast('✓ Loaded from OneDrive');
-  } catch(e) { setSaveStatus('⚠ OneDrive load failed — using local'); }
+    ['participants','apprentices','courses','requests','budget'].forEach(k=>localStorage.setItem('th5_'+k,JSON.stringify(eval(k))));
+    setSaveStatus('✓ Synced with Google Drive'); showToast('✓ Loaded from Google Drive');
+  } catch(e) { setSaveStatus('⚠ Load failed — using local data'); }
 }
 
-async function saveToOneDrive() {
-  if (!odToken) return;
-  odSyncing = true; setSaveStatus('☁ Saving to OneDrive…');
-  const payload = JSON.stringify({ participants, apprentices, courses, requests, budget }, null, 2);
+async function saveToGoogleDrive() {
+  if (!gdToken) return;
+  setSaveStatus('☁ Saving to Google Drive…');
+  const body = JSON.stringify({ participants, apprentices, courses, requests, budget });
   try {
-    await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${DATA_FILENAME}:/content`, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${odToken}`, 'Content-Type': 'application/json' },
-      body: payload
-    });
-    setSaveStatus('✓ Saved to OneDrive');
-  } catch(e) { setSaveStatus('⚠ OneDrive save failed — saved locally'); }
-  odSyncing = false;
+    if (gdFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${gdFileId}?uploadType=media`, { method:'PATCH', headers:{ Authorization:`Bearer ${gdToken}`,'Content-Type':'application/json' }, body });
+    } else {
+      const meta = await gdFetch('https://www.googleapis.com/drive/v3/files?fields=id', { method:'POST', body:JSON.stringify({ name:DATA_FILENAME, parents:['appDataFolder'] }) });
+      gdFileId = meta.id; localStorage.setItem('th5_gd_fileid', gdFileId);
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${gdFileId}?uploadType=media`, { method:'PATCH', headers:{ Authorization:`Bearer ${gdToken}`,'Content-Type':'application/json' }, body });
+    }
+    setSaveStatus('✓ Saved to Google Drive');
+  } catch(e) { setSaveStatus('⚠ Save failed — saved locally'); }
+}
+
+async function gdFetch(url, opts={}) {
+  const res = await fetch(url, { ...opts, headers:{ Authorization:`Bearer ${gdToken}`,'Content-Type':'application/json',...(opts.headers||{}) } });
+  return res.json();
 }
 
 function updateSyncUI() {
-  const el = document.getElementById('sync-btn');
-  if (!el) return;
-  if (!window.msal) {
-    el.innerHTML = `<div style="font-size:11px;color:#ef4444;padding:4px 0">⚠ MSAL library not loaded.<br>See setup instructions.</div>`; return;
-  }
-  if (MSAL_CLIENT_ID === 'YOUR_CLIENT_ID') {
-    el.innerHTML = `<div style="font-size:11px;color:#f59e0b;padding:4px 0;line-height:1.5">⚠ Client ID not set.<br>See setup instructions below.</div>`; return;
-  }
-  if (odConnected) {
-    const accts = msalApp?.getAllAccounts() || [];
-    const name = accts[0]?.name || 'Connected';
-    el.innerHTML = `<div style="background:#d1fae5;border-radius:8px;padding:8px 10px"><div style="font-size:11px;font-weight:700;color:#065f46">☁ OneDrive Connected</div><div style="font-size:10px;color:#065f46;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div><button onclick="disconnectOneDrive()" style="margin-top:6px;width:100%;background:#fff;border:1px solid #6ee7b7;border-radius:6px;padding:4px;font-size:11px;font-weight:600;color:#065f46;cursor:pointer;font-family:inherit">Disconnect</button></div>`;
+  const el = document.getElementById('sync-btn'); if (!el) return;
+  if (gdConnected) {
+    el.innerHTML = `<div style="background:#d1fae5;border-radius:8px;padding:8px 10px;margin-top:4px"><div style="font-size:11px;font-weight:700;color:#065f46">☁ Google Drive Connected</div><div style="font-size:10px;color:#065f46;margin-top:1px">Auto-saving all changes</div><button onclick="disconnectGoogleDrive()" style="margin-top:6px;width:100%;background:#fff;border:1px solid #6ee7b7;border-radius:6px;padding:4px;font-size:11px;font-weight:600;color:#065f46;cursor:pointer;font-family:inherit">Disconnect</button></div>`;
   } else {
-    el.innerHTML = `<button onclick="connectOneDrive()" style="width:100%;background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.4">☁ Connect OneDrive<br><span style="font-size:10px;font-weight:400;opacity:.85">Auto-save & sync data</span></button>`;
+    el.innerHTML = `<button onclick="connectGoogleDrive()" style="width:100%;background:#1e40af;color:#fff;border:none;border-radius:8px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.5;margin-top:4px">☁ Connect Google Drive<br><span style="font-size:10px;font-weight:400;opacity:.85">Auto-save & sync data</span></button>`;
   }
 }
 
-// ── LOCAL FALLBACK ────────────────────────────────────────────────────────────
+// ── LOCAL FALLBACK ─────────────────────────────────────────────────────────────
 function ld(k){try{const v=localStorage.getItem('th5_'+k);return v?JSON.parse(v):JSON.parse(JSON.stringify(DEFAULTS[k]));}catch{return JSON.parse(JSON.stringify(DEFAULTS[k]));}}
 function sd(k,d){try{localStorage.setItem('th5_'+k,JSON.stringify(d));}catch(e){}}
 
@@ -351,7 +348,7 @@ function setSaveStatus(m){const el=document.getElementById('save-status');if(el)
 function persist(k,d){
   setSaveStatus('💾 Saving...');
   sd(k,d);
-  if(odConnected){saveToOneDrive();}
+  if(gdConnected){saveToGoogleDrive();}
   else{setTimeout(()=>setSaveStatus('✓ Saved locally'),400);showToast('✓ Saved');}
 }
 
@@ -733,7 +730,7 @@ function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=r
 function submitBudget(){const d=getForm();budget={projected:parseInt(d.projected)||0,expected:parseInt(d.expected)||0};persist('budget',budget);closeModal();render();}
 
 render();
-window.addEventListener("load", () => { initMsal(); updateSyncUI(); });
+window.addEventListener("load", () => { updateSyncUI(); silentReconnect(); });
 </script>
 </body>
 </html>
