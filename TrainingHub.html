@@ -648,7 +648,7 @@ function render(){
             <td style="font-weight:600;color:#dc2626">${c.costIncurred?'$'+parseFloat(c.costIncurred).toLocaleString():'—'}</td>
             <td><span style="background:${sc}18;color:${sc};border-radius:10px;padding:2px 9px;font-size:11px;font-weight:700">${c.status||'Pending'}</span></td>
             <td>
-              ${c.invoicePdfName?`<button class="btn-sm btn-purple" onclick="viewClaimPdf(${c.id})">📄</button> `:''}
+              ${c.soaPdfName?`<button class="btn-sm" style="background:#d1fae5;color:#065f46" onclick="viewClaimSoa(${c.id})">🎓</button> `:''} ${c.invoicePdfName?`<button class="btn-sm btn-purple" onclick="viewClaimPdf(${c.id})">📄</button> `:''}
               <button class="btn-sm btn-edit" onclick="openModal('edit-claim',${c.id})">Edit</button>
               <button class="btn-sm btn-del" onclick="deleteClaim(${c.id})">Del</button>
             </td>
@@ -950,10 +950,17 @@ function openModal(mode,idOrData){
           ${inp(isApproved?'Approved On':isRejected?'Rejected On':'Resubmitted On','statusDate',d.statusDate,'date')}
         </div>
       </div>
+      <div class="form-group"><label class="form-label">Statement of Attainment / Equivalent</label>
+        ${d.soaPdfName?`<div class="pdf-preview"><span>🎓</span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
+        <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
+          <div style="font-size:18px;margin-bottom:4px">🎓</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach Statement of Attainment</div>
+        </div>
+        <input type="file" id="claim-soa-file" accept=".pdf" style="display:none" onchange="handleClaimSoa(event)">
+      </div>
       <div class="form-group"><label class="form-label">Invoice PDF</label>
         ${d.invoicePdfName?`<div class="pdf-preview"><span>📄</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
         <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
-          <div style="font-size:18px;margin-bottom:4px">📄</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF</div>
+          <div style="font-size:18px;margin-bottom:4px">📄</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF invoice</div>
         </div>
         <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
       </div>
@@ -965,8 +972,8 @@ function openModal(mode,idOrData){
           <button onclick="addClaimNote()" style="background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end">Add</button>
         </div>
       </div>
-      <button class="btn-save" onclick="submitClaim(${JSON.stringify(displayId)})">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
-    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;
+      <button class="btn-save" id="claim-submit-btn" onclick="submitClaim()">${mode==='add-claim'?'Add Claim':'Save Changes'}</button>`;
+    window._claimPdf=d.invoicePdf||null;window._claimPdfName=d.invoicePdfName||null;window._claimSoa=d.soaPdf||null;window._claimSoaName=d.soaPdfName||null;window._claimDisplayId=displayId;
   }
 
   // ── MANAGE CLAIM TYPES ────────────────────────────────────────────────────
@@ -1061,7 +1068,7 @@ function removeDocInvoice(courseId){
 
 
 
-function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;}
+function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;window._claimPdf=null;window._claimPdfName=null;window._claimSoa=null;window._claimSoaName=null;window._claimDisplayId=null;window._claimNotes=null;}
 function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
 function handleClaimPdf(event){
   const file=event.target.files[0];if(!file)return;
@@ -1073,7 +1080,18 @@ function handleClaimPdf(event){
     document.getElementById('claim-pdf-drop').parentNode.insertBefore(prev,document.getElementById('claim-pdf-drop'));
   };reader.readAsDataURL(file);
 }
-function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('.pdf-preview');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
+function handleClaimSoa(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{window._claimSoa=e.target.result;window._claimSoaName=file.name;
+    document.getElementById('claim-soa-drop').style.display='none';
+    const prev=document.createElement('div');prev.className='pdf-preview';prev.id='soa-preview';
+    prev.innerHTML=`<span>🎓</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button>`;
+    document.getElementById('claim-soa-drop').parentNode.insertBefore(prev,document.getElementById('claim-soa-drop'));
+  };reader.readAsDataURL(file);
+}
+function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const p=document.getElementById('soa-preview');if(p)p.remove();document.getElementById('claim-soa-drop').style.display='';}
+function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
 function updateClaimStatusFields(status, claimAmount){
   const extra=document.getElementById('claim-extra-fields');if(!extra)return;
   const show=status==='Approved'||status==='Rejected'||status==='Resubmitted';
@@ -1118,9 +1136,10 @@ function removeClaimType(i){
   claimTypes.splice(i,1);persist('claimTypes',claimTypes);
   document.getElementById('ct-list').innerHTML=(claimTypes||[]).map((t,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f3f4f6"><span style="flex:1;font-size:13px">${t}</span><button class="btn-sm btn-del" onclick="removeClaimType(${j})">Remove</button></div>`).join('');
 }
-function submitClaim(displayId){
+function submitClaim(){
+  const displayId=window._claimDisplayId||'CLM-'+String(claims.length+1).padStart(4,'0');
   const d=getForm();
-  d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;
+  d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
   // Auto-calculate cost logic
   if(d.status==='Rejected'&&!d.costIncurred) d.costIncurred=d.claimAmount;
   if(d.status==='Resubmitted'&&!d.costIncurred) d.costIncurred=-(parseFloat(d.claimAmount)||0);
@@ -1130,13 +1149,14 @@ function submitClaim(displayId){
   } else {
     const existing=claims.find(c=>c.id===editId)||{};
     const mergedNotes=[...(existing.notes||[]),...(window._claimNotes||[])];
-    claims=claims.map(c=>c.id!==editId?c:{...c,...d,internalClaimId:c.internalClaimId,invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,notes:mergedNotes});
+    claims=claims.map(c=>c.id!==editId?c:{...c,...d,internalClaimId:c.internalClaimId,invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,notes:mergedNotes});
   }
   window._claimNotes=null;
   persist('claims',claims);closeModal();render();
 }
 function deleteClaim(id){if(!confirm('Delete this claim?'))return;claims=claims.filter(c=>c.id!==id);persist('claims',claims);render();}
 function viewClaimPdf(id){const c=claims.find(x=>x.id===id);if(!c||!c.invoicePdf)return;const win=window.open();win.document.write(`<iframe src="${c.invoicePdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
+function viewClaimSoa(id){const c=claims.find(x=>x.id===id);if(!c||!c.soaPdf)return;const win=window.open();win.document.write(`<iframe src="${c.soaPdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
 
 function getForm(){const d={};document.querySelectorAll('#modal-body input,#modal-body select,#modal-body textarea').forEach(i=>{if(i.name)d[i.name]=i.value;});return d;}
 function addUnit(){const w=document.getElementById('cli-wrap');const d=document.createElement('div');d.className='cli-row';d.innerHTML=`<input class="cli-input" placeholder="Unit name"/><input class="cli-input" type="date"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button>`;w.appendChild(d);}
