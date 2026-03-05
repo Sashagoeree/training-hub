@@ -176,7 +176,8 @@ tr:hover td{background:#fafafa}
     <button class="nav-btn" data-tab="participants"><span class="nav-icon">👥</span>Participants</button>
     <button class="nav-btn" data-tab="apprentices"><span class="nav-icon">🎓</span>Apprentices</button>
     <div class="nav-section">Training</div>
-    <button class="nav-btn" data-tab="courses"><span class="nav-icon">📋</span>Short Courses</button>
+    <button class="nav-btn" data-tab="courses"><span class="nav-icon">📋</span>Upcoming Courses</button>
+    <button class="nav-btn" data-tab="completed"><span class="nav-icon">✅</span>Completed Courses</button>
     <button class="nav-btn" data-tab="requests"><span class="nav-icon">📨</span>Requests</button>
     <div class="nav-section">Data</div>
     <button class="nav-btn" data-tab="export"><span class="nav-icon">⬇️</span>Export / Power BI</button>
@@ -326,7 +327,7 @@ let currentTab='dashboard',searchVal='',editId=null,modalMode=null;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let openPlans=new Set();
 
-const SC={"On Track":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"At Risk":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Completed":{bg:"#dbeafe",text:"#1e40af",dot:"#3b82f6"},"Scheduled":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Full":{bg:"#ede9fe",text:"#5b21b6",dot:"#8b5cf6"},"Approved":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"Pending":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Under Review":{bg:"#e0e7ff",text:"#3730a3",dot:"#6366f1"},"Declined":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"High":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Medium":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Low":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"}};
+const SC={"On Track":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"At Risk":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Completed":{bg:"#dbeafe",text:"#1e40af",dot:"#3b82f6"},"Scheduled":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Full":{bg:"#ede9fe",text:"#5b21b6",dot:"#8b5cf6"},"Approved":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"},"Pending":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Under Review":{bg:"#e0e7ff",text:"#3730a3",dot:"#6366f1"},"Declined":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Did Not Attend":{bg:"#fef2f2",text:"#991b1b",dot:"#dc2626"},"High":{bg:"#fee2e2",text:"#991b1b",dot:"#ef4444"},"Medium":{bg:"#fef9c3",text:"#854d0e",dot:"#eab308"},"Low":{bg:"#d1fae5",text:"#065f46",dot:"#10b981"}};
 function bdg(l){const c=SC[l]||{bg:"#f3f4f6",text:"#374151",dot:"#9ca3af"};return `<span class="badge" style="background:${c.bg};color:${c.text}"><span class="badge-dot" style="background:${c.dot}"></span>${l}</span>`;}
 function pb(v){const col=v>=75?'#10b981':v>=40?'#f59e0b':'#ef4444';return `<div class="progress-wrap"><div class="progress-bar" style="width:${v}%;background:${col}"></div></div>`;}
 function getProgress(a){if(!a.courses||!a.courses.length)return 0;return Math.round(a.courses.filter(c=>c.done).length/a.courses.length*100);}
@@ -337,7 +338,7 @@ function getPName(id){const p=participants.find(x=>x.id===id);return p?p.name:''
 function getPNames(ids){return(ids||[]).map(getPName).filter(Boolean).join(', ');}
 function getTrainingPlan(pid){
   const plan=[];
-  courses.forEach(c=>{if((c.participantIds||[]).includes(pid)){plan.push({name:c.name,date:c.date,status:c.status==='Completed'?'Completed':new Date(c.date)<new Date()?'Completed':'Upcoming',type:'Short Course',provider:c.provider});}});
+  courses.forEach(c=>{if((c.participantIds||[]).includes(pid)){const hasCert=c.certificates&&c.certificates[pid];plan.push({name:c.name,date:c.date,status:c.status==='Completed'?'Completed':c.status==='Did Not Attend'?'Did Not Attend':new Date(c.date)<new Date()?'Completed':'Upcoming',type:'Short Course',provider:c.provider,cert:hasCert?true:false});}});
   const app=apprentices.find(a=>{const p=participants.find(x=>x.id===pid);return p&&a.email&&p.email&&a.email.toLowerCase()===p.email.toLowerCase();});
   if(app&&app.courses){app.courses.forEach(cu=>{plan.push({name:cu.name,date:cu.date||'',status:cu.done?'Completed':'Booked',type:'Apprentice Unit',provider:app.qualification});});}
   return plan;
@@ -470,13 +471,14 @@ function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMont
 function render(){
   const main=document.getElementById('main');
   const q=searchVal.toLowerCase();
-  const titles={dashboard:'📊 Dashboard',calendar:'📅 Training Calendar',participants:'👥 Participants',apprentices:'🎓 Apprentices',courses:'📋 Short Courses',requests:'📨 Requests',export:'⬇️ Export / Power BI'};
-  const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.length} courses`,requests:`${requests.length} training requests`,export:'Download CSVs for Power BI'};
+  const titles={dashboard:'📊 Dashboard',calendar:'📅 Training Calendar',participants:'👥 Participants',apprentices:'🎓 Apprentices',courses:'📋 Upcoming Courses',completed:'✅ Completed Courses',requests:'📨 Requests',export:'⬇️ Export / Power BI'};
+  const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.filter(c=>c.status!=='Completed'&&c.status!=='Did Not Attend').length} active courses`,completed:`${courses.filter(c=>c.status==='Completed'||c.status==='Did Not Attend').length} completed or did not attend`,requests:`${requests.length} training requests`,export:'Download CSVs for Power BI'};
 
   let addBtn='',sb='';
   if(currentTab==='participants')addBtn=`<button class="btn-primary" onclick="openModal('add-participant')">+ Add Person</button>`;
   if(currentTab==='apprentices')addBtn=`<button class="btn-primary" onclick="openModal('add-apprentice')">+ Add Apprentice</button>`;
   if(currentTab==='courses')addBtn=`<button class="btn-primary" onclick="openModal('add-course')">+ Add Course</button>`;
+  if(currentTab==='completed')addBtn='';
   if(currentTab==='requests')addBtn=`<button class="btn-primary" onclick="openModal('add-request')">+ New Request</button>`;
   if(currentTab!=='dashboard'&&currentTab!=='export'&&currentTab!=='calendar')sb=`<input class="search-input" placeholder="Search…" value="${searchVal}" oninput="searchVal=this.value;render()"/>`;
 
@@ -511,9 +513,9 @@ function render(){
         </div>
       </div>
       <div class="dash-grid">
+        <div class="dash-card span2"><h3>Upcoming Courses</h3>${courses.filter(c=>c.status!=='Completed').length===0?'<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>':`<div class="upcoming-grid">${courses.filter(c=>c.status!=='Completed').map(c=>`<div class="upcoming-card"><div style="font-weight:700;font-size:13px;margin-bottom:2px">${c.name}</div><div style="font-size:11px;color:#6b7280;margin-bottom:5px">${c.provider} · ${c.date}</div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px">${(c.participantIds||[]).length} enrolled</span>${bdg(c.status)}</div></div>`).join('')}</div>`}</div>
         <div class="dash-card"><h3>Apprentice Progress</h3>${apprentices.length===0?'<div style="color:#9ca3af;font-size:13px">No apprentices yet</div>':apprentices.map(a=>{const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);return `<div class="app-row"><div class="app-row-header"><div><div style="font-weight:700;font-size:13px">${a.name}</div><div style="font-size:10px;color:#6b7280">${a.qualification||''}</div></div><div style="display:flex;align-items:center;gap:5px"><span style="font-weight:800;font-size:12px">${p}%</span>${bdg(s)}</div></div>${pb(p)}<div style="font-size:10px;color:#6b7280;margin-top:2px">${a.courses?a.courses.filter(c=>c.done).length+'/'+a.courses.length+' units':''} · ${d>0?d+'d left':'Overdue'}</div></div>`;}).join('')}</div>
         <div class="dash-card"><h3>Recent Requests</h3>${requests.length===0?'<div style="color:#9ca3af;font-size:13px">No requests</div>':requests.slice(0,6).map(r=>`<div class="req-row"><div><div style="font-weight:700;font-size:13px">${r.employee}</div><div style="font-size:10px;color:#6b7280">${r.course}</div></div><div class="req-badges">${bdg(r.status)}${bdg(r.priority)}</div></div>`).join('')}</div>
-        <div class="dash-card span2"><h3>Upcoming Courses</h3>${courses.filter(c=>c.status!=='Completed').length===0?'<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>':`<div class="upcoming-grid">${courses.filter(c=>c.status!=='Completed').map(c=>`<div class="upcoming-card"><div style="font-weight:700;font-size:13px;margin-bottom:2px">${c.name}</div><div style="font-size:11px;color:#6b7280;margin-bottom:5px">${c.provider} · ${c.date}</div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px">${(c.participantIds||[]).length} enrolled</span>${bdg(c.status)}</div></div>`).join('')}</div>`}</div>
       </div>`;
   }
 
@@ -532,7 +534,7 @@ function render(){
         const isOpen=openPlans.has(p.id);
         const planHtml=plan.length===0?`<div style="font-size:12px;color:#9ca3af;padding:10px 0">No training recorded yet — enrol in a course to build training plan.</div>`:
           [...upcoming.map(x=>`<div class="tp-item tp-upcoming"><span style="font-size:14px">📅</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.75">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#dbeafe;color:#1e40af">${x.status}</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`),
-           ...done.map(x=>`<div class="tp-item tp-done"><span style="font-size:14px">✅</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#d1fae5;color:#065f46">Done</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`)
+           ...done.map(x=>{const isDNA=x.status==='Did Not Attend';return `<div class="tp-item" style="background:${isDNA?'#fef2f2':'#f0fdf4'}"><span style="font-size:14px">${isDNA?'❌':'✅'}</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:${isDNA?'#fef2f2':'#d1fae5'};color:${isDNA?'#991b1b':'#065f46'}">${isDNA?'DNA':'Done'}</span>${x.cert?' 🏆':''} ${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`;})
           ].join('');
         return `<div class="participant-card">
           <div class="participant-header">
@@ -571,39 +573,25 @@ function render(){
     content=`${banner}<div class="table-wrap"><table><thead><tr><th>Name</th><th>Dept</th><th>Qualification</th><th>Supervisor</th><th>Progress</th><th>End Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
-  // ── COURSES ───────────────────────────────────────────────────────────────
+  // ── COURSES (UPCOMING) ────────────────────────────────────────────────────
   if(currentTab==='courses'){
-    const fil=courses.filter(c=>c.name?.toLowerCase().includes(q)||c.provider?.toLowerCase().includes(q));
-    content=fil.length===0?`<div class="table-wrap"><div class="empty">No courses found.</div></div>`:fil.map(c=>`
-      <div class="course-card">
-        <div class="course-main">
-          <div class="course-name-row"><span class="course-name">${c.name}</span>${bdg(c.status)}</div>
-          <div style="font-size:12px;color:#6b7280;margin-bottom:4px">${c.provider} · ${c.date}</div>
-          ${getPNames(c.participantIds)?`<div style="font-size:12px;color:#374151;margin-bottom:4px">👥 ${getPNames(c.participantIds)}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            ${c.invoiceNo?`<span style="font-size:11px;font-weight:600;color:#6366f1">🧾 ${c.invoiceNo}${c.invoiceNotes?' — '+c.invoiceNotes:''}</span>`:`<span style="font-size:11px;color:#d1d5db">No invoice</span>`}
-            ${c.invoicePdfName?`<button class="btn-sm btn-purple" onclick="viewPdf(${c.id})">📄 ${c.invoicePdfName}</button>`:''}
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0">
-          <div style="display:flex;gap:14px">
-            <div style="text-align:center"><div style="font-size:16px;font-weight:800">${(c.participantIds||[]).length}/${c.seats}</div><div style="font-size:10px;color:#6b7280">Seats</div></div>
-            <div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(c.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div>
-          </div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">
-            <button class="btn-sm btn-green" onclick="openModal('enrol-course',${c.id})">👥 Enrol</button>
-            ${(c.participantIds||[]).length>0?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${c.id})">📧 Email</button>`:''}
-            <button class="btn-sm btn-edit" onclick="openModal('edit-course',${c.id})">Edit</button>
-            <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Del</button>
-          </div>
-        </div>
-      </div>`).join('');
+    const fil=courses.filter(c=>c.status!=='Completed'&&c.status!=='Did Not Attend').filter(c=>c.name?.toLowerCase().includes(q)||c.provider?.toLowerCase().includes(q));
+    content=fil.length===0?`<div class="table-wrap"><div class="empty">No upcoming courses. Add a course or check Completed Courses.</div></div>`:fil.map(c=>renderCourseCard(c,false)).join('');
+  }
+
+  // ── COMPLETED COURSES ─────────────────────────────────────────────────────
+  if(currentTab==='completed'){
+    const fil=courses.filter(c=>c.status==='Completed'||c.status==='Did Not Attend').filter(c=>c.name?.toLowerCase().includes(q)||c.provider?.toLowerCase().includes(q));
+    content=fil.length===0?`<div class="table-wrap"><div class="empty">No completed courses yet.</div></div>`:fil.map(c=>renderCourseCard(c,true)).join('');
   }
 
   // ── REQUESTS ─────────────────────────────────────────────────────────────
   if(currentTab==='requests'){
     const fil=requests.filter(r=>r.employee?.toLowerCase().includes(q)||r.course?.toLowerCase().includes(q));
-    const rows=fil.length===0?`<tr><td colspan="8" class="empty">No requests found.</td></tr>`:fil.map(r=>`<tr><td style="font-weight:700">${r.employee}</td><td style="color:#6b7280">${r.department||''}</td><td>${r.course}</td><td style="color:#6b7280;max-width:140px;font-size:12px">${r.reason||''}</td><td>${bdg(r.priority)}</td><td style="color:#6b7280;font-size:12px">${r.submitted||''}</td><td>${bdg(r.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('review-request',${r.id})">Review</button><button class="btn-sm btn-del" onclick="deleteRequest(${r.id})">Del</button></div></td></tr>`).join('');
+    const rows=fil.length===0?`<tr><td colspan="8" class="empty">No requests found.</td></tr>`:fil.map(r=>{
+      const noteCount=(r.comments||[]).length;
+      return `<tr><td style="font-weight:700">${r.employee}</td><td style="color:#6b7280">${r.department||''}</td><td>${r.course}</td><td style="color:#6b7280;max-width:120px;font-size:12px">${r.reason||''}</td><td>${bdg(r.priority)}</td><td style="color:#6b7280;font-size:12px">${r.submitted||''}</td><td>${bdg(r.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('review-request',${r.id})">Review${noteCount>0?` <span style="background:#e0e7ff;color:#3730a3;border-radius:8px;padding:0 4px;font-size:10px">${noteCount}</span>`:''}</button><button class="btn-sm btn-del" onclick="deleteRequest(${r.id})">Del</button></div></td></tr>`;
+    }).join('');
     content=`<div class="table-wrap"><table><thead><tr><th>Employee</th><th>Dept</th><th>Course</th><th>Reason</th><th>Priority</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
@@ -623,6 +611,62 @@ function render(){
 
   main.innerHTML=`<div class="page-header"><div><div class="page-title">${titles[currentTab]}</div><div class="page-sub">${subs[currentTab]}</div></div><div class="header-right">${sb}${addBtn}</div></div>${content}`;
   updateReqBadge();
+}
+
+// ── RENDER COURSE CARD ────────────────────────────────────────────────────────
+function renderCourseCard(c, isCompleted) {
+  const names = getPNames(c.participantIds);
+  const dnaParticipants = (c.dnaList||[]);
+  const certCount = Object.keys(c.certificates||{}).length;
+  return `
+    <div class="course-card" style="${isCompleted&&c.status==='Did Not Attend'?'border-left:3px solid #ef4444':''}">
+      <div class="course-main">
+        <div class="course-name-row"><span class="course-name">${c.name}</span>${bdg(c.status)}</div>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">${c.provider} · ${c.date}</div>
+        ${names?`<div style="font-size:12px;color:#374151;margin-bottom:4px">👥 ${names}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}
+        ${c.status==='Did Not Attend'&&c.dnaNotes?`<div style="font-size:12px;background:#fef2f2;border-radius:6px;padding:5px 9px;color:#991b1b;margin-bottom:4px">⚠ ${c.dnaNotes}</div>`:''}
+        ${c.courseNotes?`<div style="font-size:12px;color:#6b7280;font-style:italic;margin-bottom:4px">📝 ${c.courseNotes}</div>`:''}
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${c.invoiceNo?`<span style="font-size:11px;font-weight:600;color:#6366f1">🧾 ${c.invoiceNo}${c.invoiceNotes?' — '+c.invoiceNotes:''}</span>`:`<span style="font-size:11px;color:#d1d5db">No invoice</span>`}
+          ${c.invoicePdfName?`<button class="btn-sm btn-purple" onclick="viewPdf(${c.id})">📄 ${c.invoicePdfName}</button>`:''}
+          ${certCount>0?`<span style="font-size:11px;font-weight:600;color:#065f46">🏆 ${certCount} certificate${certCount>1?'s':''}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0">
+        <div style="display:flex;gap:14px">
+          <div style="text-align:center"><div style="font-size:16px;font-weight:800">${(c.participantIds||[]).length}/${c.seats}</div><div style="font-size:10px;color:#6b7280">Seats</div></div>
+          <div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(c.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">
+          ${!isCompleted?`<button class="btn-sm btn-green" onclick="openModal('enrol-course',${c.id})">👥 Enrol</button>`:''}
+          ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${c.id})">📧 Email</button>`:''}
+          ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${c.id})">🔔 Remind</button>`:''}
+          ${isCompleted?`<button class="btn-sm btn-green" onclick="openModal('manage-certs',${c.id})">🏆 Certificates</button>`:''}
+          <button class="btn-sm btn-edit" onclick="openModal('edit-course',${c.id})">Edit</button>
+          <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Del</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function sendReminderEmail(courseId){
+  const c=courses.find(x=>x.id===courseId);if(!c)return;
+  const emails=(c.participantIds||[]).map(id=>{const p=participants.find(x=>x.id===id);return p&&p.email?p.email:null;}).filter(Boolean);
+  const subject=encodeURIComponent(`Training Reminder: ${c.name} — ${c.date}`);
+  const body=encodeURIComponent(`Hi,
+
+This is a friendly reminder that you are booked in for the following training:
+
+Course: ${c.name}
+Provider: ${c.provider}
+Date: ${c.date}
+
+Please confirm your attendance and let us know if you have any questions.
+
+Kind regards,
+Training Team`);
+  window.location.href=`mailto:${emails.join(';')}?subject=${subject}&body=${body}`;
+  showToast('Opening email client…');
 }
 
 function exportCSV(data,filename){if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(row=>keys.map(k=>`"${String(row[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=filename;a.click();}
@@ -672,7 +716,12 @@ function openModal(mode,idOrData){
   if(mode==='add-course'||mode==='edit-course'){
     const d=mode==='edit-course'?courses.find(c=>c.id===idOrData)||{}:{};editId=d.id||null;
     title.textContent=mode==='add-course'?'Add Short Course':'Edit Course';
-    body.innerHTML=`${inp('Course Name','name',d.name,'text','Working at Heights')}<div class="form-row">${inp('Provider','provider',d.provider,'text','SafeWork Training')}${inp('Date','date',d.date,'date')}</div><div class="form-row3">${inp('Total Seats','seats',d.seats,'number','10')}${inp('Cost ($)','cost',d.cost,'number','1200')}${sel('Status','status',d.status||'Scheduled',['Scheduled','Full','Completed'])}</div>
+    body.innerHTML=`${inp('Course Name','name',d.name,'text','Working at Heights')}<div class="form-row">${inp('Provider','provider',d.provider,'text','SafeWork Training')}${inp('Date','date',d.date,'date')}</div><div class="form-row3">${inp('Total Seats','seats',d.seats,'number','10')}${inp('Cost ($)','cost',d.cost,'number','1200')}${sel('Status','status',d.status||'Scheduled',['Scheduled','Full','Completed','Did Not Attend'])}</div>
+    ${ta('Course Notes','courseNotes',d.courseNotes,'Any general notes about this course')}
+    <div id="dna-section" style="${(d.status||'Scheduled')==='Did Not Attend'?'':'display:none'}">
+      <div style="background:#fef2f2;border-radius:8px;padding:11px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;margin-bottom:8px">⚠ Did Not Attend — Reason</div>${ta('DNA Notes','dnaNotes',d.dnaNotes,'Why did participant(s) not attend?')}</div>
+    </div>
+    <script>document.querySelector('[name=status]').addEventListener('change',function(){document.getElementById('dna-section').style.display=this.value==='Did Not Attend'?'':'none'});<\/script>
     <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:9px">🧾 Invoice</div>${inp('Invoice Number','invoiceNo',d.invoiceNo,'text','INV-2025-001')}${ta('Invoice Notes','invoiceNotes',d.invoiceNotes,'e.g. Paid 15 Feb 2025')}
     <div class="form-group"><label class="form-label">PDF Invoice</label>${d.invoicePdfName?`<div class="pdf-preview"><span style="font-size:16px">📄</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removePdf()">Remove</button></div>`:''}
     <div class="pdf-upload-area" id="pdf-drop" onclick="document.getElementById('pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}><div style="font-size:20px;margin-bottom:5px">📄</div><div style="font-size:12px;font-weight:600;color:#374151">Click to attach PDF invoice</div></div>
@@ -697,7 +746,38 @@ function openModal(mode,idOrData){
   if(mode==='review-request'){
     const r=requests.find(x=>x.id===idOrData);editId=idOrData;
     title.textContent='Review Request';
-    body.innerHTML=`<div style="background:#f8fafc;border-radius:8px;padding:11px;margin-bottom:12px;font-size:13px"><div style="font-weight:700;margin-bottom:3px">${r.employee} — ${r.course}</div><div style="color:#6b7280;font-size:12px">${r.reason||''}</div><div style="margin-top:5px">${bdg(r.priority)}</div></div>${sel('Decision','status',r.status||'Pending',['Pending','Under Review','Approved','Declined'])}${inp('Approver','approver',r.approver,'text','Your name')}<button class="btn-save" onclick="submitReview()">Save Decision</button>`;
+    const comments=r.comments||[];
+    const commentLog=comments.length===0?'<div style="font-size:12px;color:#9ca3af;padding:8px 0">No notes yet.</div>':comments.map(c=>`<div style="background:#f8fafc;border-radius:7px;padding:9px 11px;margin-bottom:7px"><div style="font-size:11px;font-weight:700;color:#374151">${c.author} <span style="color:#9ca3af;font-weight:400">${c.date}</span></div><div style="font-size:12px;color:#374151;margin-top:3px">${c.text}</div></div>`).join('');
+    body.innerHTML=`<div style="background:#f8fafc;border-radius:8px;padding:11px;margin-bottom:12px;font-size:13px"><div style="font-weight:700;margin-bottom:3px">${r.employee} — ${r.course}</div><div style="color:#6b7280;font-size:12px">${r.reason||''}</div><div style="margin-top:5px">${bdg(r.priority)}</div></div>
+    ${sel('Decision','status',r.status||'Pending',['Pending','Under Review','Approved','Declined'])}${inp('Approver','approver',r.approver,'text','Your name')}
+    <div style="border:1.5px solid #e5e7eb;border-radius:9px;padding:12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">💬 Notes & Comments</div>
+      <div id="comment-log" style="max-height:200px;overflow-y:auto;margin-bottom:10px">${commentLog}</div>
+      <div style="display:flex;gap:8px">
+        <textarea class="form-textarea" id="new-comment" placeholder="Add a note or comment…" style="min-height:44px;flex:1;margin-bottom:0"></textarea>
+        <button onclick="addComment(${r.id})" style="background:#1e40af;color:#fff;border:none;border-radius:8px;padding:8px 13px;font-weight:700;cursor:pointer;font-size:12px;font-family:inherit;align-self:flex-end;white-space:nowrap">Add Note</button>
+      </div>
+    </div>
+    <button class="btn-save" onclick="submitReview()">Save Decision</button>`;
+  }
+
+  if(mode==='manage-certs'){
+    const c=courses.find(x=>x.id===idOrData);if(!c)return;editId=idOrData;
+    title.textContent=`Certificates — ${c.name}`;
+    if(!c.certificates)c.certificates={};
+    const certItems=(c.participantIds||[]).map(pid=>{
+      const p=participants.find(x=>x.id===pid);if(!p)return'';
+      const cert=c.certificates[pid];
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f3f4f6">
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${p.department||''}</div></div>
+        ${cert?`<div style="display:flex;align-items:center;gap:7px"><span style="font-size:11px;font-weight:600;color:#065f46">🏆 ${cert.name}</span><button class="btn-sm btn-purple" onclick="viewCert(${c.id},${pid})">View</button><button class="btn-sm btn-del" onclick="removeCert(${c.id},${pid})">Remove</button></div>`
+        :`<button class="btn-sm btn-green" onclick="document.getElementById('cert-upload-${pid}').click()">+ Upload PDF</button>`}
+        <input type="file" id="cert-upload-${pid}" accept=".pdf" style="display:none" onchange="handleCertUpload(event,${c.id},${pid})">
+      </div>`;
+    }).join('');
+    body.innerHTML=`<div style="font-size:12px;color:#6b7280;margin-bottom:12px">Upload completion certificates for each participant. PDFs are stored with your course data.</div>
+    <div>${certItems||'<div class="empty">No participants enrolled yet.</div>'}</div>
+    <button class="btn-save" style="margin-top:14px" onclick="closeModal()">Done</button>`;
   }
 
   if(mode==='edit-budget'){
@@ -706,6 +786,42 @@ function openModal(mode,idOrData){
   }
 
   document.getElementById('modal').classList.remove('hidden');
+}
+
+function addComment(requestId){
+  const text=document.getElementById('new-comment')?.value?.trim();if(!text)return;
+  const r=requests.find(x=>x.id===requestId);if(!r)return;
+  if(!r.comments)r.comments=[];
+  r.comments.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU')});
+  persist('requests',requests);
+  openModal('review-request',requestId);
+}
+
+function handleCertUpload(event,courseId,participantId){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const c=courses.find(x=>x.id===courseId);if(!c)return;
+    if(!c.certificates)c.certificates={};
+    c.certificates[participantId]={name:file.name,data:e.target.result};
+    persist('courses',courses);
+    openModal('manage-certs',courseId);
+  };
+  reader.readAsDataURL(file);
+}
+
+function viewCert(courseId,participantId){
+  const c=courses.find(x=>x.id===courseId);if(!c)return;
+  const cert=c.certificates?.[participantId];if(!cert)return;
+  const win=window.open();
+  win.document.write(`<iframe src="${cert.data}" style="width:100%;height:100vh;border:none"></iframe>`);
+}
+
+function removeCert(courseId,participantId){
+  const c=courses.find(x=>x.id===courseId);if(!c||!c.certificates)return;
+  delete c.certificates[participantId];
+  persist('courses',courses);
+  openModal('manage-certs',courseId);
 }
 
 function closeModal(){document.getElementById('modal').classList.add('hidden');editId=null;modalMode=null;window._tempPdf=null;window._tempPdfName=null;}
@@ -722,10 +838,10 @@ function submitParticipant(){const d=getForm();if(modalMode==='add-participant')
 function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);persist('participants',participants);render();}
 function submitApprentice(){const d=getForm(),units=getUnits();if(modalMode==='add-apprentice'){apprentices.push({...d,id:Date.now(),courses:units});}else{apprentices=apprentices.map(a=>{if(a.id!==editId)return a;const ex=a.courses||[];return{...a,...d,courses:units.map(u=>{const e=ex.find(c=>c.name===u.name);return e?{...e,date:u.date}:u;})};});}persist('apprentices',apprentices);closeModal();render();}
 function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;apprentices=apprentices.filter(a=>a.id!==id);persist('apprentices',apprentices);render();}
-function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;d.invoicePdf=window._tempPdf;d.invoicePdfName=window._tempPdfName;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d});}persist('courses',courses);closeModal();render();}
+function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=parseInt(d.cost)||0;d.invoicePdf=window._tempPdf;d.invoicePdfName=window._tempPdfName;if(modalMode==='add-course'){d.participantIds=[];d.enrolled=0;d.certificates={};courses.push({...d,id:Date.now()});}else{courses=courses.map(c=>c.id!==editId?c:{...c,...d});}persist('courses',courses);closeModal();render();}
 function deleteCourse(id){if(!confirm('Delete this course?'))return;courses=courses.filter(c=>c.id!==id);persist('courses',courses);render();}
 function submitRequest(){const d=getForm();requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});persist('requests',requests);closeModal();render();}
-function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,...d}:r);persist('requests',requests);closeModal();render();}
+function submitReview(){const d=getForm();requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver}:r);persist('requests',requests);closeModal();render();}
 function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=requests.filter(r=>r.id!==id);persist('requests',requests);render();}
 function submitBudget(){const d=getForm();budget={projected:parseInt(d.projected)||0,expected:parseInt(d.expected)||0};persist('budget',budget);closeModal();render();}
 
