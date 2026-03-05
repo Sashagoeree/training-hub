@@ -423,7 +423,7 @@ function persist(k,d){
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn=>{
- btn.addEventListener('click',()=>{currentTab=btn.dataset.tab;searchVal='';if(btn.dataset.tab!=='claims'){window._claimTab='all';window._claimSort='date-desc';window._claimFilter='';};document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();});
+ btn.addEventListener('click',()=>{currentTab=btn.dataset.tab;searchVal='';if(btn.dataset.tab!=='claims'){window._claimTab='all';window._claimSort='date-desc';window._claimFilter='';} if(btn.dataset.tab!=='participants'){window._partFilter='all';window._partSort='name';};document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();});
 });
 
 function updateReqBadge(){
@@ -563,7 +563,7 @@ function render(){
  const proj=budget.projected||0,barPct=proj>0?Math.min(100,Math.round(committed/proj*100)):0,variance=proj-committed;
  const closedCostBusiness=claims.filter(c=>c.status==='Closed').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
  const cards=[
- {icon:'PR',label:'Participants',value:participants.length,sub:'In directory',color:'#0891b2'},
+ {icon:'PR',label:'Participants',value:participants.filter(p=>p.active!==false).length,sub:participants.filter(p=>p.active===false).length>0?participants.filter(p=>p.active===false).length+' inactive':'In directory',color:'#0891b2'},
  {icon:'AP',label:'Apprentices',value:apprentices.length,sub:`${atRisk} at risk`,color:'#1e40af'},
  {icon:'CS',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
  {icon:'RQ',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
@@ -597,9 +597,12 @@ function render(){
  // ── PARTICIPANTS ───────────────────────────────────────────────────────────
  if(currentTab==='participants'){
  const fil=participants.filter(p=>p.name?.toLowerCase().includes(q)||p.department?.toLowerCase().includes(q)||p.email?.toLowerCase().includes(q));
- if(fil.length===0){content=`<div class="table-wrap"><div class="empty">No participants found. Click + Add Person to get started.</div></div>`;}
+  const activeCount=participants.filter(p=>p.active!==false).length;
+  const inactiveCount=participants.filter(p=>p.active===false).length;
+  const partControlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap"><button onclick="window._partFilter=\'all\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='all'?'var(--accent)':'var(--border)'};background:${partFilter==='all'?'var(--accent)':'var(--surface)'};color:${partFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${participants.length}</span></button><button onclick="window._partFilter=\'active\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='active'?'var(--success)':'var(--border)'};background:${partFilter==='active'?'var(--success)':'var(--surface)'};color:${partFilter==='active'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${activeCount}</span></button><button onclick="window._partFilter=\'inactive\';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='inactive'?'var(--danger)':'var(--border)'};background:${partFilter==='inactive'?'var(--danger)':'var(--surface)'};color:${partFilter==='inactive'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Inactive <span style="opacity:.7">${inactiveCount}</span></button><select onchange="window._partSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer"><option value="name" ${partSort==='name'?'selected':''}>Name A–Z</option><option value="dept" ${partSort==='dept'?'selected':''}>Department</option><option value="role" ${partSort==='role'?'selected':''}>Role</option></select></div>`;
+   if(fil.length===0){content=partControlBar+`<div class="table-wrap"><div class="empty">No participants found.</div></div>`;}
  else{
- content=fil.map(p=>{
+ content=partControlBar+fil.map(p=>{
  const plan=getTrainingPlan(p.id);
  const done=plan.filter(x=>x.status==='Completed');
  const upcoming=plan.filter(x=>x.status!=='Completed');
@@ -614,6 +617,7 @@ function render(){
  <div class="participant-name">${p.name}</div>
  <div class="participant-meta">${[p.role,p.department].filter(Boolean).join(' · ')}</div>
  <div style="font-size:11px;color:#94a3b8;margin-top:2px">${[p.email,p.phone].filter(Boolean).join(' · ')}</div>
+ <div style="margin-top:5px"><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${p.active===false?'#fee2e2':'#d1fae5'};color:${p.active===false?'#991b1b':'#065f46'}">${p.active===false?'Inactive':'Active'}</span></div>
  </div>
  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
  <button id="tp-btn-${p.id}" class="tp-toggle${isOpen?' open':''}" onclick="togglePlan(${p.id})">
@@ -742,7 +746,7 @@ function render(){
  if(currentTab==='export'){
  const flatA=apprentices.map(a=>({Name:a.name,Department:a.department,Qualification:a.qualification,Supervisor:a.supervisor,Email:a.email||'',Progress:getProgress(a)+'%',Status:getStatus(a),EndDate:a.endDate||'',UnitsComplete:a.courses?a.courses.filter(c=>c.done).length:0,TotalUnits:a.courses?a.courses.length:0,DaysRemaining:daysLeft(a.endDate)}));
  const flatC=courses.map(c=>({Name:c.name,Provider:c.provider,Date:c.date,Seats:c.seats,Enrolled:(c.participantIds||[]).length,Cost:c.cost,Status:c.status,Participants:getPNames(c.participantIds),InvoiceNo:c.invoiceNo||'',InvoiceNotes:c.invoiceNotes||''}));
- const flatP=participants.map(p=>{const plan=getTrainingPlan(p.id);return{Name:p.name,Email:p.email||'',Phone:p.phone||'',Department:p.department||'',Role:p.role||'',CoursesCompleted:plan.filter(x=>x.status==='Completed').length,CoursesUpcoming:plan.filter(x=>x.status!=='Completed').length};});
+ const flatP=participants.map(p=>{const plan=getTrainingPlan(p.id);return{Name:p.name,Status:p.active===false?'Inactive':'Active',Email:p.email||'',Phone:p.phone||'',Department:p.department||'',Role:p.role||'',CoursesCompleted:plan.filter(x=>x.status==='Completed').length,CoursesUpcoming:plan.filter(x=>x.status!=='Completed').length};});
  content=`<div style="background:#eff6ff;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #bfdbfe"><div style="font-weight:700;color:#1e40af;margin-bottom:2px;font-size:14px">Power BI Ready</div><div style="font-size:12px;color:#3b82f6">Download CSVs and import via Get Data → Text/CSV. Status and progress are auto-calculated.</div></div>
  <div class="export-grid">${[
  {icon:'PR',label:'Participants',desc:'Directory with training summary',data:flatP,file:'participants.csv'},
@@ -845,7 +849,7 @@ function exportTrainingPlan(pid){
       <div class="meta-item"><span>Email</span><strong>${p.email||'—'}</strong></div>
       <div class="meta-item"><span>Completed</span><strong>${done.length} courses</strong></div>
       <div class="meta-item"><span>Upcoming</span><strong>${upcoming.length} courses</strong></div>
-      ${dna.length>0?`<div class="meta-item"><span>Did Not Attend</span><strong>${dna.length} courses</strong></div>`:'<div class="meta-item"><span>Notes</span><strong>${p.notes||"—"}</strong></div>'}
+      ${dna.length>0?`<div class="meta-item"><span>Did Not Attend</span><strong>${dna.length} courses</strong></div>`:`<div class="meta-item"><span>Status</span><strong style="color:${p.active===false?'#dc2626':'#059669'}">${p.active===false?'Inactive':'Active'}</strong></div>`}
     </div>
     <table><thead><tr><th>Type</th><th>Course / Unit</th><th>Provider</th><th>Date</th><th>Status</th><th>Cert</th></tr></thead><tbody>${rows}</tbody></table>
     <div class="footer"><span>Generated by Training Hub</span><span>${new Date().toLocaleDateString('en-AU')}</span></div>
@@ -933,7 +937,8 @@ function openModal(mode,idOrData){
  if(mode==='add-participant'||mode==='edit-participant'){
  const d=mode==='edit-participant'?participants.find(p=>p.id===idOrData)||{}:{};editId=d.id||null;
  title.textContent=mode==='add-participant'?'Add Person':'Edit Person';
- body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Role','role',d.role,'text','Staff')}</div>${inp('Email','email',d.email,'email','jane@company.com')}${inp('Phone','phone',d.phone,'text','0412 000 000')}${ta('Notes','notes',d.notes)}<button class="btn-save" onclick="submitParticipant()">${mode==='add-participant'?'Add Person':'Save Changes'}</button>`;
+ const isActive=d.active!==false;
+    body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Role','role',d.role,'text','Staff')}</div>${inp('Email','email',d.email,'email','jane@company.com')}${inp('Phone','phone',d.phone,'text','0412 000 000')}<div class="form-group"><label class="form-label">Status</label><select class="form-select" name="active"><option value="true" ${isActive?'selected':''}>Active</option><option value="false" ${!isActive?'selected':''}>Inactive</option></select></div><button class="btn-save" onclick="submitParticipant()">${mode==='add-participant'?'Add Person':'Save Changes'}</button>`;
  }
 
  if(mode==='add-apprentice'||mode==='edit-apprentice'){
@@ -1125,7 +1130,7 @@ function handlePdfUpload(event){const file=event.target.files[0];if(!file)return
 function removePdf(){window._tempPdf=null;window._tempPdfName=null;const prev=document.querySelector('.pdf-preview');if(prev)prev.remove();document.getElementById('pdf-drop').style.display='';}
 function toggleEnrol(pid,cid){const c=courses.find(x=>x.id===cid);if(!c)return;if(!c.participantIds)c.participantIds=[];const idx=c.participantIds.indexOf(pid);if(idx>=0)c.participantIds.splice(idx,1);else c.participantIds.push(pid);const isOn=c.participantIds.includes(pid);document.getElementById('enrol-'+pid)?.classList.toggle('selected',isOn);const chk=document.getElementById('echk-'+pid);if(chk){chk.classList.toggle('on',isOn);chk.textContent=isOn?'✓':'';}}
 function saveEnrolment(cid){const c=courses.find(x=>x.id===cid);if(!c)return;c.enrolled=(c.participantIds||[]).length;persist('courses',courses);closeModal();render();}
-function submitParticipant(){const d=getForm();if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);closeModal();render();}
+function submitParticipant(){const d=getForm();d.active=d.active!=='false';if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);closeModal();render();}
 function deleteParticipant(id){if(!confirm('Delete this person?'))return;participants=participants.filter(p=>p.id!==id);courses=courses.map(c=>({...c,participantIds:(c.participantIds||[]).filter(pid=>pid!==id)}));persist('participants',participants);persist('courses',courses);render();}
 function submitApprentice(){const d=getForm(),units=getUnits();if(modalMode==='add-apprentice'){apprentices.push({...d,id:Date.now(),courses:units});}else{apprentices=apprentices.map(a=>{if(a.id!==editId)return a;const ex=a.courses||[];return{...a,...d,courses:units.map(u=>{const e=ex.find(c=>c.name===u.name);return e?{...e,code:u.code,date:u.date}:u;})};});}persist('apprentices',apprentices);closeModal();render();}
 function deleteApprentice(id){if(!confirm('Delete this apprentice?'))return;apprentices=apprentices.filter(a=>a.id!==id);persist('apprentices',apprentices);render();}
