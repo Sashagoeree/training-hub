@@ -477,7 +477,7 @@ function render(){
   const main=document.getElementById('main');
   const q=searchVal.toLowerCase();
   const titles={dashboard:'📊 Dashboard',calendar:'📅 Training Calendar',participants:'👥 Participants',apprentices:'🎓 Apprentices',courses:'📋 Upcoming Courses',completed:'✅ Completed Courses',requests:'📨 Requests',claims:'💰 Claims Tracker',export:'⬇️ Export / Power BI'};
-  const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.filter(c=>c.status!=='Completed').length} active courses`,completed:`${courses.filter(c=>c.status==='Completed').length} completed courses`,requests:`${requests.length} training requests`,claims:`${claims.length} claims — $${claims.reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0).toLocaleString()} cost to business`,export:'Download CSVs for Power BI'};
+  const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.filter(c=>c.status!=='Completed').length} active courses`,completed:`${courses.filter(c=>c.status==='Completed').length} completed courses`,requests:`${requests.length} training requests`,claims:`${claims.length} claims — $${claims.filter(c=>c.status==='Closed').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0).toLocaleString()} cost to business`,export:'Download CSVs for Power BI'};
 
   let addBtn='',sb='';
   if(currentTab==='participants')addBtn=`<button class="btn-primary" onclick="openModal('add-participant')">+ Add Person</button>`;
@@ -497,13 +497,13 @@ function render(){
     const pend=requests.filter(r=>r.status==='Pending'||r.status==='Under Review').length;
     const committed=getCommitted();
     const proj=budget.projected||0,barPct=proj>0?Math.min(100,Math.round(committed/proj*100)):0,variance=proj-committed;
-    const closedCostBusiness=claims.filter(c=>c.status==='Closed — Approved'||c.status==='Closed — Rejected').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
+    const closedCostBusiness=claims.filter(c=>c.status==='Closed').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
     const cards=[
       {icon:'👥',label:'Participants',value:participants.length,sub:'In directory',color:'#0891b2'},
       {icon:'🎓',label:'Apprentices',value:apprentices.length,sub:`${atRisk} at risk`,color:'#1e40af'},
       {icon:'📋',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
       {icon:'📨',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
-      {icon:'💰',label:'Cost to Business',value:`$${closedCostBusiness.toLocaleString()}`,sub:`${claims.filter(c=>c.status==='Closed — Approved'||c.status==='Closed — Rejected').length} closed claims`,color:'#059669'},
+      {icon:'💰',label:'Cost to Business',value:`$${closedCostBusiness.toLocaleString()}`,sub:`${claims.filter(c=>c.status==='Closed').length} closed claims`,color:'#059669'},
     ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18">${s.icon}</div><div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
     const atRiskBanner=atRisk>0?`<div class="alert-banner">⚠️ <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
     content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
@@ -614,8 +614,7 @@ function render(){
       {key:'Resubmitted',label:'Resubmitted',color:'#7c3aed'},
       {key:'Approved',label:'Approved',color:'#059669'},
       {key:'Rejected',label:'Rejected',color:'#dc2626'},
-      {key:'Closed — Approved',label:'✅ Closed',color:'#065f46'},
-      {key:'Closed — Rejected',label:'❌ Closed',color:'#6b7280'},
+      {key:'Closed',label:'🔒 Closed',color:'#374151'},
     ];
     const tabBar=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
       ${STATUS_TABS.map(t=>`<button onclick="window._claimTab='${t.key}';render()" style="padding:7px 14px;border-radius:20px;border:2px solid ${t.color};background:${claimTab===t.key?t.color:'#fff'};color:${claimTab===t.key?'#fff':t.color};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">
@@ -627,27 +626,27 @@ function render(){
       .filter(c=>claimTab==='all'||c.status===claimTab)
       .filter(c=>c.title?.toLowerCase().includes(q)||c.participantName?.toLowerCase().includes(q)||c.claimType?.toLowerCase().includes(q)||c.internalClaimId?.toLowerCase().includes(q));
     const totalClaimed=fil.reduce((s,c)=>s+(parseFloat(c.claimAmount)||0),0);
-    const totalAccepted=fil.reduce((s,c)=>s+(parseFloat(c.acceptedAmount)||0),0);
-    const totalCost=fil.reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
+    const totalApproved=fil.reduce((s,c)=>s+(parseFloat(c.acceptedAmount)||0),0);
+    const totalCost=fil.filter(c=>c.status==='Closed').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
     const summaryBar=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
       <div class="stat-card"><div class="stat-icon" style="background:#eff6ff">📋</div><div><div class="stat-value">${fil.length}</div><div class="stat-label">Claims</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#fef9c3">💸</div><div><div class="stat-value">$${totalClaimed.toLocaleString()}</div><div class="stat-label">Total Claimed</div></div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">✅</div><div><div class="stat-value">$${totalAccepted.toLocaleString()}</div><div class="stat-label">Accepted</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">✅</div><div><div class="stat-value">$${totalApproved.toLocaleString()}</div><div class="stat-label">Total Approved</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#fef2f2">🏢</div><div><div class="stat-value">$${totalCost.toLocaleString()}</div><div class="stat-label">Cost to Business</div></div></div>
     </div>`;
-    const STATUS_COLORS={Pending:'#d97706',Submitted:'#2563eb',Approved:'#059669',Rejected:'#dc2626',Resubmitted:'#7c3aed','Closed — Approved':'#065f46','Closed — Rejected':'#6b7280'};
+    const STATUS_COLORS={Pending:'#d97706',Submitted:'#2563eb',Approved:'#059669',Rejected:'#dc2626',Resubmitted:'#7c3aed',Closed:'#374151'};
     const rows=fil.length===0
       ? `<tr><td colspan="10" class="empty">No claims in this category.</td></tr>`
       : fil.map(c=>{
           const sc=STATUS_COLORS[c.status]||'#6b7280';
-          const isClosed=c.status==='Closed — Approved'||c.status==='Closed — Rejected';
-          const rowBg=c.status==='Closed — Approved'?'background:#f0fdf4':c.status==='Closed — Rejected'?'background:#f9fafb;opacity:.85':'';
+          const isClosed=c.status==='Closed';
+          const rowBg=isClosed?'background:#f8fafc;opacity:.9':'';
           return `<tr style="${rowBg}">
             <td><div style="font-size:10px;font-weight:700;color:#9ca3af">${c.internalClaimId||''}</div><div style="font-weight:700">${c.title||''}</div><div style="font-size:11px;color:#6b7280">${c.claimType||''}</div></td>
             <td style="color:#6b7280;font-size:12px">${c.ctfClaimId||'—'}</td>
             <td style="font-weight:600">${c.participantName||'—'}</td>
             <td style="color:#6b7280;font-size:12px">${c.invoiceNo||'—'}</td>
-            <td style="font-size:12px;color:#6b7280">${c.createdOn||''}${c.closedDate?`<div style='font-size:10px;color:#059669;font-weight:600'>Closed ${c.closedDate}</div>`:''}</td>
+            <td style="font-size:12px;color:#6b7280">${c.createdOn||''}${c.closedDate?`<div style='font-size:10px;color:#374151;font-weight:600'>🔒 Closed ${c.closedDate}</div>`:''}</td>
             <td style="font-weight:700;color:#1e40af">$${parseFloat(c.claimAmount||0).toLocaleString()}</td>
             <td style="font-weight:700;color:#059669">${c.acceptedAmount?'$'+parseFloat(c.acceptedAmount).toLocaleString():'—'}</td>
             <td style="font-weight:600;color:#dc2626">${c.costIncurred?'$'+parseFloat(c.costIncurred).toLocaleString():'—'}</td>
@@ -915,8 +914,8 @@ function openModal(mode,idOrData){
     const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
     const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
     const curStatus=d.status||'Pending';
-    const isApproved=curStatus==='Approved'||curStatus==='Closed — Approved';
-    const isRejected=curStatus==='Rejected'||curStatus==='Closed — Rejected';
+    const isApproved=curStatus==='Approved'||curStatus==='Closed';
+    const isRejected=curStatus==='Rejected';
     const isResubmitted=curStatus==='Resubmitted';
     const showExtraFields=isApproved||isRejected||isResubmitted;
 
@@ -944,7 +943,7 @@ function openModal(mode,idOrData){
       </div>
       <div class="form-group"><label class="form-label">Claim Status</label>
         <select class="form-select" name="status" id="claim-status-sel" onchange="updateClaimStatusFields(this.value,${JSON.stringify(d.claimAmount||0)})">
-          ${['Pending','Submitted','Approved','Rejected','Resubmitted','Closed — Approved','Closed — Rejected'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
+          ${['Pending','Submitted','Approved','Rejected','Resubmitted','Closed'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
         </select>
       </div>
       <div id="claim-extra-fields"></div>
@@ -1093,11 +1092,11 @@ function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const 
 function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
 function updateClaimStatusFields(status, claimAmount){
   const extra=document.getElementById('claim-extra-fields');if(!extra)return;
-  const show=['Approved','Rejected','Resubmitted','Closed — Approved','Closed — Rejected'].includes(status);
+  const show=['Approved','Rejected','Resubmitted','Closed'].includes(status);
   extra.style.display=show?'':'none';
   if(!show)return;
-  const isApproved=status==='Approved'||status==='Closed — Approved';
-  const isRejected=status==='Rejected'||status==='Closed — Rejected';
+  const isApproved=status==='Approved'||status==='Closed';
+  const isRejected=status==='Rejected';
   const isResubmitted=status==='Resubmitted';
   const amt=parseFloat(claimAmount)||0;
   const ed=window._claimData||{}; // existing data for pre-population
@@ -1113,31 +1112,30 @@ function updateClaimStatusFields(status, claimAmount){
         </div>
       </div>
       <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
-      <div style="font-size:11px;color:#065f46;margin-top:4px">💡 Saving will close this claim as <strong>Closed — Approved</strong></div>
+      <div style="font-size:11px;color:#065f46;margin-top:4px">💡 Saving will close this claim as <strong>Closed</strong></div>
     </div>`
   :isRejected?`
     <div style="background:#fef2f2;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #fecaca">
       <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">❌ Rejection Details</div>
-      <div class="form-group"><label class="form-label">Rejection Reason</label><textarea class="form-textarea" name="rejectionReason" placeholder="Why was this claim rejected?"></textarea></div>
-      <div class="form-group"><label class="form-label">Rejected On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-      <div class="form-group"><label class="form-label">Next Action</label>
+      <div class="form-group"><label class="form-label">Rejection Reason</label><textarea class="form-textarea" name="rejectionReason" placeholder="Why was this claim rejected?">${ed.rejectionReason||''}</textarea></div>
+      <div class="form-group"><label class="form-label">Rejected On</label><input class="form-input" name="statusDate" type="date" value="${ed.statusDate||new Date().toISOString().slice(0,10)}"></div>
+      <div class="form-group"><label class="form-label">Next Steps</label>
         <select class="form-select" name="nextAction" onchange="updateNextAction(this.value)">
-          <option value="">— Select next action —</option>
-          <option value="Resubmit">Resubmit Claim</option>
-          <option value="Final Decision">Final Decision (close out)</option>
+          <option value="">— Select next steps —</option>
+          <option value="Resubmit" ${ed.nextAction==='Resubmit'?'selected':''}>Resubmit Claim</option>
+          <option value="Write Off" ${ed.nextAction==='Write Off'?'selected':''}>Write Off (close out)</option>
         </select>
       </div>
-      <div id="resubmit-info" style="display:none">
+      <div id="resubmit-info" style="${ed.nextAction==='Resubmit'?'':'display:none'}">
         <div style="background:#ede9fe;border-radius:7px;padding:10px;margin-bottom:8px">
-          <div style="font-size:12px;font-weight:700;color:#5b21b6;margin-bottom:3px">🔄 Resubmission</div>
-          <div style="font-size:12px;color:#5b21b6">Saving will move this claim to <strong>Resubmitted</strong> status and log today's date.</div>
+          <div style="font-size:12px;font-weight:700;color:#5b21b6;margin-bottom:3px">🔄 Will move to Resubmitted</div>
+          <div style="font-size:12px;color:#5b21b6">Full history is copied across. Status becomes <strong>Resubmitted</strong>.</div>
         </div>
       </div>
-      <div id="final-decision-info" style="display:none">
+      <div id="final-decision-info" style="${ed.nextAction==='Write Off'?'':'display:none'}">
         <div style="background:#f3f4f6;border-radius:7px;padding:10px;margin-bottom:8px">
-          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">🔒 Final Decision Details</div>
-          <div class="form-group"><label class="form-label">Final Decision Notes</label><textarea class="form-textarea" name="finalDecisionNotes" placeholder="Details of the final decision from CTF…"></textarea></div>
-          <div style="font-size:11px;color:#6b7280">Saving will close this claim as <strong>Closed — Rejected</strong>. Cost to business = full claim amount.</div>
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">🔒 Write Off</div>
+          <div style="font-size:11px;color:#6b7280">Claim will be <strong>Closed</strong>. Full claim amount becomes cost to business.</div>
         </div>
       </div>
     </div>`
@@ -1205,31 +1203,31 @@ function submitClaim(){
   // ── Status transition logic ──
   const nextAction=d.nextAction||'';
 
-  // Approved → auto-close, calc cost
+  // Approved → auto-close, calc cost to business = claimed - accepted
   if(d.status==='Approved'){
     const claimed=parseFloat(d.claimAmount||0);
     const accepted=parseFloat(d.acceptedAmount||0);
     d.costIncurred=(claimed-accepted).toFixed(2);
-    d.status='Closed — Approved';
+    d.status='Closed';
     d.closedDate=today;
-    newNotes.push({text:`Claim approved. Accepted: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred}`,author:'System',date:today,status:'Closed — Approved'});
+    newNotes.push({text:`✅ Claim approved. Approved amount: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred}`,author:'System',date:today,status:'Closed'});
   }
 
-  // Rejected + Resubmit → move to Resubmitted
+  // Rejected + Resubmit → copy history, move to Resubmitted
   if(d.status==='Rejected'&&nextAction==='Resubmit'){
     d.status='Resubmitted';
     d.resubmittedDate=today;
-    if(!d.statusDate)d.statusDate=today;
     d.costIncurred=0;
-    newNotes.push({text:`Claim resubmitted after rejection. Reason: ${d.rejectionReason||'Not specified'}`,author:'System',date:today,status:'Resubmitted'});
+    newNotes.push({text:`🔄 Resubmitted after rejection. Rejection reason: ${d.rejectionReason||'Not specified'}`,author:'System',date:today,status:'Resubmitted'});
   }
 
-  // Rejected + Final Decision → close out
-  if(d.status==='Rejected'&&nextAction==='Final Decision'){
-    d.status='Closed — Rejected';
+  // Rejected + Write Off → close, full claim = cost to business
+  if(d.status==='Rejected'&&nextAction==='Write Off'){
+    d.status='Closed';
     d.closedDate=today;
-    d.costIncurred=d.claimAmount; // full claim = cost to business
-    newNotes.push({text:`Final decision — claim closed. ${d.finalDecisionNotes||''}`,author:'System',date:today,status:'Closed — Rejected'});
+    d.costIncurred=d.claimAmount;
+    d.acceptedAmount=0;
+    newNotes.push({text:`🔒 Written off. Full claim amount ($${parseFloat(d.claimAmount||0).toLocaleString()}) recorded as cost to business.`,author:'System',date:today,status:'Closed'});
   }
 
   // Resubmitted → log updated date
