@@ -497,12 +497,13 @@ function render(){
     const pend=requests.filter(r=>r.status==='Pending'||r.status==='Under Review').length;
     const committed=getCommitted();
     const proj=budget.projected||0,barPct=proj>0?Math.min(100,Math.round(committed/proj*100)):0,variance=proj-committed;
+    const closedCostBusiness=claims.filter(c=>c.status==='Closed — Approved'||c.status==='Closed — Rejected').reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0);
     const cards=[
       {icon:'👥',label:'Participants',value:participants.length,sub:'In directory',color:'#0891b2'},
       {icon:'🎓',label:'Apprentices',value:apprentices.length,sub:`${atRisk} at risk`,color:'#1e40af'},
       {icon:'📋',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
       {icon:'📨',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
-      {icon:'💰',label:'Cost to Business',value:`$${claims.reduce((s,c)=>s+(parseFloat(c.costIncurred)||0),0).toLocaleString()}`,sub:`${claims.length} claims tracked`,color:'#059669'},
+      {icon:'💰',label:'Cost to Business',value:`$${closedCostBusiness.toLocaleString()}`,sub:`${claims.filter(c=>c.status==='Closed — Approved'||c.status==='Closed — Rejected').length} closed claims`,color:'#059669'},
     ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18">${s.icon}</div><div><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
     const atRiskBanner=atRisk>0?`<div class="alert-banner">⚠️ <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
     content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
@@ -610,9 +611,11 @@ function render(){
       {key:'all',label:'All Claims',color:'#374151'},
       {key:'Pending',label:'Pending',color:'#d97706'},
       {key:'Submitted',label:'Submitted',color:'#2563eb'},
+      {key:'Resubmitted',label:'Resubmitted',color:'#7c3aed'},
       {key:'Approved',label:'Approved',color:'#059669'},
       {key:'Rejected',label:'Rejected',color:'#dc2626'},
-      {key:'Resubmitted',label:'Resubmitted',color:'#7c3aed'},
+      {key:'Closed — Approved',label:'✅ Closed',color:'#065f46'},
+      {key:'Closed — Rejected',label:'❌ Closed',color:'#6b7280'},
     ];
     const tabBar=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
       ${STATUS_TABS.map(t=>`<button onclick="window._claimTab='${t.key}';render()" style="padding:7px 14px;border-radius:20px;border:2px solid ${t.color};background:${claimTab===t.key?t.color:'#fff'};color:${claimTab===t.key?'#fff':t.color};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">
@@ -632,17 +635,19 @@ function render(){
       <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">✅</div><div><div class="stat-value">$${totalAccepted.toLocaleString()}</div><div class="stat-label">Accepted</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#fef2f2">🏢</div><div><div class="stat-value">$${totalCost.toLocaleString()}</div><div class="stat-label">Cost to Business</div></div></div>
     </div>`;
-    const STATUS_COLORS={Pending:'#d97706',Submitted:'#2563eb',Approved:'#059669',Rejected:'#dc2626',Resubmitted:'#7c3aed'};
+    const STATUS_COLORS={Pending:'#d97706',Submitted:'#2563eb',Approved:'#059669',Rejected:'#dc2626',Resubmitted:'#7c3aed','Closed — Approved':'#065f46','Closed — Rejected':'#6b7280'};
     const rows=fil.length===0
       ? `<tr><td colspan="10" class="empty">No claims in this category.</td></tr>`
       : fil.map(c=>{
           const sc=STATUS_COLORS[c.status]||'#6b7280';
-          return `<tr>
+          const isClosed=c.status==='Closed — Approved'||c.status==='Closed — Rejected';
+          const rowBg=c.status==='Closed — Approved'?'background:#f0fdf4':c.status==='Closed — Rejected'?'background:#f9fafb;opacity:.85':'';
+          return `<tr style="${rowBg}">
             <td><div style="font-size:10px;font-weight:700;color:#9ca3af">${c.internalClaimId||''}</div><div style="font-weight:700">${c.title||''}</div><div style="font-size:11px;color:#6b7280">${c.claimType||''}</div></td>
             <td style="color:#6b7280;font-size:12px">${c.ctfClaimId||'—'}</td>
             <td style="font-weight:600">${c.participantName||'—'}</td>
             <td style="color:#6b7280;font-size:12px">${c.invoiceNo||'—'}</td>
-            <td style="font-size:12px;color:#6b7280">${c.createdOn||''}</td>
+            <td style="font-size:12px;color:#6b7280">${c.createdOn||''}${c.closedDate?`<div style='font-size:10px;color:#059669;font-weight:600'>Closed ${c.closedDate}</div>`:''}</td>
             <td style="font-weight:700;color:#1e40af">$${parseFloat(c.claimAmount||0).toLocaleString()}</td>
             <td style="font-weight:700;color:#059669">${c.acceptedAmount?'$'+parseFloat(c.acceptedAmount).toLocaleString():'—'}</td>
             <td style="font-weight:600;color:#dc2626">${c.costIncurred?'$'+parseFloat(c.costIncurred).toLocaleString():'—'}</td>
@@ -908,8 +913,8 @@ function openModal(mode,idOrData){
     const pOpts=participants.map(p=>`<option value="${p.name}" ${d.participantName===p.name?'selected':''}>${p.name}</option>`).join('');
     const ctOpts=(claimTypes||[]).map(t=>`<option value="${t}" ${d.claimType===t?'selected':''}>${t}</option>`).join('');
     const curStatus=d.status||'Pending';
-    const isApproved=curStatus==='Approved';
-    const isRejected=curStatus==='Rejected';
+    const isApproved=curStatus==='Approved'||curStatus==='Closed — Approved';
+    const isRejected=curStatus==='Rejected'||curStatus==='Closed — Rejected';
     const isResubmitted=curStatus==='Resubmitted';
     const showExtraFields=isApproved||isRejected||isResubmitted;
 
@@ -937,19 +942,11 @@ function openModal(mode,idOrData){
       </div>
       <div class="form-group"><label class="form-label">Claim Status</label>
         <select class="form-select" name="status" id="claim-status-sel" onchange="updateClaimStatusFields(this.value,${JSON.stringify(d.claimAmount||0)})">
-          ${['Pending','Submitted','Approved','Rejected','Resubmitted'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
+          ${['Pending','Submitted','Approved','Rejected','Resubmitted','Closed — Approved','Closed — Rejected'].map(s=>`<option value="${s}" ${curStatus===s?'selected':''}>${s}</option>`).join('')}
         </select>
       </div>
-      <div id="claim-extra-fields" style="${showExtraFields?'':'display:none'}">
-        <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid #e5e7eb">
-          <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">
-            ${isApproved?'✅ Approval Details':isRejected?'❌ Rejection Details':'🔄 Resubmission Details'}
-          </div>
-          ${isApproved||isResubmitted?`<div class="form-row">${inp('Accepted Amount ($)','acceptedAmount',d.acceptedAmount,'number','0')}${inp('Cost Incurred to Business ($)','costIncurred',d.costIncurred,'number','0')}</div>`:''}
-          ${isRejected?`<div class="form-group"><label class="form-label">Cost Incurred to Business ($)</label><input class="form-input" name="costIncurred" type="number" value="${d.costIncurred||d.claimAmount||0}" placeholder="Auto-set to claim amount"></div>`:''}
-          ${inp(isApproved?'Approved On':isRejected?'Rejected On':'Resubmitted On','statusDate',d.statusDate,'date')}
-        </div>
-      </div>
+      <div id="claim-extra-fields"></div>
+      <script>setTimeout(()=>updateClaimStatusFields(${JSON.stringify(curStatus)},${JSON.stringify(d.claimAmount||0)}),10);<\/script>
       <div class="form-group"><label class="form-label">Statement of Attainment / Equivalent</label>
         ${d.soaPdfName?`<div class="pdf-preview"><span>🎓</span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
         <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
@@ -1094,22 +1091,76 @@ function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const 
 function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const p=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(p)p.remove();document.getElementById('claim-pdf-drop').style.display='';}
 function updateClaimStatusFields(status, claimAmount){
   const extra=document.getElementById('claim-extra-fields');if(!extra)return;
-  const show=status==='Approved'||status==='Rejected'||status==='Resubmitted';
+  const show=['Approved','Rejected','Resubmitted','Closed — Approved','Closed — Rejected'].includes(status);
   extra.style.display=show?'':'none';
-  // Auto-fill cost to business for Rejected
-  if(status==='Rejected'){
-    const costField=extra.querySelector('[name="costIncurred"]');
-    if(costField&&!costField.value) costField.value=claimAmount||0;
-  }
-  // Auto-fill negative cost for Resubmitted
-  if(status==='Resubmitted'){
-    const costField=extra.querySelector('[name="costIncurred"]');
-    if(costField&&!costField.value) costField.value=-(parseFloat(claimAmount)||0);
-  }
-  // Update section heading
-  const headings={'Approved':'✅ Approval Details','Rejected':'❌ Rejection Details','Resubmitted':'🔄 Resubmission Details'};
-  const h=extra.querySelector('div[style*="font-size:11px"]');
-  if(h&&headings[status])h.textContent=headings[status];
+  if(!show)return;
+  const isApproved=status==='Approved'||status==='Closed — Approved';
+  const isRejected=status==='Rejected'||status==='Closed — Rejected';
+  const isResubmitted=status==='Resubmitted';
+  const amt=parseFloat(claimAmount)||0;
+  extra.innerHTML=isApproved?`
+    <div style="background:#f0fdf4;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #bbf7d0">
+      <div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">✅ Approval Details</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" placeholder="0" oninput="calcCostToBusiness(${amt})">
+        </div>
+        <div class="form-group"><label class="form-label">Cost to Business ($) <span style="font-size:10px;color:#6b7280;font-weight:400">(claim − accepted)</span></label>
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" placeholder="Auto-calculated" readonly style="background:#f1f5f9;color:#374151">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Approved On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div style="font-size:11px;color:#065f46;margin-top:4px">💡 Saving will close this claim as <strong>Closed — Approved</strong></div>
+    </div>`
+  :isRejected?`
+    <div style="background:#fef2f2;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #fecaca">
+      <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">❌ Rejection Details</div>
+      <div class="form-group"><label class="form-label">Rejection Reason</label><textarea class="form-textarea" name="rejectionReason" placeholder="Why was this claim rejected?"></textarea></div>
+      <div class="form-group"><label class="form-label">Rejected On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="form-group"><label class="form-label">Next Action</label>
+        <select class="form-select" name="nextAction" onchange="updateNextAction(this.value)">
+          <option value="">— Select next action —</option>
+          <option value="Resubmit">Resubmit Claim</option>
+          <option value="Final Decision">Final Decision (close out)</option>
+        </select>
+      </div>
+      <div id="resubmit-info" style="display:none">
+        <div style="background:#ede9fe;border-radius:7px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:#5b21b6;margin-bottom:3px">🔄 Resubmission</div>
+          <div style="font-size:12px;color:#5b21b6">Saving will move this claim to <strong>Resubmitted</strong> status and log today's date.</div>
+        </div>
+      </div>
+      <div id="final-decision-info" style="display:none">
+        <div style="background:#f3f4f6;border-radius:7px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">🔒 Final Decision Details</div>
+          <div class="form-group"><label class="form-label">Final Decision Notes</label><textarea class="form-textarea" name="finalDecisionNotes" placeholder="Details of the final decision from CTF…"></textarea></div>
+          <div style="font-size:11px;color:#6b7280">Saving will close this claim as <strong>Closed — Rejected</strong>. Cost to business = full claim amount.</div>
+        </div>
+      </div>
+    </div>`
+  :`
+    <div style="background:#ede9fe;border-radius:8px;padding:13px;margin-bottom:12px;border:1px solid #ddd6fe">
+      <div style="font-size:11px;font-weight:700;color:#5b21b6;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">🔄 Resubmission Details</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Accepted Amount ($)</label>
+          <input class="form-input" name="acceptedAmount" id="accepted-amt" type="number" placeholder="0" oninput="calcCostToBusiness(${amt})">
+        </div>
+        <div class="form-group"><label class="form-label">Cost to Business ($)</label>
+          <input class="form-input" name="costIncurred" id="cost-business" type="number" placeholder="Auto-calculated" readonly style="background:#f1f5f9">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Resubmitted On</label><input class="form-input" name="statusDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+    </div>`;
+}
+function calcCostToBusiness(claimAmtFallback){
+  const claimAmt=parseFloat(document.querySelector('[name="claimAmount"]')?.value||0)||parseFloat(claimAmtFallback||0);
+  const acceptedAmt=parseFloat(document.getElementById('accepted-amt')?.value||0);
+  const costField=document.getElementById('cost-business');
+  if(costField) costField.value=Math.max(0,claimAmt-acceptedAmt).toFixed(2);
+}
+function updateNextAction(val){
+  document.getElementById('resubmit-info').style.display=val==='Resubmit'?'':'none';
+  document.getElementById('final-decision-info').style.display=val==='Final Decision'?'':'none';
 }
 function addClaimNote(){
   const text=document.getElementById('new-claim-note')?.value?.trim();if(!text)return;
@@ -1139,19 +1190,60 @@ function removeClaimType(i){
 function submitClaim(){
   const displayId=window._claimDisplayId||'CLM-'+String(claims.length+1).padStart(4,'0');
   const d=getForm();
-  d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
-  // Auto-calculate cost logic
-  if(d.status==='Rejected'&&!d.costIncurred) d.costIncurred=d.claimAmount;
-  if(d.status==='Resubmitted'&&!d.costIncurred) d.costIncurred=-(parseFloat(d.claimAmount)||0);
+  d.invoicePdf=window._claimPdf;d.invoicePdfName=window._claimPdfName;
+  d.soaPdf=window._claimSoa;d.soaPdfName=window._claimSoaName;
+  const today=new Date().toLocaleDateString('en-AU');
+  const newNotes=window._claimNotes||[];
+
+  // ── Status transition logic ──
+  const nextAction=d.nextAction||'';
+
+  // Approved → auto-close, calc cost
+  if(d.status==='Approved'){
+    const claimed=parseFloat(d.claimAmount||0);
+    const accepted=parseFloat(d.acceptedAmount||0);
+    d.costIncurred=(claimed-accepted).toFixed(2);
+    d.status='Closed — Approved';
+    d.closedDate=today;
+    newNotes.push({text:`Claim approved. Accepted: $${accepted.toLocaleString()}. Cost to business: $${d.costIncurred}`,author:'System',date:today,status:'Closed — Approved'});
+  }
+
+  // Rejected + Resubmit → move to Resubmitted
+  if(d.status==='Rejected'&&nextAction==='Resubmit'){
+    d.status='Resubmitted';
+    d.resubmittedDate=today;
+    if(!d.statusDate)d.statusDate=today;
+    d.costIncurred=0;
+    newNotes.push({text:`Claim resubmitted after rejection. Reason: ${d.rejectionReason||'Not specified'}`,author:'System',date:today,status:'Resubmitted'});
+  }
+
+  // Rejected + Final Decision → close out
+  if(d.status==='Rejected'&&nextAction==='Final Decision'){
+    d.status='Closed — Rejected';
+    d.closedDate=today;
+    d.costIncurred=d.claimAmount; // full claim = cost to business
+    newNotes.push({text:`Final decision — claim closed. ${d.finalDecisionNotes||''}`,author:'System',date:today,status:'Closed — Rejected'});
+  }
+
+  // Resubmitted → log updated date
+  if(d.status==='Resubmitted'){
+    d.lastUpdated=today;
+  }
+
   if(modalMode==='add-claim'){
-    const newNotes=window._claimNotes||[];
-    claims.push({...d,id:Date.now(),internalClaimId:displayId,notes:newNotes});
+    claims.push({...d,id:Date.now(),internalClaimId:displayId,notes:newNotes,createdDate:today});
   } else {
     const existing=claims.find(c=>c.id===editId)||{};
-    const mergedNotes=[...(existing.notes||[]),...(window._claimNotes||[])];
-    claims=claims.map(c=>c.id!==editId?c:{...c,...d,internalClaimId:c.internalClaimId,invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,notes:mergedNotes});
+    const mergedNotes=[...(existing.notes||[]),...newNotes];
+    claims=claims.map(c=>c.id!==editId?c:{...existing,...d,
+      internalClaimId:c.internalClaimId,
+      createdDate:c.createdDate,
+      invoicePdf:window._claimPdf,invoicePdfName:window._claimPdfName,
+      soaPdf:window._claimSoa,soaPdfName:window._claimSoaName,
+      notes:mergedNotes
+    });
   }
-  window._claimNotes=null;
+  window._claimNotes=null;window._pendingStatus=null;
   persist('claims',claims);closeModal();render();
 }
 function deleteClaim(id){if(!confirm('Delete this claim?'))return;claims=claims.filter(c=>c.id!==id);persist('claims',claims);render();}
