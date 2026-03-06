@@ -328,12 +328,15 @@ function disconnectGoogleDrive() {
 async function silentReconnect() {
  if (!localStorage.getItem('th5_gd_connected')) return;
  if (!window.google) { setTimeout(silentReconnect, 800); return; }
- try { getTokenClient().requestAccessToken({ prompt:'' }); } catch(e) {}
+ window._silentReconnect = true;
+ try { getTokenClient().requestAccessToken({ prompt:'' }); } catch(e) { window._silentReconnect = false; }
 }
 
 async function loadFromGoogleDrive() {
  if (!gdToken) return;
- setSaveStatus('Loading from Google Drive…');
+ const silent = window._silentReconnect;
+ window._silentReconnect = false;
+ if (!silent) setSaveStatus('Syncing with Google Drive…');
  try {
  let fileId = gdFileId || localStorage.getItem('th5_gd_fileid');
  if (!fileId) {
@@ -353,8 +356,8 @@ async function loadFromGoogleDrive() {
  if (data.claims) claims = data.claims;
  if (data.claimTypes) claimTypes = data.claimTypes;
  ['participants','apprentices','courses','requests','budget','claims','claimTypes'].forEach(k=>localStorage.setItem('th5_'+k,JSON.stringify(eval(k))));
- setSaveStatus(' Synced with Google Drive'); showToast(' Loaded from Google Drive');
- } catch(e) { setSaveStatus('Load failed — using local data'); }
+ if(!silent){setSaveStatus(' Synced with Google Drive');showToast(' Loaded from Google Drive');}else{setSaveStatus(' All data saved');}
+ } catch(e) { setSaveStatus(' All data saved'); }
 }
 
 async function saveToGoogleDrive() {
