@@ -583,7 +583,7 @@ function render(){
  {icon:'CS',label:'Active Courses',value:active,sub:'Scheduled / Full',color:'#8b5cf6'},
  {icon:'RQ',label:'Pending',value:pend,sub:'Awaiting review',color:'#f59e0b'},
  {icon:'$',label:'Closed Claims',value:`$${closedCostBusiness.toLocaleString()}`,sub:'Approved & written off',color:'#dc2626'},
- {icon:'£',label:'Committed Spend',value:`$${getCommitted().toLocaleString()}`,sub:'Courses + bookings',color:'#7c3aed'},
+ {icon:'CM',label:'Committed Spend',value:`$${getCommitted().toLocaleString()}`,sub:'Courses + bookings',color:'#7c3aed'},
  ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18;color:${s.color};font-size:11px;font-weight:800;font-family:'JetBrains Mono','Courier New',monospace;letter-spacing:-.5px;flex-shrink:0">${s.icon}</div><div style="min-width:0;flex:1"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
  const atRiskBanner=atRisk>0?`<div class="alert-banner"> <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
  content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
@@ -601,12 +601,7 @@ function render(){
  </div>
  </div>
  <div class="dash-grid">
- <div class="dash-card span2"><h3>Upcoming Courses</h3>${(()=>{
-  const sc=courses.filter(x=>x.status!=='Completed');
-  const au=[];apprentices.forEach(a=>(a.courses||[]).forEach(u=>{if(!u.done&&u.date)au.push({name:u.name,date:u.date,apprentice:a.name});}));au.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  if(!sc.length&&!au.length)return '<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>';
-  return '<div style="max-height:280px;overflow-y:auto;margin-top:4px">'+sc.map(x=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #c4b5fd;padding-left:8px"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${x.name}</div><div style="font-size:11px;color:#6b7280">${x.provider||''} · ${formatDate(x.date)||'TBC'}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#6b7280">${(x.participantIds||[]).length} enrolled</div>${bdg(x.status)}</div></div>`).join('')+au.slice(0,8).map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #fde68a;padding-left:8px"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.name}</div><div style="font-size:11px;color:#854d0e">${u.apprentice} · ${formatDate(u.date)}</div></div><div style="text-align:right;flex-shrink:0"><span style="font-size:10px;background:#fef9c3;color:#854d0e;border-radius:10px;padding:2px 7px;font-weight:700">Unit</span></div></div>`).join('')+'</div>';
-})()}</div>
+ <div class="dash-card span2"><h3>Upcoming Courses</h3>${renderDashUpcoming()}</div>
  <div class="dash-card"><h3>Apprentice Progress</h3>${apprentices.length===0?'<div style="color:#9ca3af;font-size:13px">No apprentices yet</div>':apprentices.map(a=>{const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);return `<div class="app-row"><div class="app-row-header"><div><div style="font-weight:700;font-size:13px">${a.name}</div><div style="font-size:10px;color:#6b7280">${a.qualification||''}</div></div><div style="display:flex;align-items:center;gap:5px"><span style="font-weight:800;font-size:12px">${p}%</span>${bdg(s)}</div></div>${pb(p)}<div style="font-size:10px;color:#6b7280;margin-top:2px">${a.courses?a.courses.filter(c=>c.done).length+'/'+a.courses.length+' units':''} · ${d>0?d+'d left':'Overdue'}</div></div>`;}).join('')}</div>
  <div class="dash-card"><h3>Recent Requests</h3>${requests.length===0?'<div style="color:#9ca3af;font-size:13px">No requests</div>':requests.slice(0,6).map(r=>`<div class="req-row"><div><div style="font-weight:700;font-size:13px">${r.employee}</div><div style="font-size:10px;color:#6b7280">${r.course}</div></div><div class="req-badges">${bdg(r.status)}${bdg(r.priority)}</div></div>`).join('')}</div>
  </div>`;
@@ -710,14 +705,14 @@ function render(){
    const showSC=courseFilter==='all'||courseFilter==='courses';
    const showU=courseFilter==='all'||courseFilter==='units';
 
-   const controlBar='<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">'
-     +'<button onclick="window._courseFilter='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid '+(courseFilter==='all'?'var(--accent)':'var(--border)')+';background:'+(courseFilter==='all'?'var(--accent)':'var(--surface)')+';color:'+(courseFilter==='all'?'#fff':'var(--text-secondary)')+';font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">'+(filSC.length+filUnits.length)+'</span></button>'
-     +'<button onclick="window._courseFilter='courses';render()" style="padding:6px 14px;border-radius:20px;border:2px solid '+(courseFilter==='courses'?'#7c3aed':'var(--border)')+';background:'+(courseFilter==='courses'?'#7c3aed':'var(--surface)')+';color:'+(courseFilter==='courses'?'#fff':'var(--text-secondary)')+';font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Short Courses <span style="opacity:.7">'+filSC.length+'</span></button>'
-     +'<button onclick="window._courseFilter='units';render()" style="padding:6px 14px;border-radius:20px;border:2px solid '+(courseFilter==='units'?'#d97706':'var(--border)')+';background:'+(courseFilter==='units'?'#d97706':'var(--surface)')+';color:'+(courseFilter==='units'?'#fff':'var(--text-secondary)')+';font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Apprentice Units <span style="opacity:.7">'+allUnits.length+'</span></button>'
-     +'<select onchange="window._courseSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">'
-     +'<option value="date"'+(courseSort==='date'?' selected':'')+'>Date</option>'
-     +'<option value="name"'+(courseSort==='name'?' selected':'')+'>Name A–Z</option>'
-     +'</select></div>';
+   const controlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+     <button onclick="window._courseFilter='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='all'?'var(--accent)':'var(--border)'};background:${courseFilter==='all'?'var(--accent)':'var(--surface)'};color:${courseFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${filSC.length+filUnits.length}</span></button>
+     <button onclick="window._courseFilter='courses';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='courses'?'#7c3aed':'var(--border)'};background:${courseFilter==='courses'?'#7c3aed':'var(--surface)'};color:${courseFilter==='courses'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Short Courses <span style="opacity:.7">${filSC.length}</span></button>
+     <button onclick="window._courseFilter='units';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='units'?'#d97706':'var(--border)'};background:${courseFilter==='units'?'#d97706':'var(--surface)'};color:${courseFilter==='units'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Apprentice Units <span style="opacity:.7">${allUnits.length}</span></button>
+     <select onchange="window._courseSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">
+       <option value="date" ${courseSort==='date'?'selected':''}>Date</option>
+       <option value="name" ${courseSort==='name'?'selected':''}>Name A–Z</option>
+     </select></div>`;
 
    const scHtml=(showSC?filSC:[] ).map(x=>`<div class="course-card" style="border-left:3px solid #c4b5fd"><div class="course-main"><div class="course-name-row"><span class="course-name">${x.name}</span><span class="badge" style="background:#ede9fe;color:#5b21b6"><span class="badge-dot" style="background:#8b5cf6"></span>Short Course</span>${bdg(x.status)}</div><div style="font-size:12px;color:#6b7280;margin-bottom:4px">${x.provider||'—'} · ${formatDate(x.date)}</div>${getPNames(x.participantIds)?`<div style="font-size:12px;color:#374151;margin-bottom:4px">${getPNames(x.participantIds)}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}${x.invoiceNo?`<span style="font-size:11px;font-weight:600;color:#6366f1">${x.invoiceNo}${x.invoiceNotes?' — '+x.invoiceNotes:''}</span>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0"><div style="display:flex;gap:14px"><div style="text-align:center"><div style="font-size:16px;font-weight:800">${(x.participantIds||[]).length}/${x.seats}</div><div style="font-size:10px;color:#6b7280">Seats</div></div><div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(x.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><button class="btn-sm btn-green" onclick="openModal('enrol-course',${x.id})">Enrol</button>${(x.participantIds||[]).length>0?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${x.id})">Email</button>`:''}${(x.participantIds||[]).length>0?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${x.id})">Remind</button>`:''}<button class="btn-sm btn-green" onclick="openModal('manage-certs',${x.id})">Documents</button><button class="btn-sm btn-edit" onclick="openModal('edit-course',${x.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteCourse(${x.id})">Del</button></div></div></div>`).join('');
 
@@ -1562,6 +1557,30 @@ function convertBookingToCourse(id){
   bookings=bookings.map(b=>b.id===id?{...b,status:'Converted',courseId:newCourse.id}:b);
   persist('courses',courses);persist('bookings',bookings);
   showToast('Course created in Upcoming Courses');render();
+}
+
+function renderDashUpcoming(){
+  const sc=courses.filter(x=>x.status!=='Completed');
+  const au=[];
+  apprentices.forEach(a=>(a.courses||[]).forEach(u=>{
+    if(!u.done&&u.date)au.push({name:u.name,date:u.date,apprentice:a.name});
+  }));
+  au.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!sc.length&&!au.length)return '<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>';
+  const scHtml=sc.map(x=>{
+    const enrolled=(x.participantIds||[]).length;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #c4b5fd;padding-left:8px">'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+x.name+'</div>'
+      +'<div style="font-size:11px;color:#6b7280">'+(x.provider||'')+' &middot; '+(formatDate(x.date)||'TBC')+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#6b7280">'+enrolled+' enrolled</div>'+bdg(x.status)+'</div></div>';
+  }).join('');
+  const auHtml=au.slice(0,8).map(u=>{
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #fde68a;padding-left:8px">'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+u.name+'</div>'
+      +'<div style="font-size:11px;color:#854d0e">'+u.apprentice+' &middot; '+formatDate(u.date)+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0"><span style="font-size:10px;background:#fef9c3;color:#854d0e;border-radius:10px;padding:2px 7px;font-weight:700">Unit</span></div></div>';
+  }).join('');
+  return '<div style="max-height:280px;overflow-y:auto;margin-top:4px">'+scHtml+auHtml+'</div>';
 }
 
 updateSyncUI();
