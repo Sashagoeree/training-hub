@@ -1519,8 +1519,19 @@ function toggleReqParticipant(pid){
 function submitEditRequest(){
   const d=getForm();
   d.participants=Array.from(window._reqParticipants||[]);
+  const prevReq=requests.find(r=>r.id===editId);
+  const wasApproved=prevReq&&prevReq.status==='Approved';
   requests=requests.map(r=>r.id===editId?{...r,...d}:r);
   persist('requests',requests);
+  // Auto-create booking when status flips to Approved
+  if(d.status==='Approved'&&!wasApproved){
+    const r=requests.find(x=>x.id===editId);
+    if(r&&!bookings.find(b=>b.requestId===r.id)){
+      bookings.push({id:Date.now(),requestId:r.id,employee:r.employee,department:r.department||'',course:r.course,reason:r.reason||'',priority:r.priority||'Medium',participants:d.participants||[],provider:'',date:'',cost:'',seats:'',notes:'',status:'To Be Booked',approver:d.approver||r.approver||'',created:new Date().toLocaleDateString('en-AU')});
+      persist('bookings',bookings);
+      showToast('Approved — booking record created in Training to be Booked');
+    }
+  }
   window._reqParticipants=null;
   closeModal();render();
 }
