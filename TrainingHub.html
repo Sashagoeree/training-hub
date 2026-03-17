@@ -39,35 +39,44 @@
  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
  --shadow-lg:0 20px 48px rgba(0,0,0,.14),0 8px 16px rgba(0,0,0,.06);
 }
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
+/* Thin scrollbars globally */
+*{scrollbar-width:thin;scrollbar-color:#d0d5dd transparent}
+*::-webkit-scrollbar{width:5px;height:5px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:10px}
+*::-webkit-scrollbar-thumb:hover{background:#9aa3b4}
 .layout{display:flex;height:100vh;overflow:hidden}
+.sidebar-wrap{position:relative;flex-shrink:0}
 
 /* ── SIDEBAR ── */
-.sidebar{width:232px;background:var(--sidebar-bg);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;flex-shrink:0;overflow-y:auto}
+.sidebar{width:232px;background:var(--sidebar-bg);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;flex-shrink:0;overflow-y:auto;transition:width .2s ease}
+
+.nav-section{font-size:9px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:1.4px;padding:16px 18px 5px;font-family:'JetBrains Mono','Courier New',monospace}
 .brand{padding:20px 18px 16px;border-bottom:1px solid var(--sidebar-border)}
 .brand h1{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2}
 .brand p{font-size:11px;color:var(--sidebar-text);margin-top:3px;letter-spacing:.2px}
-.nav-section{font-size:10px;font-weight:700;color:#3d4a5c;text-transform:uppercase;letter-spacing:1.2px;padding:18px 18px 6px;font-family:'JetBrains Mono','Courier New',monospace}
-.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 18px;border:none;cursor:pointer;background:transparent;color:var(--sidebar-text);font-weight:500;font-size:13px;text-align:left;width:100%;font-family:'Inter',sans-serif;transition:all .12s;position:relative}
-.nav-btn:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}
-.nav-btn.active{color:#fff;background:rgba(26,86,219,.15)}
-.nav-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);height:60%;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
-.nav-icon{font-size:11px;width:16px;text-align:center;flex-shrink:0;opacity:.6;font-family:serif}
-.nav-btn.active .nav-icon{opacity:1}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:7px 16px;border:none;cursor:pointer;background:transparent;color:var(--sidebar-text);font-weight:500;font-size:13px;text-align:left;width:100%;font-family:'Inter',sans-serif;transition:all .12s;position:relative;border-radius:6px;margin:1px 6px;width:calc(100% - 12px)}
+.nav-btn:hover{color:#e2e8f0;background:rgba(255,255,255,.06)}
+.nav-btn.active{color:#fff;background:rgba(26,86,219,.18);font-weight:600}
+.nav-btn.active::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);height:60%;width:3px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-icon{display:flex;align-items:center;justify-content:center;width:18px;flex-shrink:0}
+.nav-btn.active .nav-icon{opacity:1} .nav-btn.active .nav-icon svg{opacity:1} .nav-icon svg{opacity:.7}
 .badge-red{margin-left:auto;background:#e53e3e;color:#fff;border-radius:20px;font-size:9px;padding:1px 6px;font-weight:700;font-family:'JetBrains Mono','Courier New',monospace}
 .sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--sidebar-border);font-size:10px;color:#3d4a5c;line-height:1.6}
 
 /* ── MAIN ── */
-.main{flex:1;padding:28px 32px;overflow-y:auto;min-width:0;height:100vh}
+.main{flex:1;padding:28px 32px;overflow-y:auto;min-width:0;height:100vh;transition:padding .2s ease}
 .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;gap:12px;flex-wrap:wrap}
-.page-title{font-size:20px;font-weight:800;color:var(--text-primary);letter-spacing:-.3px}
+.page-title{font-size:22px;font-weight:800;color:var(--text-primary);letter-spacing:-.4px}
 .page-sub{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500}
 .header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .search-input{border:1.5px solid var(--border);border-radius:var(--radius);padding:7px 12px;font-size:13px;outline:none;width:200px;background:var(--surface);font-family:inherit;color:var(--text-primary);transition:border-color .15s}
 .search-input:focus{border-color:var(--accent)}
 .search-input::placeholder{color:var(--text-muted)}
-.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px 16px;font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;white-space:nowrap;transition:background .15s;letter-spacing:.1px}
-.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px 18px;font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;white-space:nowrap;transition:all .15s;letter-spacing:.1px;box-shadow:0 1px 3px rgba(26,86,219,.25)}
+.btn-primary:hover{background:var(--accent-hover);box-shadow:0 2px 6px rgba(26,86,219,.35);transform:translateY(-1px)}
 .btn-secondary{background:var(--surface);color:var(--text-secondary);border:1.5px solid var(--border);border-radius:var(--radius);padding:7px 13px;font-weight:600;cursor:pointer;font-size:12px;font-family:inherit;transition:all .15s}
 .btn-secondary:hover{background:var(--surface-2);border-color:var(--border-strong)}
 
@@ -75,7 +84,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
 .stat-card{background:var(--surface);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border);display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);overflow:hidden;min-width:0}
 .stat-icon{border-radius:var(--radius);width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;font-weight:700}
-.stat-value{font-size:clamp(14px,2vw,20px);font-weight:800;line-height:1;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.stat-value{font-size:clamp(16px,2vw,22px);font-weight:800;line-height:1;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 .stat-sub{font-size:10px;font-weight:600;margin-top:3px}
 
@@ -87,7 +96,7 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 .budget-lbl{font-size:11px;color:var(--text-muted);margin-top:3px;font-weight:500}
 .budget-bar-wrap{background:var(--border);border-radius:8px;height:4px;margin-top:12px;overflow:hidden}
 .budget-bar{height:100%;border-radius:8px}
-.badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;letter-spacing:.1px}
 .badge-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
 .progress-wrap{background:var(--border);border-radius:8px;height:5px;width:100%;overflow:hidden}
 .progress-bar{height:100%;border-radius:8px}
@@ -95,13 +104,13 @@ body{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--
 /* ── TABLES ── */
 .table-wrap{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse}
-thead tr{background:var(--surface-2);border-bottom:1.5px solid var(--border)}
+thead tr{background:#f1f3f7;border-bottom:2px solid var(--border)}
 th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;font-family:'JetBrains Mono','Courier New',monospace}
 td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px;color:var(--text-primary)}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surface-2)}
-.btn-sm{border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-size:11px;font-weight:600;font-family:inherit;white-space:nowrap;transition:opacity .15s}
-.btn-sm:hover{opacity:.8}
+tr:nth-child(even) td{background:#fafbfc} tr:hover td{background:#eef2ff!important;transition:background .1s}
+.btn-sm{border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:600;font-family:inherit;white-space:nowrap;transition:all .12s}
+.btn-sm:hover{opacity:.85;transform:translateY(-1px)}
 .btn-edit{background:var(--accent-light);color:var(--accent)}
 .btn-del{background:var(--danger-light);color:var(--danger)}
 .btn-green{background:var(--success-light);color:var(--success)}
@@ -110,7 +119,7 @@ tr:hover td{background:var(--surface-2)}
 
 /* ── COURSE CARDS ── */
 .course-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;box-shadow:var(--shadow);transition:box-shadow .15s}
-.course-card:hover{box-shadow:var(--shadow-md)}
+.course-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .course-main{flex:1;min-width:0}
 .course-name-row{display:flex;gap:7px;align-items:center;margin-bottom:3px;flex-wrap:wrap}
 .course-name{font-weight:700;font-size:14px;color:var(--text-primary)}
@@ -166,7 +175,7 @@ tr:hover td{background:var(--surface-2)}
 .enrol-check.on{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(13,17,23,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(13,17,23,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);animation:fadeIn .15s ease}
 .modal-box{background:var(--surface);border-radius:16px;padding:26px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .modal-title{font-size:16px;font-weight:800;color:var(--text-primary);letter-spacing:-.2px}
@@ -174,8 +183,8 @@ tr:hover td{background:var(--surface-2)}
 .modal-close:hover{background:var(--danger-light);color:var(--danger);border-color:#fecaca}
 .form-group{margin-bottom:14px}
 .form-label{display:block;font-size:10px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;font-family:'JetBrains Mono','Courier New',monospace}
-.form-input,.form-select,.form-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 11px;font-size:13px;outline:none;background:var(--surface);font-family:inherit;color:var(--text-primary);transition:border-color .15s}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);background:#fff}
+.form-input,.form-select,.form-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:13px;outline:none;background:var(--surface);font-family:inherit;color:var(--text-primary);transition:all .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.08)}
 .form-textarea{resize:vertical;min-height:60px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
@@ -197,7 +206,7 @@ tr:hover td{background:var(--surface-2)}
 
 /* ── PDF ── */
 .pdf-upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;background:var(--surface-2);transition:all .15s}
-.pdf-upload-area:hover{border-color:var(--accent);background:var(--accent-light)}
+.pdf-upload-area:hover,.pdf-upload-area.drag-over{border-color:var(--accent);background:var(--accent-light);border-style:solid}
 .pdf-preview{background:var(--accent-light);border-radius:var(--radius);padding:9px 12px;display:flex;align-items:center;gap:9px;margin-top:7px;border:1px solid #bfdbfe}
 .pdf-preview-name{font-size:12px;font-weight:600;color:var(--accent);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
@@ -207,7 +216,7 @@ tr:hover td{background:var(--surface-2)}
 /* ── DASH ── */
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 .dash-card{background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.dash-card h3{margin:0 0 13px;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;font-family:'JetBrains Mono','Courier New',monospace}
+.dash-card h3{margin:0 0 14px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono','Courier New',monospace;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .app-row{margin-bottom:12px}
 .app-row-header{display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;gap:8px}
 .req-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -230,25 +239,25 @@ tr:hover td{background:var(--surface-2)}
 </head>
 <body>
 <div class="layout">
- <div class="sidebar">
- <div class="brand"><h1> Training Hub</h1><p id="save-status"> All data saved</p></div>
- <div class="nav-section">Overview</div>
- <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon">—</span>Dashboard</button>
- <button class="nav-btn" data-tab="calendar"><span class="nav-icon">—</span>Calendar</button>
+ <div class="sidebar-wrap">
+<div class="sidebar" id="sidebar">
+ <div class="brand"><h1> Training Hub</h1><p id="save-status"> All data saved</p></div><div class="nav-section">Overview</div>
+ <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>Dashboard</button>
+ <button class="nav-btn" data-tab="calendar"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Calendar</button>
  <div class="nav-section">People</div>
- <button class="nav-btn" data-tab="participants"><span class="nav-icon">—</span>Participants</button>
- <button class="nav-btn" data-tab="apprentices"><span class="nav-icon">—</span>Apprentices</button>
+ <button class="nav-btn" data-tab="participants"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Participants</button>
+ <button class="nav-btn" data-tab="apprentices"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>Apprentices</button>
  <div class="nav-section">Training</div>
- <button class="nav-btn" data-tab="requests"><span class="nav-icon">—</span>Requests</button>
- <button class="nav-btn" data-tab="bookings"><span class="nav-icon">—</span>Training to be Booked</button>
- <button class="nav-btn" data-tab="courses"><span class="nav-icon">—</span>Upcoming Courses</button>
- <button class="nav-btn" data-tab="completed"><span class="nav-icon">—</span>Completed Courses</button>
+ <button class="nav-btn" data-tab="requests"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Requests</button>
+ <button class="nav-btn" data-tab="bookings"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Training to be Booked</button>
+ <button class="nav-btn" data-tab="courses"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>Upcoming Courses</button>
+ <button class="nav-btn" data-tab="completed"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Completed Courses</button>
  <div class="nav-section">Data</div>
- <button class="nav-btn" data-tab="claims"><span class="nav-icon">—</span>Claims Tracker</button>
- <button class="nav-btn" data-tab="export"><span class="nav-icon">—</span>Export / Power BI</button>
+ <button class="nav-btn" data-tab="claims"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>Claims Tracker</button>
+ <button class="nav-btn" data-tab="export"><span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Export / Power BI</button>
  <div class="sidebar-footer" id="sidebar-footer">Data saves automatically<br>to your browser</div>
  <div style="padding:8px 4px 4px" id="sync-btn"></div>
- </div>
+ </div></div>
  <div class="main" id="main"></div>
 </div>
 
@@ -264,10 +273,10 @@ tr:hover td{background:var(--surface-2)}
 // ── DEFAULTS ──────────────────────────────────────────────────────────────────
 const DEFAULTS={
  participants:[
- {id:101,name:"Jordan Smith",email:"jordan.smith@company.com",phone:"0412 000 001",department:"Engineering",role:"Apprentice",notes:""},
+ {id:101,name:"Jordan Smith",email:"jordan.smith@company.com",phone:"0412 000 001",department:"Engineering",role:"Apprentice",employmentType:"Employee",notes:""},
  {id:102,name:"Taylor Nguyen",email:"taylor.nguyen@company.com",phone:"0412 000 002",department:"Electrical",role:"Apprentice",notes:""},
  {id:103,name:"Riley Johnson",email:"riley.johnson@company.com",phone:"0412 000 003",department:"Mechanical",role:"Apprentice",notes:""},
- {id:104,name:"Alex Brown",email:"alex.brown@company.com",phone:"0412 000 004",department:"Warehouse",role:"Staff",notes:""},
+ {id:104,name:"Alex Brown",email:"alex.brown@company.com",phone:"0412 000 004",department:"Warehouse",role:"Staff",employmentType:"Labour Hire",notes:""},
  {id:105,name:"Sam Lee",email:"sam.lee@company.com",phone:"0412 000 005",department:"Engineering",role:"Staff",notes:""},
  ],
  apprentices:[
@@ -289,7 +298,8 @@ const DEFAULTS={
  claims:[],
  claimTypes:['AASN Wage Subsidy','Apprenticeship Incentive','Training Supplement','Completion Bonus','Other'],
  departments:['Engineering','Electrical','Mechanical','Warehouse','Admin','HR','Operations','Finance'],
- bookings:[]
+ bookings:[],
+ settings:{apprenticeWarningDays:180}
 };
 
 // ── GOOGLE DRIVE SYNC ─────────────────────────────────────────────────────────
@@ -327,10 +337,9 @@ function disconnectGoogleDrive() {
  updateSyncUI(); render(); showToast('Disconnected from Google Drive');
 }
 
-async function silentReconnect(attempt) {
- attempt=attempt||0;
+async function silentReconnect() {
  if (!localStorage.getItem('th5_gd_connected')) return;
- if (!window.google) { if(attempt<8)setTimeout(()=>silentReconnect(attempt+1),800); return; }
+ if (!window.google) { if((window._srAttempts=(window._srAttempts||0)+1)<8)setTimeout(silentReconnect,800); return; }
  window._silentReconnect = true;
  try { getTokenClient().requestAccessToken({ prompt:'' }); } catch(e) { window._silentReconnect = false; }
 }
@@ -359,7 +368,8 @@ async function loadFromGoogleDrive() {
  if (data.claims) claims = data.claims;
  if (data.claimTypes) claimTypes = data.claimTypes;
  if (data.bookings) bookings = data.bookings;
- ['participants','apprentices','courses','requests','budget','claims','claimTypes','bookings'].forEach(k=>localStorage.setItem('th5_'+k,JSON.stringify(eval(k))));
+ if (data.settings) settings = data.settings;
+ ['participants','apprentices','courses','requests','budget','claims','claimTypes','bookings','settings'].forEach(k=>localStorage.setItem('th5_'+k,JSON.stringify(eval(k))));
  if(!silent){setSaveStatus(' Synced with Google Drive');showToast(' Loaded from Google Drive');}else{setSaveStatus(' All data saved');}
  } catch(e) { setSaveStatus(' All data saved'); }
 }
@@ -367,7 +377,7 @@ async function loadFromGoogleDrive() {
 async function saveToGoogleDrive() {
  if (!gdToken) return;
  setSaveStatus('Saving to Google Drive…');
- const body = JSON.stringify({ participants, apprentices, courses, requests, budget, claims, claimTypes, departments, bookings });
+ const body = JSON.stringify({ participants, apprentices, courses, requests, budget, claims, claimTypes, departments, bookings, settings });
  try {
  if (gdFileId) {
  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${gdFileId}?uploadType=media`, { method:'PATCH', headers:{ Authorization:`Bearer ${gdToken}`,'Content-Type':'application/json' }, body });
@@ -398,7 +408,7 @@ function updateSyncUI() {
 function ld(k){try{const v=localStorage.getItem('th5_'+k);return v?JSON.parse(v):JSON.parse(JSON.stringify(DEFAULTS[k]));}catch{return JSON.parse(JSON.stringify(DEFAULTS[k]));}}
 function sd(k,d){try{localStorage.setItem('th5_'+k,JSON.stringify(d));}catch(e){}}
 
-let participants=ld('participants'),apprentices=ld('apprentices'),courses=ld('courses'),requests=ld('requests'),budget=ld('budget'),claims=ld('claims'),claimTypes=ld('claimTypes'),departments=ld('departments'),bookings=ld('bookings');
+let participants=ld('participants'),apprentices=ld('apprentices'),courses=ld('courses'),requests=ld('requests'),budget=ld('budget'),claims=ld('claims'),claimTypes=ld('claimTypes'),departments=ld('departments'),bookings=ld('bookings'),settings=ld('settings');
 let currentTab='dashboard',searchVal='',editId=null,modalMode=null;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let openPlans=new Set();
@@ -409,8 +419,8 @@ function bdg(l){const c=SC[l]||{bg:"#f3f4f6",text:"#374151",dot:"#9ca3af"};retur
 function pb(v){const col=v>=75?'#10b981':v>=40?'#f59e0b':'#ef4444';return `<div class="progress-wrap"><div class="progress-bar" style="width:${v}%;background:${col}"></div></div>`;}
 function getProgress(a){if(!a.courses||!a.courses.length)return 0;return Math.round(a.courses.filter(c=>c.done).length/a.courses.length*100);}
 function daysLeft(d){if(!d)return 9999;return Math.ceil((new Date(d)-new Date())/86400000);}
-function getStatus(a){const p=getProgress(a),d=daysLeft(a.endDate);if(p===100)return 'Completed';if(d<=180&&p<75)return 'At Risk';return 'On Track';}
-function getCommitted(){const courseCost=courses.filter(c=>c.status==='Scheduled'||c.status==='Full').reduce((s,c)=>s+(parseInt(c.cost)||0),0);const bookingCost=bookings.filter(b=>b.status==='To Be Booked').reduce((s,b)=>s+(parseFloat(b.cost)||0),0);return courseCost+bookingCost;}
+function getStatus(a){const p=getProgress(a),d=daysLeft(a.endDate);const warn=(settings&&settings.apprenticeWarningDays)||180;if(p===100)return 'Completed';if(d<=warn&&p<75)return 'At Risk';return 'On Track';}
+function getCommitted(){const cc=courses.filter(c=>c.status==='Scheduled'||c.status==='Full').reduce((s,c)=>s+(parseInt(c.cost)||0),0);const bc=bookings.filter(b=>b.status!=='Converted').reduce((s,b)=>s+(parseFloat(b.cost)||0),0);return cc+bc;}
 function getPName(id){const p=participants.find(x=>x.id===id);return p?p.name:'';}
 function getPNames(ids){return(ids||[]).map(getPName).filter(Boolean).join(', ');}
 function getTrainingPlan(pid){
@@ -431,15 +441,15 @@ function persist(k,d){
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn=>{
- btn.addEventListener('click',()=>{currentTab=btn.dataset.tab;searchVal='';if(btn.dataset.tab!=='claims'){window._claimTab='all';window._claimSort='date-desc';window._claimFilter='';} if(btn.dataset.tab!=='participants'){window._partFilter='active';window._partSort='name';} if(btn.dataset.tab!=='courses'){window._courseSort='date';window._courseFilter='all';};document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();});
+ btn.addEventListener('click',()=>{currentTab=btn.dataset.tab;searchVal='';if(btn.dataset.tab!=='claims'){window._claimTab='all';window._claimSort='date-desc';window._claimFilter='';} if(btn.dataset.tab!=='participants'){window._partFilter='active';window._partSort='name';window._partType='all';} if(btn.dataset.tab!=='requests'){window._reqFilter='pending';} if(btn.dataset.tab!=='courses'){window._courseSort='date';window._courseFilter='all';} if(btn.dataset.tab!=='bookings'){window._bkTab='pending';window._bkSort='date';} document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();});
 });
 
 function updateReqBadge(){
  const p=requests.filter(r=>r.status==='Pending'||r.status==='Under Review').length;
- const bk=bookings.filter(b=>b.status==='To Be Booked').length;
+ const bk=bookings.filter(b=>b.status!=='Converted').length;
  document.querySelectorAll('.nav-btn').forEach(btn=>{
-   if(btn.dataset.tab==='requests'){const ex=btn.querySelector('.badge-red');if(ex)ex.remove();if(p>0)btn.innerHTML=`<span class="nav-icon">—</span>Requests<span class="badge-red">${p}</span>`;else btn.innerHTML=`<span class="nav-icon">—</span>Requests`;}
-   if(btn.dataset.tab==='bookings'){const ex=btn.querySelector('.badge-red');if(ex)ex.remove();if(bk>0)btn.innerHTML=`<span class="nav-icon">—</span>Training to be Booked<span class="badge-red">${bk}</span>`;else btn.innerHTML=`<span class="nav-icon">—</span>Training to be Booked`;}
+   if(btn.dataset.tab==='requests'){const ex=btn.querySelector('.badge-red');if(ex)ex.remove();if(p>0)btn.innerHTML=`<span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Requests<span class="badge-red">${p}</span>`;else btn.innerHTML=`<span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Requests`;}
+   if(btn.dataset.tab==='bookings'){const ex=btn.querySelector('.badge-red');if(ex)ex.remove();if(bk>0)btn.innerHTML=`<span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Training to be Booked<span class="badge-red">${bk}</span>`;else btn.innerHTML=`<span class="nav-icon" style="display:flex;align-items:center;width:18px;flex-shrink:0;opacity:.7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Training to be Booked`;}
  });
 }
 
@@ -473,7 +483,7 @@ function getCalEvents(){
  (a.courses||[]).forEach((cu,i)=>{
  if(!cu.date||cu.done)return;
  const col={bg:'#fef9c3',text:'#854d0e',border:'#fde68a'};
- events.push({date:cu.date,label:cu.name,sub:a.name,type:'unit',color:col,apprenticeId:a.id,apprenticeName:a.name,qualification:a.qualification||''});
+ events.push({date:cu.date,label:cu.name,sub:a.name,type:'unit',color:col});
  });
  });
  return events;
@@ -517,7 +527,7 @@ function renderCalendar(){window._calEvents=[];
  const evHtml=dayEvents.slice(0,3).map(e=>{
    if(!window._calEvents)window._calEvents=[];
    const idx=window._calEvents.length;window._calEvents.push(e);
-   return `<div class="cal-event" style="background:${e.color.bg};color:${e.color.text};border-left:3px solid ${e.color.border};cursor:pointer" title="${e.label}${e.sub?' — '+e.sub:''}" onclick="openModal('cal-event',window._calEvents[${idx}])">${e.label}</div>`;
+   return `<div class="cal-event" style="background:${e.color.bg};color:${e.color.text};border-left:3px solid ${e.color.border};cursor:pointer" title="${e.label}${e.sub?' - '+e.sub:''}" onclick="openModal('cal-event',window._calEvents[${idx}])">${e.label}</div>`;
  }).join('');
  const more=dayEvents.length>3?`<div style="font-size:10px;color:#6b7280;padding:1px 4px">+${dayEvents.length-3} more</div>`:'';
  return `<div class="cal-day${!current?' other-month':''}${isToday?' today':''}">
@@ -546,16 +556,14 @@ function renderCalendar(){window._calEvents=[];
  </div>`;
 }
 
-function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}render();}
-function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}render();}
-function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMonth();render();}
+
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function render(){
  const main=document.getElementById('main');
  const q=searchVal.toLowerCase();
  const titles={dashboard:'Dashboard',calendar:'Training Calendar',participants:'Participants',apprentices:'Apprentices',courses:'Upcoming Courses',completed:'Completed Courses',requests:'Requests',bookings:'Training to be Booked',claims:'Claims Tracker',export:'Export / Power BI'};
- const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.filter(c=>c.status!=='Completed').length} active courses`,completed:`${courses.filter(c=>c.status==='Completed').length} completed courses`,requests:`${requests.length} training requests`,bookings:`${bookings.length} approved requests awaiting booking`,claims:`${claims.length} claims tracked`,export:'Download CSVs for Power BI'};
+ const subs={dashboard:'Live overview',calendar:'All scheduled training in one view — month by month',participants:`${participants.length} people — training plans collapse/expand per person`,apprentices:`${apprentices.length} apprentices — click name for course checklist`,courses:`${courses.filter(c=>c.status!=='Completed').length} active courses`,completed:`${courses.filter(c=>c.status==='Completed').length} completed courses`,requests:`${requests.length} training requests`,bookings:`${bookings.filter(b=>b.status!=='Converted').length} pending bookings`,claims:`${claims.length} claims tracked`,export:'Download CSVs for Power BI'};
 
  let addBtn='',sb='';
  if(currentTab==='participants')addBtn=`<button class="btn-primary" onclick="openModal('add-participant')">+ Add Person</button>`;
@@ -585,10 +593,10 @@ function render(){
  {icon:'$',label:'Closed Claims',value:`$${closedCostBusiness.toLocaleString()}`,sub:'Approved & written off',color:'#dc2626'},
  {icon:'CM',label:'Committed Spend',value:`$${getCommitted().toLocaleString()}`,sub:'Courses + bookings',color:'#7c3aed'},
  ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s.color}18;color:${s.color};font-size:11px;font-weight:800;font-family:'JetBrains Mono','Courier New',monospace;letter-spacing:-.5px;flex-shrink:0">${s.icon}</div><div style="min-width:0;flex:1"><div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div><div class="stat-sub" style="color:${s.color}">${s.sub}</div></div></div>`).join('');
- const atRiskBanner=atRisk>0?`<div class="alert-banner"> <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
+ const atRiskBanner=atRisk>0?`<div class="alert-banner"> <strong>${apprentices.filter(a=>getStatus(a)==='At Risk').map(a=>a.name).join(', ')}</strong> — under 75% with less than ${(settings&&settings.apprenticeWarningDays)||180} days remaining.</div>`:'';
  content=`<div class="stats-grid">${cards}</div>${atRiskBanner}
  <div class="budget-card">
- <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px"><div style="font-size:14px;font-weight:700"> Training Budget</div><button class="btn-secondary" onclick="openModal('edit-budget')">Edit</button></div>
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px"><div style="font-size:14px;font-weight:700"> Training Budget</div><div style="display:flex;gap:6px"><button class="btn-secondary" onclick="openModal('app-settings')" title="Settings">&#9881; Settings</button><button class="btn-secondary" onclick="openModal('edit-budget')">Edit Budget</button></div></div>
  <div class="budget-grid">
  <div class="budget-item" style="background:#eff6ff"><div class="budget-val" style="color:#1e40af">$${(budget.projected||0).toLocaleString()}</div><div class="budget-lbl">Projected</div><div style="font-size:10px;color:#6b7280;margin-top:2px">Manually set</div></div>
  <div class="budget-item" style="background:#fef9c3"><div class="budget-val" style="color:#854d0e">$${(budget.expected||0).toLocaleString()}</div><div class="budget-lbl">Expected Spend</div><div style="font-size:10px;color:#6b7280;margin-top:2px">Manually set</div></div>
@@ -614,10 +622,12 @@ function render(){
  if(currentTab==='participants'){
   const partFilter=window._partFilter||'active';
   const partSort=window._partSort||'name';
-  const activeCount=participants.filter(p=>p.active!==false).length;
-  const inactiveCount=participants.filter(p=>p.active===false).length;
+  const partType=window._partType||'all';
+  const employeeCount=participants.filter(p=>p.active!==false&&(p.employmentType==='Employee'||!p.employmentType)).length;
+  const labourCount=participants.filter(p=>p.active!==false&&p.employmentType==='Labour Hire').length;
   let fil=participants
     .filter(p=>partFilter==='all'||(partFilter==='active'&&p.active!==false)||(partFilter==='inactive'&&p.active===false))
+    .filter(p=>partType==='all'||p.employmentType===partType||(partType==='Employee'&&!p.employmentType))
     .filter(p=>p.name?.toLowerCase().includes(q)||p.department?.toLowerCase().includes(q)||p.email?.toLowerCase().includes(q));
   fil=[...fil].sort((a,b)=>{
     if(partSort==='name')return(a.name||'').localeCompare(b.name||'');
@@ -625,15 +635,21 @@ function render(){
     if(partSort==='role')return(a.role||'').localeCompare(b.role||'');
     return 0;
   });
-  const partControlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
-    <button onclick="window._partFilter=&apos;active&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='active'?'var(--success)':'var(--border)'};background:${partFilter==='active'?'var(--success)':'var(--surface)'};color:${partFilter==='active'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${activeCount}</span></button>
-    <button onclick="window._partFilter=&apos;inactive&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='inactive'?'var(--danger)':'var(--border)'};background:${partFilter==='inactive'?'var(--danger)':'var(--surface)'};color:${partFilter==='inactive'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Inactive <span style="opacity:.7">${inactiveCount}</span></button>
-    <button onclick="window._partFilter=&apos;all&apos;;render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='all'?'var(--accent)':'var(--border)'};background:${partFilter==='all'?'var(--accent)':'var(--surface)'};color:${partFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${participants.length}</span></button>
+  const partControlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+    <button onclick="window._partFilter='active';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='active'?'var(--success)':'var(--border)'};background:${partFilter==='active'?'var(--success)':'var(--surface)'};color:${partFilter==='active'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${participants.filter(p=>p.active!==false).length}</span></button>
+    <button onclick="window._partFilter='inactive';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='inactive'?'var(--danger)':'var(--border)'};background:${partFilter==='inactive'?'var(--danger)':'var(--surface)'};color:${partFilter==='inactive'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Inactive <span style="opacity:.7">${participants.filter(p=>p.active===false).length}</span></button>
+    <button onclick="window._partFilter='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${partFilter==='all'?'var(--accent)':'var(--border)'};background:${partFilter==='all'?'var(--accent)':'var(--surface)'};color:${partFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${participants.length}</span></button>
     <select onchange="window._partSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">
       <option value="name" ${partSort==='name'?'selected':''}>Name A–Z</option>
       <option value="dept" ${partSort==='dept'?'selected':''}>Department</option>
       <option value="role" ${partSort==='role'?'selected':''}>Role</option>
     </select>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Type:</span>
+    <button onclick="window._partType='all';render()" style="padding:5px 12px;border-radius:20px;border:2px solid ${partType==='all'?'#374151':'var(--border)'};background:${partType==='all'?'#374151':'var(--surface)'};color:${partType==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All</button>
+    <button onclick="window._partType='Employee';render()" style="padding:5px 12px;border-radius:20px;border:2px solid ${partType==='Employee'?'#0891b2':'var(--border)'};background:${partType==='Employee'?'#0891b2':'var(--surface)'};color:${partType==='Employee'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Employee <span style="opacity:.7">${employeeCount}</span></button>
+    <button onclick="window._partType='Labour Hire';render()" style="padding:5px 12px;border-radius:20px;border:2px solid ${partType==='Labour Hire'?'#d97706':'var(--border)'};background:${partType==='Labour Hire'?'#d97706':'var(--surface)'};color:${partType==='Labour Hire'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Labour Hire <span style="opacity:.7">${labourCount}</span></button>
   </div>`;
   if(fil.length===0){content=partControlBar+`<div class="table-wrap"><div class="empty">No participants found.</div></div>`;}
   else{
@@ -643,8 +659,8 @@ function render(){
   const upcoming=plan.filter(x=>x.status!=='Completed');
   const isOpen=openPlans.has(p.id);
   const planHtml=plan.length===0?`<div style="font-size:12px;color:#9ca3af;padding:10px 0">No training recorded yet — enrol in a course to build training plan.</div>`:
-  [...upcoming.map(x=>`<div class="tp-item tp-upcoming"><span style="font-size:14px"></span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.75">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#dbeafe;color:#1e40af">${x.status}</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${formatDate(x.date)}</div>`:''}</div></div>`),
-  ...done.map(x=>{const isDNA=x.status==='Did Not Attend';return `<div class="tp-item" style="background:${isDNA?'#fef2f2':'#f0fdf4'}"><span style="font-size:14px">${isDNA?'':''}</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div>${isDNA&&x.dnaReason?`<div style="font-size:10px;color:#dc2626;margin-top:1px">${x.dnaReason}</div>`:''}</div><div style="text-align:right"><span class="tp-badge" style="background:${isDNA?'#fef2f2':'#d1fae5'};color:${isDNA?'#991b1b':'#065f46'}">${isDNA?'DNA':'Done'}</span>${x.cert?' CERT':''} ${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${formatDate(x.date)}</div>`:''}</div></div>`;})
+  [...upcoming.map(x=>`<div class="tp-item tp-upcoming"><span style="font-size:14px"></span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.75">${x.type} · ${x.provider||''}</div></div><div style="text-align:right"><span class="tp-badge" style="background:#dbeafe;color:#1e40af">${x.status}</span>${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`),
+  ...done.map(x=>{const isDNA=x.status==='Did Not Attend';return `<div class="tp-item" style="background:${isDNA?'#fef2f2':'#f0fdf4'}"><span style="font-size:14px">${isDNA?'':''}</span><div style="flex:1"><div style="font-weight:600">${x.name}</div><div style="font-size:10px;opacity:.7">${x.type} · ${x.provider||''}</div>${isDNA&&x.dnaReason?`<div style="font-size:10px;color:#dc2626;margin-top:1px">${x.dnaReason}</div>`:''}</div><div style="text-align:right"><span class="tp-badge" style="background:${isDNA?'#fef2f2':'#d1fae5'};color:${isDNA?'#991b1b':'#065f46'}">${isDNA?'DNA':'Done'}</span>${x.cert?' CERT':''} ${x.date?`<div style="font-size:10px;color:#6b7280;margin-top:1px">${x.date}</div>`:''}</div></div>`;})
   ].join('');
   return `<div class="participant-card">
   <div class="participant-header">
@@ -652,7 +668,7 @@ function render(){
   <div class="participant-name">${p.name}</div>
   <div class="participant-meta">${[p.role,p.department].filter(Boolean).join(' · ')}</div>
   <div style="font-size:11px;color:#94a3b8;margin-top:2px">${[p.email,p.phone].filter(Boolean).join(' · ')}</div>
-  <div style="margin-top:5px"><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${p.active===false?'#fee2e2':'#d1fae5'};color:${p.active===false?'#991b1b':'#065f46'}">${p.active===false?'Inactive':'Active'}</span></div>
+  <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${p.active===false?'#fee2e2':'#d1fae5'};color:${p.active===false?'#991b1b':'#065f46'}">${p.active===false?'Inactive':'Active'}</span>${p.employmentType==='Labour Hire'?'<span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:#fff7ed;color:#c2410c">Labour Hire</span>':'<span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e0f2fe;color:#0369a1">Employee</span>'}</div>
   </div>
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
   <button id="tp-btn-${p.id}" class="tp-toggle${isOpen?' open':''}" onclick="togglePlan(${p.id})">
@@ -676,12 +692,12 @@ function render(){
  if(currentTab==='apprentices'){
  const fil=apprentices.filter(a=>a.name?.toLowerCase().includes(q)||a.department?.toLowerCase().includes(q));
  const atRiskList=apprentices.filter(a=>getStatus(a)==='At Risk');
- const banner=atRiskList.length>0?`<div class="alert-banner"> <strong>${atRiskList.map(a=>a.name).join(', ')}</strong> — under 75% with less than 6 months remaining.</div>`:'';
+ const banner=atRiskList.length>0?`<div class="alert-banner"> <strong>${atRiskList.map(a=>a.name).join(', ')}</strong> — under 75% with less than ${(settings&&settings.apprenticeWarningDays)||180} days remaining.</div>`:'';
  const rows=fil.length===0?`<tr><td colspan="8" class="empty">No apprentices found.</td></tr>`:fil.map(a=>{
  const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);
  return `<tr><td><span style="font-weight:700;cursor:pointer;color:#1e40af;text-decoration:underline;text-underline-offset:2px" onclick="openModal('view-apprentice',${a.id})">${a.name}</span></td><td style="color:#6b7280">${a.department||''}</td><td style="font-size:12px">${a.qualification||''}</td><td style="color:#6b7280">${a.supervisor||''}</td>
  <td style="width:130px"><div style="display:flex;align-items:center;gap:5px">${pb(p)}<span style="font-weight:700;font-size:11px;min-width:24px">${p}%</span></div><div style="font-size:10px;color:#6b7280;margin-top:2px">${a.courses?a.courses.filter(c=>c.done).length+'/'+a.courses.length+' units':''}</div></td>
- <td style="font-size:12px;color:#6b7280">${formatDate(a.endDate)}<br><span style="font-size:10px">${d>0?d+'d left':'Overdue'}</span></td><td>${bdg(s)}</td>
+ <td style="font-size:12px;color:#6b7280">${a.endDate||''}<br><span style="font-size:10px">${d>0?d+'d left':'Overdue'}</span></td><td>${bdg(s)}</td>
  <td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('view-apprentice',${a.id})">Checklist</button><button class="btn-sm btn-green" onclick="exportApprenticeTranscript(${a.id})">Export</button><button class="btn-sm btn-edit" onclick="openModal('edit-apprentice',${a.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteApprentice(${a.id})">Del</button></div></td></tr>`;}).join('');
  content=`${banner}<div class="table-wrap"><table><thead><tr><th>Name</th><th>Dept</th><th>Qualification</th><th>Supervisor</th><th>Progress</th><th>End Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }
@@ -690,36 +706,33 @@ function render(){
  if(currentTab==='courses'){
    const courseSort=window._courseSort||'date';
    const courseFilter=window._courseFilter||'all';
-
-   let filSC=courses.filter(x=>x.status!=='Completed')
-     .filter(x=>x.name?.toLowerCase().includes(q)||x.provider?.toLowerCase().includes(q));
+   let filSC=courses.filter(x=>x.status!=='Completed').filter(x=>x.name?.toLowerCase().includes(q)||x.provider?.toLowerCase().includes(q));
    filSC.sort((a,b)=>courseSort==='name'?(a.name||'').localeCompare(b.name||''):(a.date||'').localeCompare(b.date||''));
-
    const allUnits=[];
-   apprentices.forEach(a=>(a.courses||[]).forEach(u=>{
-     if(!u.done&&u.date)allUnits.push({name:u.name,date:u.date,apprentice:a.name,appId:a.id,qualification:a.qualification||'',email:a.email||''});
-   }));
+   apprentices.forEach(a=>(a.courses||[]).forEach(u=>{if(!u.done&&!u.dna&&u.date)allUnits.push({name:u.name,date:u.date,apprentice:a.name,appId:a.id,qualification:a.qualification||'',email:a.email||''});}));
    allUnits.sort((a,b)=>courseSort==='name'?(a.name||'').localeCompare(b.name||''):(a.date||'').localeCompare(b.date||''));
    let filUnits=allUnits.filter(u=>u.name?.toLowerCase().includes(q)||u.apprentice?.toLowerCase().includes(q));
-
    const showSC=courseFilter==='all'||courseFilter==='courses';
    const showU=courseFilter==='all'||courseFilter==='units';
-
    const controlBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
      <button onclick="window._courseFilter='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='all'?'var(--accent)':'var(--border)'};background:${courseFilter==='all'?'var(--accent)':'var(--surface)'};color:${courseFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${filSC.length+filUnits.length}</span></button>
      <button onclick="window._courseFilter='courses';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='courses'?'#7c3aed':'var(--border)'};background:${courseFilter==='courses'?'#7c3aed':'var(--surface)'};color:${courseFilter==='courses'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Short Courses <span style="opacity:.7">${filSC.length}</span></button>
      <button onclick="window._courseFilter='units';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${courseFilter==='units'?'#d97706':'var(--border)'};background:${courseFilter==='units'?'#d97706':'var(--surface)'};color:${courseFilter==='units'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Apprentice Units <span style="opacity:.7">${allUnits.length}</span></button>
      <select onchange="window._courseSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">
        <option value="date" ${courseSort==='date'?'selected':''}>Date</option>
-       <option value="name" ${courseSort==='name'?'selected':''}>Name A–Z</option>
+       <option value="name" ${courseSort==='name'?'selected':''}>Name A-Z</option>
      </select></div>`;
-
-   const scHtml=(showSC?filSC:[] ).map(x=>`<div class="course-card" style="border-left:3px solid #c4b5fd"><div class="course-main"><div class="course-name-row"><span class="course-name">${x.name}</span><span class="badge" style="background:#ede9fe;color:#5b21b6"><span class="badge-dot" style="background:#8b5cf6"></span>Short Course</span>${bdg(x.status)}</div><div style="font-size:12px;color:#6b7280;margin-bottom:4px">${x.provider||'—'} · ${formatDate(x.date)}</div>${getPNames(x.participantIds)?`<div style="font-size:12px;color:#374151;margin-bottom:4px">${getPNames(x.participantIds)}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}${x.invoiceNo?`<span style="font-size:11px;font-weight:600;color:#6366f1">${x.invoiceNo}${x.invoiceNotes?' — '+x.invoiceNotes:''}</span>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0"><div style="display:flex;gap:14px"><div style="text-align:center"><div style="font-size:16px;font-weight:800">${(x.participantIds||[]).length}/${x.seats}</div><div style="font-size:10px;color:#6b7280">Seats</div></div><div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(x.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><button class="btn-sm btn-green" onclick="openModal('enrol-course',${x.id})">Enrol</button>${(x.participantIds||[]).length>0?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${x.id})">Email</button>`:''}${(x.participantIds||[]).length>0?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${x.id})">Remind</button>`:''}<button class="btn-sm btn-green" onclick="openModal('manage-certs',${x.id})">Documents</button><button class="btn-sm btn-edit" onclick="openModal('edit-course',${x.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteCourse(${x.id})">Del</button></div></div></div>`).join('');
-
-   const unitHtml=(showU?filUnits:[]).map(u=>`<div class="course-card" style="border-left:3px solid #fde68a"><div class="course-main"><div class="course-name-row"><span class="course-name">${u.name}</span><span class="badge" style="background:#fef9c3;color:#854d0e"><span class="badge-dot" style="background:#eab308"></span>Apprentice Unit</span></div><div style="font-size:12px;color:#854d0e;margin-bottom:2px">${u.qualification} · ${u.apprentice}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:#6b7280">${formatDate(u.date)}</div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${u.email?`<button class="btn-sm btn-green" data-uemail="${u.email.replace(/"/g,'&quot;')}" data-uname="${u.apprentice.replace(/"/g,'&quot;')}" data-uunit="${u.name.replace(/"/g,'&quot;')}" data-udate="${u.date}" onclick="sendUnitEmailSafe(this)">Email</button>`:''} ${u.email?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" data-uemail="${u.email.replace(/"/g,'&quot;')}" data-uname="${u.apprentice.replace(/"/g,'&quot;')}" data-uunit="${u.name.replace(/"/g,'&quot;')}" data-udate="${u.date}" onclick="sendUnitReminderSafe(this)">Remind</button>`:''} ${u.appId?`<button class="btn-sm btn-edit" onclick="openModal('edit-apprentice',${u.appId})">Edit</button>`:''}</div></div></div>`).join('');
-
-   const scSection=showSC&&scHtml?`<div style="font-size:11px;font-weight:700;color:#5b21b6;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:'JetBrains Mono','Courier New',monospace">${courseFilter==='all'?'Short Courses ('+filSC.length+')':''}</div>${scHtml}`:'';
-   const unitSection=showU&&unitHtml?`<div style="font-size:11px;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;margin-top:${showSC&&scHtml?'22':'0'}px;font-family:'JetBrains Mono','Courier New',monospace">${courseFilter==='all'?'Apprentice Units ('+filUnits.length+')':''}</div>${unitHtml}`:'';
+   const scHtml=(showSC?filSC:[]).map(x=>`<div class="course-card" style="border-left:3px solid #c4b5fd"><div class="course-main"><div class="course-name-row"><span class="course-name">${x.name}</span><span class="badge" style="background:#ede9fe;color:#5b21b6"><span class="badge-dot" style="background:#8b5cf6"></span>Short Course</span>${bdg(x.status)}</div><div style="font-size:12px;color:#6b7280;margin-bottom:4px">${x.provider||'&mdash;'} &middot; ${formatDate(x.date)}</div>${getPNames(x.participantIds)?`<div style="font-size:12px;color:#374151;margin-bottom:4px">${getPNames(x.participantIds)}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}${x.invoiceNo?`<span style="font-size:11px;font-weight:600;color:#6366f1">${x.invoiceNo}${x.invoiceNotes?' &mdash; '+x.invoiceNotes:''}</span>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0"><div style="display:flex;gap:14px"><div style="text-align:center"><div style="font-size:16px;font-weight:800">${(x.participantIds||[]).length}/${x.seats}</div><div style="font-size:10px;color:#6b7280">Seats</div></div><div style="text-align:center"><div style="font-size:16px;font-weight:800">$${parseInt(x.cost||0).toLocaleString()}</div><div style="font-size:10px;color:#6b7280">Cost</div></div></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><button class="btn-sm btn-green" onclick="openModal('enrol-course',${x.id})">Enrol</button>${(x.participantIds||[]).length>0?`<button class="btn-sm btn-green" onclick="sendCourseEmail(${x.id})">Email</button>`:''} ${(x.participantIds||[]).length>0?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${x.id})">Remind</button>`:''}<button class="btn-sm btn-green" onclick="openModal('manage-certs',${x.id})">Documents</button><button class="btn-sm" style="background:#f0f9ff;color:#0369a1" onclick="duplicateCourse(${x.id})">Duplicate</button><button class="btn-sm btn-edit" onclick="openModal('edit-course',${x.id})">Edit</button><button class="btn-sm btn-del" onclick="deleteCourse(${x.id})">Del</button></div></div></div>`).join('');
+   const todayD=new Date();todayD.setHours(0,0,0,0);
+   const unitHtml=(showU?filUnits:[]).map(u=>{
+     const uDate=u.date?new Date(u.date):null;
+     const isPast=uDate&&uDate<todayD;
+     const confirmBtns=isPast?`<button class="btn-sm btn-green" data-appid="${u.appId}" data-uname="${u.name.replace(/"/g,'&quot;')}" onclick="confirmUnitAttended(this)">Attended</button> <button class="btn-sm" style="background:#fff7ed;color:#c2410c" data-appid="${u.appId}" data-uname="${u.name.replace(/"/g,'&quot;')}" onclick="openUnitDNAModal(this)">Did Not Attend</button>`:'';
+     const pastBadge='';
+     return `<div class="course-card" style="border-left:3px solid ${isPast?'#fde68a':'#fde68a'}"><div class="course-main"><div class="course-name-row"><span class="course-name">${u.name}</span><span class="badge" style="background:#fef9c3;color:#854d0e"><span class="badge-dot" style="background:#eab308"></span>Apprentice Unit</span>${pastBadge}</div><div style="font-size:12px;color:#854d0e;margin-bottom:2px">${u.qualification} &middot; ${u.apprentice}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0"><div style="font-size:13px;font-weight:700;color:${isPast?'#d97706':'#6b7280'}">${formatDate(u.date)}</div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${confirmBtns}${u.email&&!isPast?`<button class="btn-sm btn-green" data-uemail="${u.email.replace(/"/g,'&quot;')}" data-uname="${u.apprentice.replace(/"/g,'&quot;')}" data-uunit="${u.name.replace(/"/g,'&quot;')}" data-udate="${u.date}" onclick="sendUnitEmailSafe(this)">Email</button>`:''}${u.email&&!isPast?` <button class="btn-sm" style="background:#fff7ed;color:#c2410c" data-uemail="${u.email.replace(/"/g,'&quot;')}" data-uname="${u.apprentice.replace(/"/g,'&quot;')}" data-uunit="${u.name.replace(/"/g,'&quot;')}" data-udate="${u.date}" onclick="sendUnitReminderSafe(this)">Remind</button>`:''}${u.appId?` <button class="btn-sm btn-edit" onclick="openModal('edit-apprentice',${u.appId})">Edit</button>`:''}</div></div></div>`;
+   }).join('');
+   const scSection=showSC&&scHtml?`<div style="font-size:11px;font-weight:700;color:#5b21b6;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:'JetBrains Mono',monospace">${courseFilter==='all'?'Short Courses ('+filSC.length+')':''}</div>${scHtml}`:'';
+   const unitSection=showU&&unitHtml?`<div style="font-size:11px;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;margin-top:${showSC&&scHtml?'22':'0'}px;font-family:'JetBrains Mono',monospace">${courseFilter==='all'?'Apprentice Units ('+filUnits.length+')':''}</div>${unitHtml}`:'';
    const emptyMsg=!scSection&&!unitSection?'<div class="table-wrap"><div class="empty">No upcoming training found.</div></div>':'';
    content=controlBar+scSection+unitSection+emptyMsg;
  }
@@ -730,42 +743,100 @@ function render(){
  content=fil.length===0?`<div class="table-wrap"><div class="empty">No completed courses yet.</div></div>`:fil.map(c=>renderCourseCard(c,true)).join('');
  }
 
- // ── BOOKINGS (Training to be Booked) ─────────────────────────────────────
+  // ── BOOKINGS (Training to be Booked) ─────────────────────────────────────
  if(currentTab==='bookings'){
-  const fil=bookings.filter(b=>b.course?.toLowerCase().includes(q)||b.employee?.toLowerCase().includes(q));
-  const SC_BK={'To Be Booked':{bg:'#fef9c3',text:'#854d0e',dot:'#eab308'},'Converted':{bg:'#d1fae5',text:'#065f46',dot:'#10b981'}};
+  const bkSort=window._bkSort||'date';
+  const SC_BK={'To Be Booked':{bg:'#fef9c3',text:'#854d0e',dot:'#eab308'},'Converted':{bg:'#dbeafe',text:'#1e40af',dot:'#3b82f6'}};
   function bdgBk(l){const cc=SC_BK[l]||{bg:'#f3f4f6',text:'#374151',dot:'#9ca3af'};return `<span class="badge" style="background:${cc.bg};color:${cc.text}"><span class="badge-dot" style="background:${cc.dot}"></span>${l}</span>`;}
-  const rows=fil.length===0?'<tr><td colspan="8" class="empty">No bookings yet. Approve a training request to auto-create one, or click + Add Manually.</td></tr>':fil.map(b=>{
+  const pendingCount=bookings.filter(b=>b.status!=='Converted').length;
+  const totalCount=bookings.length;
+  const bkView=window._bkView||'pending';
+  const tabBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <button onclick="window._bkView='pending';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${bkView==='pending'?'#d97706':'var(--border)'};background:${bkView==='pending'?'#d97706':'var(--surface)'};color:${bkView==='pending'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Pending <span style="opacity:.7">${pendingCount}</span></button>
+    <button onclick="window._bkView='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${bkView==='all'?'#374151':'var(--border)'};background:${bkView==='all'?'#374151':'var(--surface)'};color:${bkView==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${totalCount}</span></button>
+    <select onchange="window._bkSort=this.value;render()" style="margin-left:auto;border:1.5px solid var(--border);border-radius:var(--radius);padding:6px 11px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer">
+      <option value="date" ${bkSort==='date'?'selected':''}>Sort by Date</option>
+      <option value="name" ${bkSort==='name'?'selected':''}>Sort by Name</option>
+      <option value="dept" ${bkSort==='dept'?'selected':''}>Sort by Dept</option>
+    </select></div>`;
+  let fil=[...bookings]
+    .filter(b=>bkView==='pending'?b.status!=='Converted':true)
+    .filter(b=>b.course?.toLowerCase().includes(q)||b.employee?.toLowerCase().includes(q)||b.department?.toLowerCase().includes(q));
+  fil.sort((a,b)=>{
+    if(bkSort==='status'){if(a.status==='Converted'&&b.status!=='Converted')return 1;if(a.status!=='Converted'&&b.status==='Converted')return -1;}
+    if(bkSort==='name')return(a.course||'').localeCompare(b.course||'');
+    if(bkSort==='dept')return(a.department||'').localeCompare(b.department||'');
+    return(a.date||'zzz').localeCompare(b.date||'zzz');
+  });
+  const rows=fil.length===0?`<tr><td colspan="9" class="empty">No bookings yet. Approve a training request or click + Add Manually.</td></tr>`:fil.map(b=>{
     const pNames=(b.participants||[]).map(pid=>{const p=participants.find(x=>x.id===pid);return p?p.name:'';}).filter(Boolean).join(', ');
     const isConverted=b.status==='Converted';
-    return `<tr style="${isConverted?'opacity:.6':''}">
-      <td><div style="font-weight:700">${b.course}</div>${b.requestId?`<div style="font-size:10px;color:#9ca3af">From request</div>`:''}${b.created?`<div style="font-size:10px;color:#9ca3af">${b.created}</div>`:''}</td>
-      <td style="color:#6b7280">${b.employee||'—'}</td>
-      <td style="color:#6b7280">${b.department||'—'}</td>
-      <td style="color:#6b7280;font-size:12px">${b.provider||'—'}</td>
+    return `<tr style="${isConverted?'background:#eff6ff':''}">
+      <td><div style="font-weight:700">${b.course}</div>${b.requestId?'<div style="font-size:10px;color:#9ca3af">From request</div>':''}${b.created?`<div style="font-size:10px;color:#9ca3af">${b.created}</div>`:''}</td>
+      <td style="color:#6b7280">${b.employee||'&mdash;'}</td>
+      <td style="color:#6b7280">${b.department||'&mdash;'}</td>
+      <td style="color:#6b7280;font-size:12px">${b.provider||'&mdash;'}</td>
       <td style="font-size:12px">${b.date?formatDate(b.date):'TBC'}</td>
-      <td style="font-size:12px">${b.cost?'$'+parseFloat(b.cost).toLocaleString():'—'}</td>
-      <td style="font-size:12px;max-width:160px;color:#6b7280">${pNames||'—'}</td>
+      <td style="font-size:12px">${b.cost?'$'+parseFloat(b.cost).toLocaleString():'&mdash;'}</td>
+      <td style="font-size:12px;max-width:160px;color:#6b7280">${pNames||'&mdash;'}</td>
       <td>${bdgBk(b.status||'To Be Booked')}</td>
       <td><div style="display:flex;gap:4px;flex-wrap:wrap">
-        ${!isConverted?`<button class="btn-sm btn-green" onclick="convertBookingToCourse(${b.id})" title="Create Upcoming Course from this booking">Convert to Course</button>`:''}
+        ${!isConverted?`<button class="btn-sm btn-green" onclick="openModal('enrol-booking',${b.id})">Participants</button>`:''}
+        ${!isConverted?`<button class="btn-sm" style="background:#ede9fe;color:#5b21b6" onclick="convertBookingToCourse(${b.id})">Convert &#8594;</button>`:''}
+        ${isConverted&&b.courseId?`<button class="btn-sm" style="background:#dbeafe;color:#1e40af" onclick="viewConvertedCourse(${b.courseId})">View Course</button>`:''}
         <button class="btn-sm btn-edit" onclick="openModal('edit-booking',${b.id})">Edit</button>
         <button class="btn-sm btn-del" onclick="deleteBooking(${b.id})">Del</button>
       </div></td>
     </tr>`;
   }).join('');
-  content=`<div class="table-wrap"><table><thead><tr><th>Course</th><th>Requestor</th><th>Dept</th><th>Provider</th><th>Date</th><th>Cost</th><th>Participants</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  content=tabBar+`<div class="table-wrap"><table><thead><tr><th>Course</th><th>Requestor</th><th>Dept</th><th>Provider</th><th>Date</th><th>Cost</th><th>Participants</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }
-
 
  // ── REQUESTS ─────────────────────────────────────────────────────────────
  if(currentTab==='requests'){
- const fil=requests.filter(r=>r.employee?.toLowerCase().includes(q)||r.course?.toLowerCase().includes(q));
- const rows=fil.length===0?`<tr><td colspan="8" class="empty">No requests found.</td></tr>`:fil.map(r=>{
- const noteCount=(r.comments||[]).length;
- return `<tr><td style="font-weight:700">${r.employee}</td><td style="color:#6b7280">${r.department||''}</td><td>${r.course}</td><td style="color:#6b7280;max-width:120px;font-size:12px">${r.reason||''}</td><td>${bdg(r.priority)}</td><td style="color:#6b7280;font-size:12px">${formatDate(r.submitted)||''}</td><td>${bdg(r.status)}</td><td><div style="display:flex;gap:4px"><button class="btn-sm btn-edit" onclick="openModal('edit-request',${r.id})">Edit</button><button class="btn-sm" style="background:#e0e7ff;color:#3730a3" onclick="openModal('review-request',${r.id})">Review${noteCount>0?` <span style="background:#c7d2fe;color:#3730a3;border-radius:8px;padding:0 4px;font-size:10px">${noteCount}</span>`:''}</button><button class="btn-sm btn-del" onclick="deleteRequest(${r.id})">Del</button></div></td></tr>`;
- }).join('');
- content=`<div class="table-wrap"><table><thead><tr><th>Employee</th><th>Dept</th><th>Course</th><th>Reason</th><th>Priority</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  if(!window._selReqs)window._selReqs=new Set();
+  const reqFilter=window._reqFilter||'pending';
+  const allReqs=requests.filter(r=>r.employee?.toLowerCase().includes(q)||r.course?.toLowerCase().includes(q));
+  // Approved requests live in Training to be Booked — only show non-approved here
+  const pendingReqs=allReqs.filter(r=>r.status!=='Approved'&&r.status!=='Declined');
+  const declinedReqs=allReqs.filter(r=>r.status==='Declined');
+  const fil=reqFilter==='pending'?pendingReqs:reqFilter==='declined'?declinedReqs:allReqs;
+  const pendingFil=fil.filter(r=>r.status==='Pending'||r.status==='Under Review');
+  const allPendingSelected=pendingFil.length>0&&pendingFil.every(r=>window._selReqs.has(r.id));
+  const reqTabBar=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <button onclick="window._reqFilter='pending';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${reqFilter==='pending'?'var(--accent)':'var(--border)'};background:${reqFilter==='pending'?'var(--accent)':'var(--surface)'};color:${reqFilter==='pending'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Active <span style="opacity:.7">${pendingReqs.length}</span></button>
+    <button onclick="window._reqFilter='declined';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${reqFilter==='declined'?'var(--danger)':'var(--border)'};background:${reqFilter==='declined'?'var(--danger)':'var(--surface)'};color:${reqFilter==='declined'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Declined <span style="opacity:.7">${declinedReqs.length}</span></button>
+    <button onclick="window._reqFilter='all';render()" style="padding:6px 14px;border-radius:20px;border:2px solid ${reqFilter==='all'?'#374151':'var(--border)'};background:${reqFilter==='all'?'#374151':'var(--surface)'};color:${reqFilter==='all'?'#fff':'var(--text-secondary)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">All <span style="opacity:.7">${allReqs.length}</span></button>
+  </div>`;
+  const bulkBar=window._selReqs.size>0?`<div style="display:flex;align-items:center;gap:10px;background:#d1fae5;border-radius:var(--radius);padding:9px 14px;margin-bottom:12px;border:1px solid #6ee7b7">
+    <span style="font-size:13px;font-weight:700;color:#065f46">${window._selReqs.size} selected</span>
+    <button class="btn-sm btn-green" onclick="bulkApproveRequests()">Approve Selected &rarr; To Be Booked</button>
+    <button class="btn-sm" style="background:#fff;color:#6b7280;border:1px solid #d1d5db" onclick="window._selReqs=new Set();render()">Clear</button>
+  </div>`:'';
+  const rows=fil.length===0?`<tr><td colspan="9" class="empty">${reqFilter==='pending'?'No active requests. Approved requests move to Training to be Booked.':'No requests found.'}</td></tr>`:fil.map(r=>{
+    const noteCount=(r.comments||[]).length;
+    const isPending=r.status==='Pending'||r.status==='Under Review';
+    const isSelected=window._selReqs.has(r.id);
+    const pNames=(r.participants||[]).map(pid=>{const p=participants.find(x=>x.id===pid);return p?p.name:'';}).filter(Boolean).join(', ');
+    const approvedNote=r.status==='Approved'?`<div style="font-size:10px;color:#059669;font-weight:600">&#8594; In Training to be Booked</div>`:'';
+    return `<tr style="${isSelected?'background:#f0fdf4':''}${r.status==='Approved'?';opacity:.6':''}">
+      <td style="width:32px;padding:8px 8px 8px 14px">${isPending?`<div onclick="toggleReqSel(${r.id})" style="width:16px;height:16px;border-radius:4px;border:2px solid ${isSelected?'var(--success)':'var(--border-strong)'};background:${isSelected?'var(--success)':'#fff'};cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700">${isSelected?'&#10003;':''}</div>`:''}</td>
+      <td style="font-weight:700">${r.employee}${pNames?`<div style="font-size:11px;color:#6b7280;font-weight:400">${pNames}</div>`:''}</td>
+      <td style="color:#6b7280">${r.department||''}</td>
+      <td>${r.course}</td>
+      <td style="color:#6b7280;max-width:120px;font-size:12px">${r.reason||''}</td>
+      <td>${bdg(r.priority)}</td>
+      <td style="color:#6b7280;font-size:12px">${formatDate(r.submitted)||''}</td>
+      <td>${bdg(r.status)}${approvedNote}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn-sm btn-edit" onclick="openModal('edit-request',${r.id})">Edit</button>
+        <button class="btn-sm" style="background:#e0e7ff;color:#3730a3" onclick="openModal('review-request',${r.id})">Review${noteCount>0?` <span style="background:#c7d2fe;color:#3730a3;border-radius:8px;padding:0 4px;font-size:10px">${noteCount}</span>`:''}</button>
+        <button class="btn-sm btn-del" onclick="deleteRequest(${r.id})">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  const selectAllChk=`<div onclick="toggleSelectAllReqs()" style="width:16px;height:16px;border-radius:4px;border:2px solid ${allPendingSelected?'var(--success)':'#fff'};background:${allPendingSelected?'var(--success)':'rgba(255,255,255,.15)'};cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700">${allPendingSelected?'&#10003;':''}</div>`;
+  content=reqTabBar+bulkBar+`<div class="table-wrap"><table><thead><tr><th style="width:32px">${selectAllChk}</th><th>Employee / Participants</th><th>Dept</th><th>Course</th><th>Reason</th><th>Priority</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }
 
  // ── CLAIMS ───────────────────────────────────────────────────────────────
@@ -822,7 +893,7 @@ function render(){
  <td style="color:#6b7280;font-size:12px">${c.ctfClaimId||'—'}</td>
  <td style="font-weight:600">${c.participantName||'—'}</td>
  <td style="color:#6b7280;font-size:12px">${c.invoiceNo||'—'}</td>
- <td style="font-size:12px;color:#6b7280">${formatDate(c.createdOn)||''}${c.closedDate?`<div style='font-size:10px;color:#374151;font-weight:600'>Closed ${c.closedDate}</div>`:''}</td>
+ <td style="font-size:12px;color:#6b7280">${c.createdOn||''}${c.closedDate?`<div style='font-size:10px;color:#374151;font-weight:600'>Closed ${c.closedDate}</div>`:''}</td>
  <td style="font-weight:700;color:#1e40af">$${parseFloat(c.claimAmount||0).toLocaleString()}</td>
  <td style="font-weight:700;color:#059669">${c.acceptedAmount?'$'+parseFloat(c.acceptedAmount).toLocaleString():'—'}</td>
  <td style="font-weight:600;color:#dc2626">${c.costIncurred?'$'+parseFloat(c.costIncurred).toLocaleString():'—'}</td>
@@ -842,7 +913,7 @@ function render(){
  if(currentTab==='export'){
  const flatA=apprentices.map(a=>({Name:a.name,Department:a.department,Qualification:a.qualification,Supervisor:a.supervisor,Email:a.email||'',Progress:getProgress(a)+'%',Status:getStatus(a),EndDate:a.endDate||'',UnitsComplete:a.courses?a.courses.filter(c=>c.done).length:0,TotalUnits:a.courses?a.courses.length:0,DaysRemaining:daysLeft(a.endDate)}));
  const flatC=courses.map(c=>({Name:c.name,Provider:c.provider,Date:c.date,Seats:c.seats,Enrolled:(c.participantIds||[]).length,Cost:c.cost,Status:c.status,Participants:getPNames(c.participantIds),InvoiceNo:c.invoiceNo||'',InvoiceNotes:c.invoiceNotes||''}));
- const flatP=participants.map(p=>{const plan=getTrainingPlan(p.id);return{Name:p.name,Status:p.active===false?'Inactive':'Active',Email:p.email||'',Phone:p.phone||'',Department:p.department||'',Role:p.role||'',CoursesCompleted:plan.filter(x=>x.status==='Completed').length,CoursesUpcoming:plan.filter(x=>x.status!=='Completed').length};});
+ const flatP=participants.map(p=>{const plan=getTrainingPlan(p.id);return{Name:p.name,Status:p.active===false?'Inactive':'Active',EmploymentType:p.employmentType||'Employee',Email:p.email||'',Phone:p.phone||'',Department:p.department||'',Role:p.role||'',CoursesCompleted:plan.filter(x=>x.status==='Completed').length,CoursesUpcoming:plan.filter(x=>x.status!=='Completed').length};});
  content=`<div style="background:#eff6ff;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #bfdbfe"><div style="font-weight:700;color:#1e40af;margin-bottom:2px;font-size:14px">Power BI Ready</div><div style="font-size:12px;color:#3b82f6">Download CSVs and import via Get Data → Text/CSV. Status and progress are auto-calculated.</div></div>
  <div class="export-grid">${[
  {icon:'PR',label:'Participants',desc:'Directory with training summary',data:flatP,file:'participants.csv'},
@@ -867,7 +938,7 @@ function renderCourseCard(c, isCompleted) {
  <div class="course-card" style="${isCompleted&&c.status==='Did Not Attend'?'border-left:3px solid #ef4444':''}">
  <div class="course-main">
  <div class="course-name-row"><span class="course-name">${c.name}</span>${bdg(c.status)}</div>
- <div style="font-size:12px;color:#6b7280;margin-bottom:4px">${c.provider} · ${formatDate(c.date)}</div>
+ <div style="font-size:12px;color:#6b7280;margin-bottom:4px">${c.provider} &middot; ${formatDate(c.date)}</div>
  ${names?`<div style="font-size:12px;color:#374151;margin-bottom:4px"> ${names}</div>`:'<div style="font-size:11px;color:#d1d5db;margin-bottom:4px">No participants enrolled</div>'}
  ${Object.keys(c.dnaMap||{}).length>0?`<div style="font-size:12px;background:#fef2f2;border-radius:6px;padding:5px 9px;color:#991b1b;margin-bottom:4px">${Object.keys(c.dnaMap||{}).length} did not attend</div>`:''}
  ${c.courseNotes?`<div style="font-size:12px;color:#6b7280;font-style:italic;margin-bottom:4px"> ${c.courseNotes}</div>`:''}
@@ -888,6 +959,7 @@ function renderCourseCard(c, isCompleted) {
  ${(c.participantIds||[]).length>0&&!isCompleted?`<button class="btn-sm" style="background:#fff7ed;color:#c2410c" onclick="sendReminderEmail(${c.id})">Remind</button>`:''}
  <button class="btn-sm btn-green" onclick="openModal('manage-certs',${c.id})">Documents</button>
  ${isCompleted?`<button class="btn-sm" style="background:#fef9c3;color:#854d0e" onclick="createClaimFromCourse(${c.id})">Create Claim</button>`:''}
+ <button class="btn-sm" style="background:#f0f9ff;color:#0369a1" onclick="duplicateCourse(${c.id})">Duplicate</button>
  <button class="btn-sm btn-edit" onclick="openModal('edit-course',${c.id})">Edit</button>
  <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Del</button>
  </div>
@@ -898,9 +970,9 @@ function renderCourseCard(c, isCompleted) {
 function sendReminderEmail(courseId){
  const c=courses.find(x=>x.id===courseId);if(!c)return;
  const emails=(c.participantIds||[]).map(id=>{const p=participants.find(x=>x.id===id);return p&&p.email?p.email:null;}).filter(Boolean);
- const subject=encodeURIComponent(`Training Reminder: ${c.name} — ${c.date}`);
+ const subject=encodeURIComponent(`Training Reminder: ${c.name} - ${formatDate(c.date)}`);
  const notesLine=c.courseNotes?`\n\nImportant Information:\n${c.courseNotes}`:'';
- const body=encodeURIComponent(`Hi,\n\nThis is a friendly reminder that you are booked in for the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${c.date}${notesLine}\n\nPlease confirm your attendance and let us know if you have any questions.\n\nKind regards,\nTraining Team`);
+ const body=encodeURIComponent(`Hi,\n\nThis is a friendly reminder that you are booked in for the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${formatDate(c.date)}${notesLine}\n\nPlease confirm your attendance.\n\nKind regards,\nTraining Team`);
  if(!emails.length){showToast('No email addresses on enrolled participants');return;}
  window.location.href=`mailto:${emails.join(';')}?subject=${subject}&body=${body}`;
  showToast('Opening email client');
@@ -925,7 +997,7 @@ function exportTrainingPlan(pid){
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter','Segoe UI',sans-serif;background:#fff;color:#0d1117;-webkit-font-smoothing:antialiased}
+    body{font-family:'Aptos','Inter','Segoe UI',sans-serif;font-size:11pt;background:#fff;color:#0d1117;-webkit-font-smoothing:antialiased}
     .page{max-width:900px;margin:0 auto;padding:48px 40px}
     .header{border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:28px}
     .header h1{font-size:28px;font-weight:800;letter-spacing:-.5px}
@@ -952,7 +1024,7 @@ function exportTrainingPlan(pid){
     <table><thead><tr><th>Type</th><th>Course / Unit</th><th>Provider</th><th>Date</th><th>Status</th><th>Cert</th></tr></thead><tbody>${rows}</tbody></table>
     <div class="footer"><span>Generated by Training Hub</span><span>${new Date().toLocaleDateString('en-AU')}</span></div>
   </div><script>window.onload=function(){window.print()}<\/script></body></html>`;
-  const win=window.open('','_blank');win.document.write(html);win.document.close();
+  safeOpenPdf(html);
 }
 
 function exportApprenticeTranscript(aid){
@@ -971,7 +1043,7 @@ function exportApprenticeTranscript(aid){
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter','Segoe UI',sans-serif;background:#fff;color:#0d1117;padding:0}
+    body{font-family:'Aptos','Inter','Segoe UI',sans-serif;font-size:11pt;background:#fff;color:#0d1117;padding:0}
     .page{max-width:860px;margin:0 auto;padding:48px 40px}
     .header{border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:28px}
     .header h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
@@ -1006,7 +1078,7 @@ function exportApprenticeTranscript(aid){
     <table><thead><tr><th>Unit Code</th><th>Unit Name</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="padding:20px;text-align:center;color:#9ca3af">No units recorded</td></tr>'}</tbody></table>
     <div class="footer"><span>Generated by Training Hub</span><span>${new Date().toLocaleDateString('en-AU')}</span></div>
   </div><script>window.onload=function(){window.print()}<\/script></body></html>`;
-  const win=window.open('','_blank');win.document.write(html);win.document.close();
+  safeOpenPdf(html);
 }
 
 function exportCSV(data,filename){if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(row=>keys.map(k=>`"${String(row[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=filename;a.click();}
@@ -1014,14 +1086,14 @@ function exportCSV(data,filename){if(!data.length)return;const keys=Object.keys(
 function sendCourseEmail(courseId){
  const c=courses.find(x=>x.id===courseId);if(!c)return;
  const emails=(c.participantIds||[]).map(id=>{const p=participants.find(x=>x.id===id);return p&&p.email?p.email:null;}).filter(Boolean);
- const subject=encodeURIComponent(`Training Confirmation: ${c.name} — ${c.date}`);
+ const subject=encodeURIComponent(`Training Confirmation: ${c.name} - ${formatDate(c.date)}`);
  const notesLine=c.courseNotes?`\n\nAdditional Information:\n${c.courseNotes}`:'';
- const body=encodeURIComponent(`Hi,\n\nThis is to confirm your enrolment in the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${c.date}${notesLine}\n\nPlease arrive on time and bring any required ID or materials.\n\nIf you have any questions please reach out.\n\nKind regards,\nTraining Team`);
+ const body=encodeURIComponent(`Hi,\n\nThis is to confirm your enrolment in the following training:\n\nCourse: ${c.name}\nProvider: ${c.provider}\nDate: ${formatDate(c.date)}${notesLine}\n\nPlease arrive on time and bring any required ID or materials.\n\nKind regards,\nTraining Team`);
  if(!emails.length){showToast('No email addresses on enrolled participants');return;}
  window.location.href=`mailto:${emails.join(';')}?subject=${subject}&body=${body}`;showToast('Opening email client');
 }
 
-function viewPdf(courseId){const c=courses.find(x=>x.id===courseId);if(!c||!c.invoicePdf)return;const win=window.open();win.document.write(`<iframe src="${c.invoicePdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
+function viewPdf(courseId){const c=courses.find(x=>x.id===courseId);if(!c||!c.invoicePdf)return;safeOpenIframe(c.invoicePdf);}
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
 function openModal(mode,idOrData){
@@ -1036,7 +1108,8 @@ function openModal(mode,idOrData){
  const d=mode==='edit-participant'?participants.find(p=>p.id===idOrData)||{}:{};editId=d.id||null;
  title.textContent=mode==='add-participant'?'Add Person':'Edit Person';
  const isActive=d.active!==false;
-    body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Role','role',d.role,'text','Staff')}</div>${inp('Email','email',d.email,'email','jane@company.com')}${inp('Phone','phone',d.phone,'text','0412 000 000')}<div class="form-group"><label class="form-label">Status</label><select class="form-select" name="active"><option value="true" ${isActive?'selected':''}>Active</option><option value="false" ${!isActive?'selected':''}>Inactive</option></select></div><button class="btn-save" onclick="submitParticipant()">${mode==='add-participant'?'Add Person':'Save Changes'}</button>`;
+    const empType=d.employmentType||'Employee';
+    body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Role','role',d.role,'text','Staff')}</div>${inp('Email','email',d.email,'email','jane@company.com')}${inp('Phone','phone',d.phone,'text','0412 000 000')}<div class="form-row"><div class="form-group"><label class="form-label">Status</label><select class="form-select" name="active"><option value="true" ${isActive?'selected':''}>Active</option><option value="false" ${!isActive?'selected':''}>Inactive</option></select></div><div class="form-group"><label class="form-label">Employment Type</label><select class="form-select" name="employmentType"><option value="Employee" ${empType==='Employee'?'selected':''}>Employee</option><option value="Labour Hire" ${empType==='Labour Hire'?'selected':''}>Labour Hire</option></select></div></div><button class="btn-save" onclick="submitParticipant()">${mode==='add-participant'?'Add Person':'Save Changes'}</button>`;
  }
 
  if(mode==='add-apprentice'||mode==='edit-apprentice'){
@@ -1046,11 +1119,6 @@ function openModal(mode,idOrData){
  body.innerHTML=`${inp('Full Name','name',d.name,'text','Jane Smith')}<div class="form-row">${inp('Department','department',d.department,'text','Engineering')}${inp('Supervisor','supervisor',d.supervisor,'text','Mike Chen')}</div>${inp('Qualification','qualification',d.qualification,'text','Cert III Engineering')}${inp('Email','email',d.email,'email','jane@company.com')}<div class="form-row">${inp('Start Date','startDate',d.startDate,'date')}${inp('End Date','endDate',d.endDate,'date')}</div>
  <div class="checklist-builder"><div class="checklist-builder-title">Required Course Units</div><div style="display:grid;grid-template-columns:100px 1fr 120px 28px;gap:5px;margin-bottom:5px"><span style="font-size:10px;color:#9ca3af;padding:0 3px">Unit Code</span><span style="font-size:10px;color:#9ca3af;padding:0 3px">Unit Name</span><span style="font-size:10px;color:#9ca3af;padding:0 3px">Booked / Done Date</span><span></span></div><div id="cli-wrap">${ec.map(c=>`<div class="cli-row"><input class="cli-input" value="${c.code||''}" placeholder="e.g. CPCCWHS1001"/><input class="cli-input" value="${c.name||''}" placeholder="e.g. WHS Induction"/><input class="cli-input" type="date" value="${c.date||''}"/><button class="cli-remove" onclick="this.parentElement.remove()">✕</button></div>`).join('')}</div><button class="btn-add-item" onclick="addUnit()">+ Add Unit</button></div>
  <button class="btn-save" onclick="submitApprentice()">${mode==='add-apprentice'?'Add Apprentice':'Save Changes'}</button>`;
-  // Start autosave draft
-  window._appDraftTimer=setInterval(()=>{
-    const d2=getForm();const units2=getUnits();
-    localStorage.setItem('th5_app_draft',JSON.stringify({mode,editId:editId||null,form:d2,units:units2,ts:Date.now()}));
-  },30000);
  }
 
  if(mode==='view-apprentice'){
@@ -1058,7 +1126,7 @@ function openModal(mode,idOrData){
  const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);
  title.textContent=a.name+' — Checklist';
  const items=(a.courses||[]).map((c,i)=>`<div class="chk-row"><div class="chk ${c.done?'done':''}" onclick="toggleCourse(${a.id},${i})">${c.done?'✓':''}</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px"><span style="${c.done?'text-decoration:line-through;color:#9ca3af;':''}font-weight:600;font-size:13px">${c.name}</span>${c.code?`<span style="font-size:10px;font-weight:600;color:#6b7280;background:#f1f5f9;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace">${c.code}</span>`:''}</div>${c.date?`<div style="font-size:11px;color:#9ca3af;margin-top:1px">${c.date}</div>`:''}</div></div>`).join('');
- body.innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;padding:12px;background:#f8fafc;border-radius:10px"><div style="flex:1">${pb(p)}</div><span style="font-weight:800;font-size:19px">${p}%</span>${bdg(s)}</div>${d<=180&&p<75?`<div class="alert-banner"> At Risk — ${d} days remaining, ${p}% complete.</div>`:''}<div style="font-size:11px;color:#6b7280;margin-bottom:9px">${(a.courses||[]).filter(c=>c.done).length} of ${(a.courses||[]).length} units · ${d>0?d+' days remaining':'Overdue'}</div><div>${items||'<div style="color:#9ca3af;font-size:13px">No units added.</div>'}</div><button class="btn-save" style="margin-top:13px" onclick="closeModal()">Done</button>`;
+ body.innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;padding:12px;background:#f8fafc;border-radius:10px"><div style="flex:1">${pb(p)}</div><span style="font-weight:800;font-size:19px">${p}%</span>${bdg(s)}</div>${d<=(warningDays||180)&&p<75?`<div class="alert-banner"> At Risk — ${d} days remaining, ${p}% complete.</div>`:''}<div style="font-size:11px;color:#6b7280;margin-bottom:9px">${(a.courses||[]).filter(c=>c.done).length} of ${(a.courses||[]).length} units · ${d>0?d+' days remaining':'Overdue'}</div><div>${items||'<div style="color:#9ca3af;font-size:13px">No units added.</div>'}</div><button class="btn-save" style="margin-top:13px" onclick="closeModal()">Done</button>`;
  }
 
  if(mode==='add-course'||mode==='edit-course'){
@@ -1074,7 +1142,7 @@ function openModal(mode,idOrData){
  const c=courses.find(x=>x.id===idOrData);if(!c)return;editId=idOrData;
  title.textContent=`Enrol — ${c.name}`;
  const selected=new Set(c.participantIds||[]);
- const activeP=participants.filter(p=>p.active!==false);const items=activeP.length===0?'<div class="empty">No active participants. Add people first.</div>':activeP.map(p=>`<div class="enrol-item ${selected.has(p.id)?'selected':''}" id="enrol-${p.id}" onclick="toggleEnrol(${p.id},${idOrData})"><div class="enrol-check ${selected.has(p.id)?'on':''}" id="echk-${p.id}">${selected.has(p.id)?'✓':''}</div><div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${[p.role,p.department].filter(Boolean).join(' · ')}</div></div><div style="margin-left:auto;font-size:11px;color:#94a3b8">${p.email||''}</div></div>`).join('');
+ const activeP=participants.filter(p=>p.active!==false);const items=activeP.length===0?'<div class="empty">No active participants. Add people first.</div>':activeP.map(p=>`<div class="enrol-item ${selected.has(p.id)?'selected':''}" id="enrol-${p.id}" onclick="toggleEnrol(${p.id},${idOrData})"><div class="enrol-check ${selected.has(p.id)?'on':''}" id="echk-${p.id}">${selected.has(p.id)?'':''}</div><div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${[p.role,p.department].filter(Boolean).join(' · ')}</div></div><div style="margin-left:auto;font-size:11px;color:#94a3b8">${p.email||''}</div></div>`).join('');
  body.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div style="font-size:12px;color:#6b7280">Tick participants to enrol.</div><button onclick="addParticipantFromEnrol(${idOrData})" style="font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-light);border:none;border-radius:var(--radius);padding:5px 11px;cursor:pointer;font-family:inherit">+ Add New Participant</button></div><div class="enrol-list">${items}</div><div style="display:flex;gap:8px"><button class="btn-save" style="flex:1;margin-top:0" onclick="saveEnrolment(${idOrData})">Save</button><button onclick="sendCourseEmail(${idOrData});closeModal()" style="background:#d1fae5;color:#065f46;border:none;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit;margin-top:0;white-space:nowrap"> Email All</button></div>`;
  }
 
@@ -1082,16 +1150,28 @@ function openModal(mode,idOrData){
     title.textContent='New Training Request';
     const pReqOpts=participants.filter(p=>p.active!==false).map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
     const dReqOpts=(departments||[]).sort().map(d=>`<option value="${d}">${d}</option>`).join('');
-    body.innerHTML=`<div class="form-group"><label class="form-label">Employee</label><select class="form-select" name="employee" onchange="reqAutoFillDept(this.value)"><option value="">— Select participant —</option>${pReqOpts}</select></div><div class="form-group"><label class="form-label">Department</label><select class="form-select" name="department" onchange="reqToggleOtherDept(this.value)" id="req-dept-sel"><option value="">— Select department —</option>${dReqOpts}<option value="__other__">Other…</option></select></div><div class="form-group" id="req-dept-other" style="display:none">${inp('Department (specify)','departmentOther','','text','Enter department name')}</div>${inp('Course Requested','course','','text','e.g. Forklift Licence')}${ta('Reason','reason','','Why is this training needed?')}${sel('Priority','priority','Medium',['High','Medium','Low'])}<button class="btn-save" onclick="submitRequest()">Submit Request</button>`;
+    window._reqParticipants=new Set();
+    const partPicker=participants.filter(p=>p.active!==false).map(p=>{
+      const typeLbl=p.employmentType||'Employee';
+      const typeBg=p.employmentType==='Labour Hire'?'#fff7ed':'#e0f2fe';
+      const typeColor=p.employmentType==='Labour Hire'?'#c2410c':'#0369a1';
+      return `<div class="enrol-item" id="arp-${p.id}" onclick="toggleReqParticipant(${p.id})"><div class="enrol-check" id="arpchk-${p.id}"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${[p.role,p.department].filter(Boolean).join(' &middot; ')}</div></div><span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:${typeBg};color:${typeColor}">${typeLbl}</span></div>`;
+    }).join('');
+    body.innerHTML=`<div class="form-group"><label class="form-label">Employee (Requestor)</label><select class="form-select" name="employee" onchange="reqAutoFillDept(this.value)"><option value="">— Select participant —</option>${pReqOpts}</select></div><div class="form-group"><label class="form-label">Department</label><select class="form-select" name="department" onchange="reqToggleOtherDept(this.value)" id="req-dept-sel"><option value="">— Select department —</option>${dReqOpts}<option value="__other__">Other&hellip;</option></select></div><div class="form-group" id="req-dept-other" style="display:none">${inp('Department (specify)','departmentOther','','text','Enter department name')}</div>${inp('Course Requested','course','','text','e.g. Forklift Licence')}${ta('Reason','reason','','Why is this training needed?')}${sel('Priority','priority','Medium',['High','Medium','Low'])}
+    <div class="form-group"><label class="form-label">Participants</label>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:11px;color:#6b7280">Who needs this training?</span><button type="button" onclick="addParticipantFromRequest()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ New Person</button></div>
+      <div class="enrol-list" style="max-height:180px">${partPicker||'<div class="empty">No participants yet.</div>'}</div>
+    </div>
+    <button class="btn-save" onclick="submitRequest()">Submit Request</button>`;
   }
 
   if(mode==='edit-request'){
     const r=requests.find(x=>x.id===idOrData);if(!r)return;editId=r.id;
     title.textContent='Edit Request';
-    const pOpts=participants.map(p=>`<option value="${p.name}" ${r.employee===p.name?'selected':''}>${p.name}</option>`).join('');
+    const pOpts=participants.filter(p=>p.active!==false).map(p=>`<option value="${p.name}" ${r.employee===p.name?'selected':''}>${p.name}</option>`).join('');
     const dOpts=(departments||[]).sort().map(d=>`<option value="${d}" ${r.department===d?'selected':''}>${d}</option>`).join('');
     const selParts=(r.participants||[]);
-    const partChecks=participants.filter(p=>p.active!==false).map(p=>`<div class="enrol-item ${selParts.includes(p.id)?'selected':''}" id="rp-${p.id}" onclick="toggleReqParticipant(${p.id})"><div class="enrol-check ${selParts.includes(p.id)?'on':''}" id="rpchk-${p.id}">${selParts.includes(p.id)?'✓':''}</div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280;margin-left:auto">${p.department||''}</div></div>`).join('');
+    const partChecks=participants.filter(p=>p.active!==false).map(p=>`<div class="enrol-item ${selParts.includes(p.id)?'selected':''}" id="rp-${p.id}" onclick="toggleReqParticipant(${p.id})"><div class="enrol-check ${selParts.includes(p.id)?'on':''}" id="rpchk-${p.id}">${selParts.includes(p.id)?'&#10003;':''}</div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280;margin-left:auto">${p.department||''}</div></div>`).join('');
     body.innerHTML=`<div class="form-group"><label class="form-label">Employee</label><select class="form-select" name="employee"><option value="">— Select —</option>${pOpts}</select></div>
       <div class="form-row"><div class="form-group" style="flex:1"><label class="form-label">Department</label><select class="form-select" name="department">${dOpts}</select></div>${inp('Course Requested','course',r.course,'text','e.g. Forklift Licence')}</div>
       ${ta('Reason','reason',r.reason,'Why is this training needed?')}
@@ -1103,20 +1183,73 @@ function openModal(mode,idOrData){
     window._reqParticipants=new Set(selParts);
   }
 
+  if(mode==='enrol-booking'){
+    const bk=bookings.find(x=>x.id===idOrData);if(!bk)return;editId=idOrData;
+    title.textContent='Participants — '+bk.course;
+    const selected=new Set(bk.participants||[]);
+    const items=participants.filter(p=>p.active!==false).length===0?'<div class="empty">No active participants.</div>':participants.filter(p=>p.active!==false).map(p=>{
+      const on=selected.has(p.id);
+      const typeLbl=p.employmentType||'Employee';
+      const typeBg=p.employmentType==='Labour Hire'?'#fff7ed':'#e0f2fe';
+      const typeColor=p.employmentType==='Labour Hire'?'#c2410c':'#0369a1';
+      return `<div class="enrol-item ${on?'selected':''}" id="bkenrol-${p.id}" onclick="toggleBkEnrol(${p.id},${idOrData})"><div class="enrol-check ${on?'on':''}" id="bkechk-${p.id}">${on?'&#10003;':''}</div><div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${[p.role,p.department].filter(Boolean).join(' &middot; ')}</div></div><span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:${typeBg};color:${typeColor}">${typeLbl}</span></div>`;
+    }).join('');
+    body.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div style="font-size:12px;color:#6b7280">Select participants to assign to this booking.</div><button onclick="addParticipantFromBooking(${idOrData})" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ New Participant</button></div><div class="enrol-list">${items}</div><button class="btn-save" onclick="saveBkEnrolment(${idOrData})">Save</button>`;
+  }
+
   if(mode==='add-booking'||mode==='edit-booking'){
     const bk=mode==='edit-booking'?bookings.find(b=>b.id===idOrData)||{}:{};editId=bk.id||null;
     title.textContent=mode==='add-booking'?'Add Booking':'Edit Booking';
-    const pOpts=participants.map(p=>`<option value="${p.name}" ${(bk.employee===p.name)?'selected':''}>${p.name}</option>`).join('');
+    const pOpts=participants.filter(p=>p.active!==false).map(p=>`<option value="${p.name}" ${(bk.employee===p.name)?'selected':''}>${p.name}</option>`).join('');
     const selParts=bk.participants||[];
-    const partChecks=participants.filter(p=>p.active!==false).map(p=>`<div class="enrol-item ${selParts.includes(p.id)?'selected':''}" id="bkp-${p.id}" onclick="toggleBookingParticipant(${p.id})"><div class="enrol-check ${selParts.includes(p.id)?'on':''}" id="bkpchk-${p.id}">${selParts.includes(p.id)?'✓':''}</div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280;margin-left:auto">${p.department||''}</div></div>`).join('');
+    const partPicker=participants.filter(p=>p.active!==false).map(p=>{
+      const on=selParts.includes(p.id);
+      const typeLbl=p.employmentType||'Employee';
+      const typeBg=p.employmentType==='Labour Hire'?'#fff7ed':'#e0f2fe';
+      const typeColor=p.employmentType==='Labour Hire'?'#c2410c':'#0369a1';
+      return `<div class="enrol-item ${on?'selected':''}" id="bkm-${p.id}" onclick="toggleBkModalPart(${p.id})"><div class="enrol-check ${on?'on':''}" id="bkmchk-${p.id}">${on?'&#10003;':''}</div><div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:#6b7280">${[p.role,p.department].filter(Boolean).join(' &middot; ')}</div></div><span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:${typeBg};color:${typeColor}">${typeLbl}</span></div>`;
+    }).join('');
+    window._bkModalParts=new Set(selParts);
     body.innerHTML=`<div class="form-row">${inp('Course / Training','course',bk.course,'text','e.g. Forklift Licence')}${inp('Provider','provider',bk.provider,'text','SafeWork Training')}</div>
       <div class="form-row">${inp('Date','date',bk.date,'date')}${inp('Cost ($)','cost',bk.cost,'number','0')}</div>
       ${inp('Seats','seats',bk.seats,'number','10')}
-      ${inp('Employee (Requestor)','employee',bk.employee,'text','')}
+      <div class="form-group"><label class="form-label">Employee (Requestor)</label><select class="form-select" name="employee"><option value="">— Select —</option>${pOpts}</select></div>
       ${ta('Notes','notes',bk.notes,'')}
-      <div class="form-group"><label class="form-label">Participants to Enrol</label><div class="enrol-list" style="max-height:180px">${partChecks||'<div class="empty">No participants yet.</div>'}</div></div>
-      <button class="btn-save" onclick="submitBooking('${mode}')">Save</button>`;
-    window._bkParticipants=new Set(selParts.map(id=>id));
+      <div class="form-group"><label class="form-label">Participants</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:11px;color:#6b7280">Select who will attend</span><button type="button" onclick="addParticipantFromBookingModal()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ New Participant</button></div>
+        <div class="enrol-list" style="max-height:200px">${partPicker||'<div class="empty">No active participants yet.</div>'}</div>
+      </div>
+      <button class="btn-save" onclick="submitBookingModal('${mode}')">Save</button>`;
+  }
+
+  if(mode==='unit-dna'){
+    const {unitName}=idOrData;
+    title.textContent='Did Not Attend — '+unitName;
+    body.innerHTML=`<div style="background:#fff7ed;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:#92400e"><strong>${unitName}</strong> — mark as Did Not Attend or reschedule to a new date.</div>
+    <div class="form-group"><label class="form-label">Reason (optional)</label><textarea class="form-textarea" id="dna-reason" placeholder="e.g. Illness, Work commitment" style="min-height:60px"></textarea></div>
+    <div class="form-group"><label class="form-label">Reschedule to new date (optional)</label><input class="form-input" type="date" id="dna-resched" value=""><div style="font-size:11px;color:#6b7280;margin-top:4px">If you enter a date, the unit will be rescheduled instead of marked as DNA.</div></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn-save" style="flex:1;background:#c2410c" onclick="confirmUnitDNA(document.getElementById('dna-reason').value,document.getElementById('dna-resched').value)">Confirm Did Not Attend</button>
+      <button onclick="closeModal()" style="flex:1;background:var(--surface-2);color:var(--text-secondary);border:1.5px solid var(--border);border-radius:var(--radius);padding:11px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit">Cancel</button>
+    </div>`;
+  }
+
+  if(mode==='cal-event'){
+    const {label,sub,date,status,people,type,courseId}=idOrData;
+    title.textContent=label;
+    const co=courseId?courses.find(x=>x.id===courseId):null;
+    const names=co?getPNames(co.participantIds):'';
+    body.innerHTML=`<div style="display:grid;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Provider / Source</div><div style="font-weight:600">${sub||'&mdash;'}</div></div>
+        <div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Date</div><div style="font-weight:600">${formatDate(date)||'&mdash;'}</div></div>
+        ${status?`<div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Status</div>${bdg(status)}</div>`:''}
+        ${people!=null?`<div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Enrolled</div><div style="font-weight:600">${people} people</div></div>`:''}
+      </div>
+      ${names?`<div style="background:var(--accent-light);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Participants</div><div style="font-size:13px">${names}</div></div>`:''}
+      ${co?`<div style="display:flex;gap:8px;margin-top:4px"><button class="btn-sm btn-edit" onclick="closeModal();openModal('edit-course',${co.id})">Edit Course</button><button class="btn-sm btn-green" onclick="closeModal();openModal('manage-certs',${co.id})">Documents</button><button class="btn-sm btn-green" onclick="closeModal();openModal('enrol-course',${co.id})">Enrol</button></div>`:''}
+    </div>
+    <button class="btn-save" style="margin-top:14px" onclick="closeModal()">Close</button>`;
   }
 
   if(mode==='review-request'){
@@ -1156,37 +1289,51 @@ function openModal(mode,idOrData){
       <div style="display:flex;gap:8px;margin-bottom:8px"><input class="form-input" id="doc-invNo" placeholder="Invoice No" value="${c.invoiceNo||''}" style="flex:1"><button class="btn-primary" onclick="saveDocInvoice(${c.id})">Save</button></div>
       <textarea class="form-textarea" id="doc-invNotes" placeholder="Invoice notes…" style="min-height:38px">${c.invoiceNotes||''}</textarea>
       ${c.invoicePdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${c.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeDocInvoice(${c.id})">Remove</button></div>`:
-      `<div class="pdf-upload-area" onclick="document.getElementById('doc-inv-file-${c.id}').click()" style="margin-top:8px"><div style="font-size:12px;font-weight:600;color:#374151">Click to attach invoice PDF</div></div><input type="file" id="doc-inv-file-${c.id}" accept=".pdf" style="display:none" onchange="handleDocInvoice(event,${c.id})">`}
+      `<div class="pdf-upload-area" onclick="document.getElementById('doc-inv-file-${c.id}').click()" style="margin-top:8px"><div style="font-size:12px;font-weight:600;color:#374151">Click or drag &amp; drop invoice PDF</div></div><input type="file" id="doc-inv-file-${c.id}" accept=".pdf" style="display:none" onchange="handleDocInvoice(event,${c.id})">`}
     </div>
     <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px;margin-top:14px">Statement of Attainment (SOA)</div>
-    ${c.soaPdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${c.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeCourseSOA(${c.id})">Remove</button></div>`:
-    `<div class="pdf-upload-area" onclick="document.getElementById('soa-file-${c.id}').click()" style="margin-bottom:8px"><div style="font-size:12px;font-weight:600;color:#374151">Click to attach SOA PDF</div></div><input type="file" id="soa-file-${c.id}" accept=".pdf" style="display:none" onchange="handleCourseSOA(event,${c.id})">`}
+    ${c.soaPdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${c.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeCourseSOA(${c.id})">Remove</button></div>`:`<div class="pdf-upload-area" onclick="document.getElementById('soa-file-${c.id}').click()" style="margin-bottom:8px"><div style="font-size:12px;font-weight:600;color:#374151">Click or drag &amp; drop SOA PDF</div></div><input type="file" id="soa-file-${c.id}" accept=".pdf" style="display:none" onchange="handleCourseSOA(event,${c.id})">`}
     <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px;margin-top:14px">Participants</div>
     ${certItems}
     <button class="btn-save" style="margin-top:10px" onclick="closeModal()">Done</button>`;
   }
 
-  if(mode==='cal-event'){
-    const {label,sub,date,status,people,type,courseId}=idOrData;
-    title.textContent=label;
-    const co=courseId?courses.find(x=>x.id===courseId):null;
-    const names=co?getPNames(co.participantIds):'';
-    body.innerHTML=`<div style="display:grid;gap:10px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Provider / Source</div><div style="font-weight:600">${sub||'—'}</div></div>
-        <div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Date</div><div style="font-weight:600">${date||'—'}</div></div>
-        ${status?`<div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Status</div>${bdg(status)}</div>`:''}
-        ${people!=null?`<div style="background:var(--surface-2);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Enrolled</div><div style="font-weight:600">${people} people</div></div>`:''}
-      </div>
-      ${names?`<div style="background:var(--accent-light);border-radius:8px;padding:12px"><div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Participants</div><div style="font-size:13px">${names}</div></div>`:''}
-      ${co?`<div style="display:flex;gap:8px;margin-top:4px"><button class="btn-sm btn-edit" onclick="closeModal();openModal('edit-course',${co.id})">Edit Course</button><button class="btn-sm btn-green" onclick="closeModal();openModal('manage-certs',${co.id})">Documents</button><button class="btn-sm btn-green" onclick="closeModal();openModal('enrol-course',${co.id})">Enrol</button></div>`:''}
+  if(mode==='app-settings'){
+    title.textContent='Settings';
+    const warn=(settings&&settings.apprenticeWarningDays)||180;
+    body.innerHTML=`<div style="font-size:12px;color:#6b7280;margin-bottom:16px">Configure app-wide preferences.</div>
+    <div class="form-group">
+      <label class="form-label">Apprentice At-Risk Warning (days before end date)</label>
+      <input class="form-input" name="apprenticeWarningDays" type="number" value="${warn}" min="30" max="730">
+      <div style="font-size:11px;color:#6b7280;margin-top:4px">Apprentices under 75% completion will be flagged as At Risk this many days before their end date. Default: 180 (6 months).</div>
     </div>
-    <button class="btn-save" style="margin-top:14px" onclick="closeModal()">Close</button>`;
+    <button class="btn-save" onclick="saveSettings()">Save Settings</button>`;
+  }
+
+  if(mode==='duplicate-course'){
+    const src=courses.find(x=>x.id===idOrData);if(!src)return;
+    title.textContent='Duplicate — '+src.name;
+    body.innerHTML=`<div style="background:var(--accent-light);border-radius:8px;padding:11px;margin-bottom:14px;font-size:12px;color:var(--accent)">
+      Duplicating <strong>${src.name}</strong>. Same provider, cost and seats. Just set the new date — participants will not be copied across.
+    </div>
+    <div class="form-group"><label class="form-label">New Date</label><input class="form-input" type="date" id="dup-date" autofocus></div>
+    <div class="form-group"><label class="form-label">Provider</label><input class="form-input" id="dup-provider" value="${src.provider||''}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Cost ($)</label><input class="form-input" type="number" id="dup-cost" value="${src.cost||0}"></div>
+      <div class="form-group"><label class="form-label">Seats</label><input class="form-input" type="number" id="dup-seats" value="${src.seats||10}"></div>
+    </div>
+    <button class="btn-save" onclick="confirmDuplicate(${src.id})">Create Duplicate</button>`;
   }
 
   if(mode==='edit-budget'){
-    title.textContent='Edit Budget';
-    body.innerHTML=`${inp('Projected Budget ($)','projected',budget.projected,'number')}${inp('Expected Spend ($)','expected',budget.expected,'number')}<div style="background:var(--success-light);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;margin-bottom:3px">Committed (auto)</div><div style="font-size:21px;font-weight:800;color:var(--success)">$${getCommitted().toLocaleString()}</div><div style="font-size:10px;color:var(--success);margin-top:2px">Scheduled + Full courses</div></div><button class="btn-save" onclick="submitBudget()">Save Budget</button>`;
+    title.textContent='Edit Budget & Settings';
+    const warnDays=(settings&&settings.apprenticeWarningDays)||180;
+    body.innerHTML=`${inp('Projected Budget ($)','projected',budget.projected,'number')}${inp('Expected Spend ($)','expected',budget.expected,'number')}<div style="background:var(--success-light);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;margin-bottom:3px">Committed (auto)</div><div style="font-size:21px;font-weight:800;color:var(--success)">$${getCommitted().toLocaleString()}</div><div style="font-size:10px;color:var(--success);margin-top:2px">Courses + pending bookings</div></div>
+    <div style="border-top:1px solid var(--border);margin:14px 0 12px"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:10px">Apprentice Settings</div>
+    ${inp('At-Risk Warning (days before end date)','warningDays',warnDays,'number','180')}
+    <div style="font-size:11px;color:var(--text-muted);margin-top:-8px;margin-bottom:12px">Apprentices with less than this many days left and under 75% progress will be flagged At Risk. Default: 180 days (6 months).</div>
+    <button class="btn-save" onclick="submitBudget()">Save</button>`;
   }
 
   if(mode==='add-claim'||mode==='edit-claim'){
@@ -1231,14 +1378,14 @@ function openModal(mode,idOrData){
       <div class="form-group"><label class="form-label">Statement of Attainment</label>
         ${d.soaPdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${d.soaPdfName}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button></div>`:''}
         <div class="pdf-upload-area" id="claim-soa-drop" onclick="document.getElementById('claim-soa-file').click()" ${d.soaPdfName?'style="display:none"':''}>
-          <div style="font-size:12px;font-weight:600;color:#374151">Click to attach Statement of Attainment</div>
+          <div style="font-size:12px;font-weight:600;color:#374151">Click or drag &amp; drop Statement of Attainment</div>
         </div>
         <input type="file" id="claim-soa-file" accept=".pdf" style="display:none" onchange="handleClaimSoa(event)">
       </div>
       <div class="form-group"><label class="form-label">Invoice PDF</label>
         ${d.invoicePdfName?`<div class="pdf-preview"><span>PDF</span><span class="pdf-preview-name">${d.invoicePdfName}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button></div>`:''}
         <div class="pdf-upload-area" id="claim-pdf-drop" onclick="document.getElementById('claim-pdf-file').click()" ${d.invoicePdfName?'style="display:none"':''}>
-          <div style="font-size:12px;font-weight:600;color:#374151">Click to attach invoice PDF</div>
+          <div style="font-size:12px;font-weight:600;color:#374151">Click or drag &amp; drop invoice PDF</div>
         </div>
         <input type="file" id="claim-pdf-file" accept=".pdf" style="display:none" onchange="handleClaimPdf(event)">
       </div>
@@ -1268,9 +1415,29 @@ function openModal(mode,idOrData){
   }
 
   document.getElementById('modal').classList.remove('hidden');
+ setTimeout(initPdfDropZones,50);
 }
 
 function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+function initPdfDropZones(){
+  document.querySelectorAll('.pdf-upload-area').forEach(zone=>{
+    if(zone.dataset.ddInit)return;
+    zone.dataset.ddInit='1';
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('drag-over');
+      const file=e.dataTransfer.files[0];
+      if(!file||!file.name.toLowerCase().endsWith('.pdf')){showToast('Please drop a PDF file');return;}
+      // Find the associated file input and trigger its handler
+      const input=zone.nextElementSibling;
+      if(input&&input.type==='file'){
+        const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;
+        input.dispatchEvent(new Event('change'));
+      }
+    });
+  });
+}
 function closeModal(){
   document.getElementById('modal').classList.add('hidden');
   editId=null;modalMode=null;
@@ -1278,7 +1445,6 @@ function closeModal(){
   window._claimPdf=null;window._claimPdfName=null;
   window._claimSoa=null;window._claimSoaName=null;
   window._claimDisplayId=null;window._claimNotes=null;window._claimData=null;
-  if(window._appDraftTimer){clearInterval(window._appDraftTimer);window._appDraftTimer=null;}
 }
 
 function getForm(){const d={};document.querySelectorAll('#modal-body input,#modal-body select,#modal-body textarea').forEach(i=>{if(i.name)d[i.name]=i.value;});return d;}
@@ -1290,11 +1456,53 @@ function removePdf(){window._tempPdf=null;window._tempPdfName=null;const prev=do
 function toggleEnrol(pid,cid){const c=courses.find(x=>x.id===cid);if(!c)return;if(!c.participantIds)c.participantIds=[];const idx=c.participantIds.indexOf(pid);if(idx>=0)c.participantIds.splice(idx,1);else c.participantIds.push(pid);const isOn=c.participantIds.includes(pid);document.getElementById('enrol-'+pid)?.classList.toggle('selected',isOn);const chk=document.getElementById('echk-'+pid);if(chk){chk.classList.toggle('on',isOn);chk.textContent=isOn?'✓':'';}}
 function saveEnrolment(cid){const c=courses.find(x=>x.id===cid);if(!c)return;c.enrolled=(c.participantIds||[]).length;persist('courses',courses);closeModal();render();}
 function addParticipantFromEnrol(cid){window._returnToEnrol=cid;openModal('add-participant');}
-function submitParticipant(){const d=getForm();d.active=d.active!=='false';if(modalMode==='add-participant')participants.push({...d,id:Date.now()});else participants=participants.map(p=>p.id===editId?{...p,...d}:p);persist('participants',participants);const returnCid=window._returnToEnrol;window._returnToEnrol=null;closeModal();if(returnCid){render();openModal('enrol-course',returnCid);}else{render();}}
+function submitParticipant(){
+  const d=getForm();d.active=d.active!=='false';
+  if(modalMode==='add-participant')participants.push({...d,id:Date.now()});
+  else participants=participants.map(p=>p.id===editId?{...p,...d}:p);
+  persist('participants',participants);
+  const returnCid=window._returnToEnrol;
+  const returnBk=window._returnToBooking;
+  window._returnToEnrol=null;window._returnToBooking=null;
+  closeModal();
+  if(returnCid){render();openModal('enrol-course',returnCid);}
+  else if(returnBk){render();setTimeout(()=>openModal('enrol-booking',returnBk),50);}
+  else if(window._returnToAddRequest){window._returnToAddRequest=false;render();setTimeout(()=>openModal('add-request'),50);}
+  else if(window._pendingBooking){
+    const pb=window._pendingBooking;window._pendingBooking=null;
+    render();
+    setTimeout(()=>{
+      openModal(pb.mode||'add-booking',pb.editId||null);
+      // Restore form values
+      setTimeout(()=>{
+        const f=document.getElementById('modal-body');
+        if(!f)return;
+        ['course','provider','date','cost','seats','employee','notes'].forEach(k=>{const el=f.querySelector('[name="'+k+'"]');if(el&&pb[k]!=null)el.value=pb[k];});
+        window._bkModalParts=new Set(pb.participants||[]);
+        // Re-check the checkboxes
+        (pb.participants||[]).forEach(pid=>{
+          document.getElementById('bkm-'+pid)?.classList.add('selected');
+          const chk=document.getElementById('bkmchk-'+pid);
+          if(chk){chk.classList.add('on');chk.innerHTML='&#10003;';}
+        });
+        // Tick new participant
+        const newest=participants[participants.length-1];
+        if(newest){
+          window._bkModalParts.add(newest.id);
+          const el=document.getElementById('bkm-'+newest.id);
+          const chk=document.getElementById('bkmchk-'+newest.id);
+          if(el)el.classList.add('selected');
+          if(chk){chk.classList.add('on');chk.innerHTML='&#10003;';}
+        }
+      },80);
+    },50);
+  }
+  else{render();}
+}
 function deleteParticipant(id){
   const p=participants.find(x=>x.id===id);
   const openClaims=claims.filter(cl=>cl.participantName===p?.name&&cl.status!=='Closed').length;
-  const msg='Delete '+( p?.name||'this person')+'?'+(openClaims>0?' They have '+openClaims+' open claim(s) that will become orphaned.':'');
+  const msg='Delete '+(p?.name||'this person')+'?'+(openClaims>0?' They have '+openClaims+' open claim(s) that will become orphaned.':'');
   if(!confirm(msg))return;
   participants=participants.filter(x=>x.id!==id);
   courses=courses.map(c=>({...c,participantIds:(c.participantIds||[]).filter(pid=>pid!==id)}));
@@ -1306,35 +1514,51 @@ function submitCourse(){const d=getForm();d.seats=parseInt(d.seats)||0;d.cost=pa
 function deleteCourse(id){
   const co=courses.find(x=>x.id===id);
   const relClaims=claims.filter(cl=>cl.invoiceNo&&co?.invoiceNo&&cl.invoiceNo===co.invoiceNo&&cl.status!=='Closed').length;
-  const msg='Delete '+(co?.name||'this course')+'?'+(relClaims>0?' There are '+relClaims+' claim(s) referencing this course invoice number.':'');
+  const msg='Delete '+(co?.name||'this course')+'?'+(relClaims>0?' There are '+relClaims+' claim(s) referencing this course.':'');
   if(!confirm(msg))return;
-  courses=courses.filter(c=>c.id!==id);
-  persist('courses',courses);render();
+  courses=courses.filter(c=>c.id!==id);persist('courses',courses);render();
 }
-function submitRequest(){const d=getForm();if(d.department==='__other__')d.department=d.departmentOther||'';delete d.departmentOther;requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});persist('requests',requests);closeModal();render();}
+function submitRequest(){
+  const d=getForm();
+  if(d.department==='__other__')d.department=d.departmentOther||'';
+  delete d.departmentOther;
+  d.participants=Array.from(window._reqParticipants||[]);
+  window._reqParticipants=null;
+  requests.push({...d,id:Date.now(),status:'Pending',submitted:new Date().toISOString().slice(0,10),approver:''});
+  persist('requests',requests);closeModal();render();
+}
 function submitReview(){
   const d=getForm();
   const prevReq=requests.find(r=>r.id===editId);
   const wasApproved=prevReq&&prevReq.status==='Approved';
   requests=requests.map(r=>r.id===editId?{...r,status:d.status,approver:d.approver,comments:r.comments||[]}:r);
   persist('requests',requests);
-  // Auto-create booking when status flips to Approved
   if(d.status==='Approved'&&!wasApproved){
     const r=requests.find(x=>x.id===editId);
     if(r&&!bookings.find(b=>b.requestId===r.id)){
       bookings.push({id:Date.now(),requestId:r.id,employee:r.employee,department:r.department||'',course:r.course,reason:r.reason||'',priority:r.priority||'Medium',participants:r.participants||[],provider:'',date:'',cost:'',seats:'',notes:'',status:'To Be Booked',approver:d.approver||r.approver||'',created:new Date().toLocaleDateString('en-AU')});
       persist('bookings',bookings);
-      showToast('Booking record created in Training to be Booked');
+      showToast('Approved — booking created in Training to be Booked');
     }
   }
   closeModal();render();
 }
 function deleteRequest(id){if(!confirm('Delete this request?'))return;requests=requests.filter(r=>r.id!==id);persist('requests',requests);render();}
 function addComment(requestId){const text=document.getElementById('new-req-comment')?.value?.trim();if(!text)return;const r=requests.find(x=>x.id===requestId);if(!r)return;if(!r.comments)r.comments=[];r.comments.push({text,author:'Admin',date:new Date().toLocaleDateString('en-AU')});persist('requests',requests);openModal('review-request',requestId);}
-function submitBudget(){const d=getForm();budget.projected=parseFloat(d.projected)||0;budget.expected=parseFloat(d.expected)||0;persist('budget',budget);closeModal();render();}
+function submitBudget(){
+  const d=getForm();
+  budget.projected=parseFloat(d.projected)||0;
+  budget.expected=parseFloat(d.expected)||0;
+  if(d.warningDays){
+    if(!settings)settings={};
+    settings.apprenticeWarningDays=parseInt(d.warningDays)||180;
+    persist('settings',settings);
+  }
+  persist('budget',budget);closeModal();render();
+}
 function handleCertUpload(event,courseId,participantId){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const c=courses.find(x=>x.id===courseId);if(!c)return;if(!c.certificates)c.certificates={};c.certificates[participantId]={name:file.name,data:e.target.result};persist('courses',courses);openModal('manage-certs',courseId);};reader.readAsDataURL(file);}
 function removeCert(courseId,participantId){const c=courses.find(x=>x.id===courseId);if(!c||!c.certificates)return;delete c.certificates[participantId];persist('courses',courses);openModal('manage-certs',courseId);}
-function viewCert(courseId,participantId){const c=courses.find(x=>x.id===courseId);if(!c)return;const cert=c.certificates?.[participantId];if(!cert)return;const win=window.open();win.document.write(`<iframe src="${cert.data}" style="width:100%;height:100vh;border:none"></iframe>`);}
+function viewCert(courseId,participantId){const c=courses.find(x=>x.id===courseId);if(!c)return;const cert=c.certificates?.[participantId];if(!cert)return;safeOpenIframe(cert.data);}
 function markDNA(courseId,participantId){const reason=prompt('Reason for Did Not Attend (optional):');if(reason===null)return;const c=courses.find(x=>x.id===courseId);if(!c)return;if(!c.dnaMap)c.dnaMap={};c.dnaMap[participantId]={reason:reason.trim(),date:new Date().toLocaleDateString('en-AU')};persist('courses',courses);openModal('manage-certs',courseId);}
 function saveDocInvoice(courseId){const c=courses.find(x=>x.id===courseId);if(!c)return;c.invoiceNo=document.getElementById('doc-invNo')?.value||'';c.invoiceNotes=document.getElementById('doc-invNotes')?.value||'';persist('courses',courses);showToast('Invoice details saved');}
 function handleDocInvoice(event,courseId){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const c=courses.find(x=>x.id===courseId);if(!c)return;c.invoicePdf=e.target.result;c.invoicePdfName=file.name;persist('courses',courses);openModal('manage-certs',courseId);};reader.readAsDataURL(file);}
@@ -1452,8 +1676,8 @@ function submitClaim(){
   persist('claims',claims);closeModal();render();
 }
 function deleteClaim(id){if(!confirm('Delete this claim?'))return;claims=claims.filter(c=>c.id!==id);persist('claims',claims);render();}
-function viewClaimPdf(id){const c=claims.find(x=>x.id===id);if(!c||!c.invoicePdf)return;const win=window.open();win.document.write(`<iframe src="${c.invoicePdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
-function viewClaimSoa(id){const c=claims.find(x=>x.id===id);if(!c||!c.soaPdf)return;const win=window.open();win.document.write(`<iframe src="${c.soaPdf}" style="width:100%;height:100vh;border:none"></iframe>`);}
+function viewClaimPdf(id){const c=claims.find(x=>x.id===id);if(!c||!c.invoicePdf)return;safeOpenIframe(c.invoicePdf);}
+function viewClaimSoa(id){const c=claims.find(x=>x.id===id);if(!c||!c.soaPdf)return;safeOpenIframe(c.soaPdf);}
 function handleClaimPdf(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._claimPdf=e.target.result;window._claimPdfName=file.name;document.getElementById('claim-pdf-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.innerHTML=`<span>PDF</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimPdf()">Remove</button>`;document.getElementById('claim-pdf-drop').parentNode.insertBefore(prev,document.getElementById('claim-pdf-drop'));};reader.readAsDataURL(file);}
 function removeClaimPdf(){window._claimPdf=null;window._claimPdfName=null;const prev=document.querySelector('#claim-pdf-drop~.pdf-preview,.pdf-preview:not(#soa-preview)');if(prev)prev.remove();document.getElementById('claim-pdf-drop').style.display='';}
 function handleClaimSoa(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{window._claimSoa=e.target.result;window._claimSoaName=file.name;document.getElementById('claim-soa-drop').style.display='none';const prev=document.createElement('div');prev.className='pdf-preview';prev.id='soa-preview';prev.innerHTML=`<span>PDF</span><span class="pdf-preview-name">${file.name}</span><button class="btn-sm btn-del" onclick="removeClaimSoa()">Remove</button>`;document.getElementById('claim-soa-drop').parentNode.insertBefore(prev,document.getElementById('claim-soa-drop'));};reader.readAsDataURL(file);}
@@ -1461,6 +1685,86 @@ function removeClaimSoa(){window._claimSoa=null;window._claimSoaName=null;const 
 function reqAutoFillDept(empName){const p=participants.find(x=>x.name===empName);if(p&&p.department){const s=document.getElementById('req-dept-sel');if(s){s.value=p.department;reqToggleOtherDept(p.department);}}}
 function reqToggleOtherDept(val){const w=document.getElementById('req-dept-other');if(w)w.style.display=val==='__other__'?'':'none';}
 
+function toggleReqParticipant(pid){
+  if(!window._reqParticipants)window._reqParticipants=new Set();
+  if(window._reqParticipants.has(pid))window._reqParticipants.delete(pid);else window._reqParticipants.add(pid);
+  const on=window._reqParticipants.has(pid);
+  document.getElementById('rp-'+pid)?.classList.toggle('selected',on);
+  const chk=document.getElementById('rpchk-'+pid);
+  if(chk){chk.classList.toggle('on',on);chk.innerHTML=on?'&#10003;':'';}
+}
+function submitEditRequest(){
+  const d=getForm();
+  d.participants=Array.from(window._reqParticipants||[]);
+  const prevReq=requests.find(r=>r.id===editId);
+  const wasApproved=prevReq&&prevReq.status==='Approved';
+  requests=requests.map(r=>r.id===editId?{...r,...d}:r);
+  persist('requests',requests);
+  if(d.status==='Approved'&&!wasApproved){
+    const r=requests.find(x=>x.id===editId);
+    if(r&&!bookings.find(b=>b.requestId===r.id)){
+      bookings.push({id:Date.now(),requestId:r.id,employee:r.employee,department:r.department||'',course:r.course,reason:r.reason||'',priority:r.priority||'Medium',participants:d.participants||[],provider:'',date:'',cost:'',seats:'',notes:'',status:'To Be Booked',approver:d.approver||r.approver||'',created:new Date().toLocaleDateString('en-AU')});
+      persist('bookings',bookings);
+      showToast('Approved — booking created in Training to be Booked');
+    }
+  }
+  window._reqParticipants=null;
+  closeModal();render();
+}
+function toggleBkEnrol(pid,bkId){
+  const bk=bookings.find(x=>x.id===bkId);if(!bk)return;
+  if(!bk.participants)bk.participants=[];
+  const idx=bk.participants.indexOf(pid);
+  if(idx>=0)bk.participants.splice(idx,1);else bk.participants.push(pid);
+  const on=bk.participants.includes(pid);
+  document.getElementById('bkenrol-'+pid)?.classList.toggle('selected',on);
+  const chk=document.getElementById('bkechk-'+pid);
+  if(chk){chk.classList.toggle('on',on);chk.innerHTML=on?'&#10003;':'';}
+}
+function saveBkEnrolment(bkId){persist('bookings',bookings);closeModal();render();showToast('Participants saved');}
+function addParticipantFromBooking(bkId){window._returnToBooking=bkId;openModal('add-participant');}
+function submitBooking(modeStr){
+  const d=getForm();
+  d.cost=parseFloat(d.cost)||0;d.seats=parseInt(d.seats)||0;
+  if(modeStr==='add-booking'){bookings.push({...d,id:Date.now(),participants:[],status:'To Be Booked',created:new Date().toLocaleDateString('en-AU')});}
+  else{bookings=bookings.map(b=>b.id===editId?{...b,...d}:b);}
+  persist('bookings',bookings);closeModal();render();
+}
+function deleteBooking(id){if(!confirm('Delete this booking?'))return;bookings=bookings.filter(b=>b.id!==id);persist('bookings',bookings);render();}
+function convertBookingToCourse(id){
+  const bk=bookings.find(b=>b.id===id);if(!bk)return;
+  if(bk.status==='Converted'){showToast('Already converted');return;}
+  const participantIds=(bk.participants||[]).filter(pid=>participants.find(x=>x.id===pid));
+  const newCourse={id:Date.now(),name:bk.course,provider:bk.provider||'',date:bk.date||'',seats:bk.seats||Math.max(participantIds.length,1),enrolled:participantIds.length,cost:bk.cost||0,status:'Scheduled',participantIds,invoiceNo:'',invoiceNotes:'',invoicePdf:null,invoicePdfName:null,soaPdf:null,soaPdfName:null,certificates:{},dnaMap:{},courseNotes:bk.notes||''};
+  courses.push(newCourse);
+  bookings=bookings.map(b=>b.id===id?{...b,status:'Converted',courseId:newCourse.id}:b);
+  persist('courses',courses);persist('bookings',bookings);
+  showToast('Moved to Upcoming Courses');
+  currentTab='courses';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='courses'));
+  render();
+}
+function confirmUnitAttended(btn){
+  const appId=btn.dataset.appid,unitName=btn.dataset.uname;
+  const a=apprentices.find(x=>x.id==appId);if(!a)return;
+  const u=a.courses&&a.courses.find(x=>x.name===unitName);if(!u)return;
+  u.done=true;
+  persist('apprentices',apprentices);showToast(unitName+' marked as complete');render();
+}
+function openUnitDNAModal(btn){
+  window._dnaAppId=btn.dataset.appid;window._dnaUnitName=btn.dataset.uname;
+  openModal('unit-dna',{unitName:btn.dataset.uname});
+}
+function confirmUnitDNA(reason,reschedDate){
+  const appId=window._dnaAppId,unitName=window._dnaUnitName;
+  const a=apprentices.find(x=>x.id==appId);if(!a)return;
+  const u=a.courses&&a.courses.find(x=>x.name===unitName);if(!u)return;
+  if(reschedDate){u.date=reschedDate;u.dna=false;u.dnaReason='';showToast(unitName+' rescheduled to '+formatDate(reschedDate));}
+  else{u.dnaReason=reason||'Did Not Attend';u.dna=true;showToast(unitName+' marked as Did Not Attend');}
+  persist('apprentices',apprentices);
+  window._dnaAppId=null;window._dnaUnitName=null;
+  closeModal();render();
+}
 function handleCourseSOA(event,courseId){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1476,127 +1780,164 @@ function createClaimFromCourse(courseId){
   const newId='CLM-'+String(maxNum+1).padStart(4,'0');
   const pNames=getPNames(co.participantIds);
   const firstP=co.participantIds&&co.participantIds.length===1?getPName(co.participantIds[0]):'';
-  // If multiple participants, leave participantName blank but list all in notes
-  const multiNote=co.participantIds&&co.participantIds.length>1?` Enrolled participants: ${pNames}.`:'';
-  const newClaim={id:Date.now(),internalClaimId:newId,title:co.name,claimType:'',ctfClaimId:'',participantName:firstP,invoiceNo:co.invoiceNo||'',createdOn:new Date().toISOString().slice(0,10),claimAmount:'',acceptedAmount:'',costIncurred:'',status:'Pending',notes:[{text:`Pre-filled from course: ${co.name}. Provider: ${co.provider}. Date: ${formatDate(co.date)}.${multiNote||' Participant: '+(pNames||'None')+'.'} Select or confirm the participant above before submitting.`,author:'System',date:new Date().toLocaleDateString('en-AU'),status:'Pending'}],invoicePdf:co.invoicePdf||null,invoicePdfName:co.invoicePdfName||null,soaPdf:co.soaPdf||null,soaPdfName:co.soaPdfName||null,createdDate:new Date().toLocaleDateString('en-AU')};
-  claims.push(newClaim);
-  persist('claims',claims);
-  showToast('Claim created — go to Claims Tracker to complete');
-  // navigate to claims tab
+  const multiNote=co.participantIds&&co.participantIds.length>1?' Enrolled participants: '+pNames+'.':'';
+  const newClaim={id:Date.now(),internalClaimId:newId,title:co.name,claimType:'',ctfClaimId:'',participantName:firstP,invoiceNo:co.invoiceNo||'',createdOn:new Date().toISOString().slice(0,10),claimAmount:'',acceptedAmount:'',costIncurred:'',status:'Pending',notes:[{text:'Pre-filled from course: '+co.name+'. Provider: '+co.provider+'. Date: '+formatDate(co.date)+'.'+( multiNote||' Participant: '+(pNames||'None')+'.') +' Select or confirm the participant above before submitting.',author:'System',date:new Date().toLocaleDateString('en-AU'),status:'Pending'}],invoicePdf:co.invoicePdf||null,invoicePdfName:co.invoicePdfName||null,soaPdf:co.soaPdf||null,soaPdfName:co.soaPdfName||null,createdDate:new Date().toLocaleDateString('en-AU')};
+  claims.push(newClaim);persist('claims',claims);
+  showToast('Claim created - go to Claims Tracker to complete');
   currentTab='claims';
-  document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.tab==='claims');});
-  render();
-  // open the new claim immediately
-  setTimeout(()=>openModal('edit-claim',newClaim.id),200);
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='claims'));
+  render();setTimeout(()=>openModal('edit-claim',newClaim.id),200);
 }
-
 function sendUnitEmailSafe(btn){
   const email=btn.dataset.uemail,name=btn.dataset.uname,unit=btn.dataset.uunit,date=btn.dataset.udate;
   if(!email){showToast('No email on file for this apprentice');return;}
-  const subject=encodeURIComponent('Training Confirmation: '+unit+' — '+formatDate(date));
-  const body=encodeURIComponent('Hi '+name+',\n\nThis is to confirm your upcoming apprenticeship unit:\n\nUnit: '+unit+'\nDate: '+formatDate(date)+'\n\nPlease contact us if you have any questions.\n\nKind regards,\nTraining Team');
-  window.location.href='mailto:'+email+'?subject='+subject+'&body='+body;
-  showToast('Opening email client');
+  const subject=encodeURIComponent('Training Confirmation: '+unit+' - '+formatDate(date));
+  const body=encodeURIComponent('Hi '+name+',\n\nThis is to confirm your upcoming apprenticeship unit:\n\nUnit: '+unit+'\nDate: '+formatDate(date)+'\n\nKind regards,\nTraining Team');
+  window.location.href='mailto:'+email+'?subject='+subject+'&body='+body;showToast('Opening email client');
 }
 function sendUnitReminderSafe(btn){
   const email=btn.dataset.uemail,name=btn.dataset.uname,unit=btn.dataset.uunit,date=btn.dataset.udate;
   if(!email){showToast('No email on file for this apprentice');return;}
-  const subject=encodeURIComponent('Reminder: '+unit+' — '+formatDate(date));
-  const body=encodeURIComponent('Hi '+name+',\n\nThis is a friendly reminder about your upcoming apprenticeship unit:\n\nUnit: '+unit+'\nDate: '+formatDate(date)+'\n\nPlease let us know if anything has changed.\n\nKind regards,\nTraining Team');
-  window.location.href='mailto:'+email+'?subject='+subject+'&body='+body;
-  showToast('Opening email client');
+  const subject=encodeURIComponent('Reminder: '+unit+' - '+formatDate(date));
+  const body=encodeURIComponent('Hi '+name+',\n\nThis is a friendly reminder about your upcoming apprenticeship unit:\n\nUnit: '+unit+'\nDate: '+formatDate(date)+'\n\nKind regards,\nTraining Team');
+  window.location.href='mailto:'+email+'?subject='+subject+'&body='+body;showToast('Opening email client');
 }
+function renderDashUpcoming(){
+  const sc=courses.filter(x=>x.status!=='Completed');
+  const au=[];
+  apprentices.forEach(a=>(a.courses||[]).forEach(u=>{if(!u.done&&!u.dna&&u.date)au.push({name:u.name,date:u.date,apprentice:a.name});}));
+  au.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!sc.length&&!au.length)return '<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>';
+  const scHtml=sc.map(x=>'<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);border-left:3px solid #c4b5fd;padding-left:8px"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+x.name+'</div><div style="font-size:10px;color:#9aa3b4">'+(x.provider||'')+' &middot; '+(formatDate(x.date)||'TBC')+'</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:#9aa3b4">'+(x.participantIds||[]).length+' enrolled</div>'+bdg(x.status)+'</div></div>').join('');
+  const auHtml=au.slice(0,8).map(u=>'<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);border-left:3px solid #fde68a;padding-left:8px"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+u.name+'</div><div style="font-size:10px;color:#854d0e">'+u.apprentice+' &middot; '+formatDate(u.date)+'</div></div><div style="text-align:right;flex-shrink:0"><span style="font-size:9px;background:#fef9c3;color:#854d0e;border-radius:10px;padding:1px 6px;font-weight:700">Unit</span></div></div>').join('');
+  return '<div style="max-height:240px;overflow-y:auto;margin-top:4px;padding-right:6px;scrollbar-width:thin;scrollbar-color:#e4e7ec transparent">'+scHtml+auHtml+'</div>';
+}
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}render();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}render();}
+function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMonth();render();}
 
-function toggleReqParticipant(pid){
-  if(!window._reqParticipants)window._reqParticipants=new Set();
-  if(window._reqParticipants.has(pid))window._reqParticipants.delete(pid);
-  else window._reqParticipants.add(pid);
-  const on=window._reqParticipants.has(pid);
-  document.getElementById('rp-'+pid)?.classList.toggle('selected',on);
-  const chk=document.getElementById('rpchk-'+pid);
-  if(chk){chk.classList.toggle('on',on);chk.textContent=on?'✓':'';}
+function toggleBkModalPart(pid){
+  if(!window._bkModalParts)window._bkModalParts=new Set();
+  if(window._bkModalParts.has(pid))window._bkModalParts.delete(pid);
+  else window._bkModalParts.add(pid);
+  const on=window._bkModalParts.has(pid);
+  document.getElementById('bkm-'+pid)?.classList.toggle('selected',on);
+  const chk=document.getElementById('bkmchk-'+pid);
+  if(chk){chk.classList.toggle('on',on);chk.innerHTML=on?'&#10003;':'';}
 }
-function submitEditRequest(){
+function submitBookingModal(modeStr){
   const d=getForm();
-  d.participants=Array.from(window._reqParticipants||[]);
-  const prevReq=requests.find(r=>r.id===editId);
-  const wasApproved=prevReq&&prevReq.status==='Approved';
-  requests=requests.map(r=>r.id===editId?{...r,...d}:r);
-  persist('requests',requests);
-  // Auto-create booking when status flips to Approved
-  if(d.status==='Approved'&&!wasApproved){
-    const r=requests.find(x=>x.id===editId);
-    if(r&&!bookings.find(b=>b.requestId===r.id)){
-      bookings.push({id:Date.now(),requestId:r.id,employee:r.employee,department:r.department||'',course:r.course,reason:r.reason||'',priority:r.priority||'Medium',participants:d.participants||[],provider:'',date:'',cost:'',seats:'',notes:'',status:'To Be Booked',approver:d.approver||r.approver||'',created:new Date().toLocaleDateString('en-AU')});
-      persist('bookings',bookings);
-      showToast('Approved — booking record created in Training to be Booked');
-    }
-  }
-  window._reqParticipants=null;
-  closeModal();render();
-}
-function toggleBookingParticipant(pid){
-  if(!window._bkParticipants)window._bkParticipants=new Set();
-  if(window._bkParticipants.has(pid))window._bkParticipants.delete(pid);
-  else window._bkParticipants.add(pid);
-  const on=window._bkParticipants.has(pid);
-  document.getElementById('bkp-'+pid)?.classList.toggle('selected',on);
-  const chk=document.getElementById('bkpchk-'+pid);
-  if(chk){chk.classList.toggle('on',on);chk.textContent=on?'✓':'';}
-}
-function submitBooking(modeStr){
-  const d=getForm();
-  d.participants=Array.from(window._bkParticipants||[]);
   d.cost=parseFloat(d.cost)||0;
   d.seats=parseInt(d.seats)||0;
+  d.participants=Array.from(window._bkModalParts||[]);
+  window._bkModalParts=null;
   if(modeStr==='add-booking'){
     bookings.push({...d,id:Date.now(),status:'To Be Booked',created:new Date().toLocaleDateString('en-AU')});
   } else {
     bookings=bookings.map(b=>b.id===editId?{...b,...d}:b);
   }
-  window._bkParticipants=null;
   persist('bookings',bookings);closeModal();render();
 }
-function deleteBooking(id){if(!confirm('Delete this booking record?'))return;bookings=bookings.filter(b=>b.id!==id);persist('bookings',bookings);render();}
-function convertBookingToCourse(id){
-  const bk=bookings.find(b=>b.id===id);if(!bk)return;
-  if(bk.status==='Converted'){showToast('Already converted to a course');return;}
-  const participantIds=[];
-  (bk.participants||[]).forEach(pid=>{const p=participants.find(x=>x.id===pid);if(p)participantIds.push(p.id);});
-  const newCourse={id:Date.now(),name:bk.course,provider:bk.provider||'',date:bk.date||'',seats:bk.seats||10,enrolled:participantIds.length,cost:bk.cost||0,status:'Scheduled',participantIds,invoiceNo:'',invoiceNotes:'',invoicePdf:null,invoicePdfName:null,soaPdf:null,soaPdfName:null,certificates:{},dnaMap:{},courseNotes:bk.notes||''};
-  courses.push(newCourse);
-  bookings=bookings.map(b=>b.id===id?{...b,status:'Converted',courseId:newCourse.id}:b);
-  persist('courses',courses);persist('bookings',bookings);
-  showToast('Course created in Upcoming Courses');render();
+
+function addParticipantFromBookingModal(){
+  // Save current form data to restore after adding participant
+  const d=getForm();
+  window._pendingBooking={course:d.course,provider:d.provider,date:d.date,cost:d.cost,seats:d.seats,employee:d.employee,notes:d.notes,participants:Array.from(window._bkModalParts||[]),mode:modalMode,editId:editId};
+  openModal('add-participant');
 }
 
-function renderDashUpcoming(){
-  const sc=courses.filter(x=>x.status!=='Completed');
-  const au=[];
-  apprentices.forEach(a=>(a.courses||[]).forEach(u=>{
-    if(!u.done&&u.date)au.push({name:u.name,date:u.date,apprentice:a.name});
-  }));
-  au.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  if(!sc.length&&!au.length)return '<div style="color:#9ca3af;font-size:13px">No upcoming courses</div>';
-  const scHtml=sc.map(x=>{
-    const enrolled=(x.participantIds||[]).length;
-    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #c4b5fd;padding-left:8px">'
-      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+x.name+'</div>'
-      +'<div style="font-size:11px;color:#6b7280">'+(x.provider||'')+' &middot; '+(formatDate(x.date)||'TBC')+'</div></div>'
-      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#6b7280">'+enrolled+' enrolled</div>'+bdg(x.status)+'</div></div>';
-  }).join('');
-  const auHtml=au.slice(0,8).map(u=>{
-    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);border-left:3px solid #fde68a;padding-left:8px">'
-      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+u.name+'</div>'
-      +'<div style="font-size:11px;color:#854d0e">'+u.apprentice+' &middot; '+formatDate(u.date)+'</div></div>'
-      +'<div style="text-align:right;flex-shrink:0"><span style="font-size:10px;background:#fef9c3;color:#854d0e;border-radius:10px;padding:2px 7px;font-weight:700">Unit</span></div></div>';
-  }).join('');
-  return '<div style="max-height:280px;overflow-y:auto;margin-top:4px">'+scHtml+auHtml+'</div>';
+// ── Sidebar collapse ────────────────────────────────────────────────
+function confirmDuplicate(srcId){
+  const src=courses.find(x=>x.id===srcId);if(!src)return;
+  const date=document.getElementById('dup-date')?.value||'';
+  const provider=document.getElementById('dup-provider')?.value||src.provider||'';
+  const cost=parseFloat(document.getElementById('dup-cost')?.value)||src.cost||0;
+  const seats=parseInt(document.getElementById('dup-seats')?.value)||src.seats||10;
+  const newCourse={...src,id:Date.now(),date,provider,cost,seats,enrolled:0,participantIds:[],invoiceNo:'',invoiceNotes:'',invoicePdf:null,invoicePdfName:null,soaPdf:null,soaPdfName:null,certificates:{},dnaMap:{},status:'Scheduled'};
+  courses.push(newCourse);
+  persist('courses',courses);closeModal();
+  currentTab='courses';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='courses'));
+  render();showToast(src.name+' duplicated');
+}
+
+
+// ── Bulk approve requests ───────────────────────────────────────────
+function toggleReqSel(id){
+  if(!window._selReqs)window._selReqs=new Set();
+  if(window._selReqs.has(id))window._selReqs.delete(id);else window._selReqs.add(id);
+  render();
+}
+function toggleSelectAllReqs(){
+  if(!window._selReqs)window._selReqs=new Set();
+  const pending=requests.filter(r=>r.status==='Pending'||r.status==='Under Review');
+  const allSel=pending.every(r=>window._selReqs.has(r.id));
+  if(allSel){pending.forEach(r=>window._selReqs.delete(r.id));}
+  else{pending.forEach(r=>window._selReqs.add(r.id));}
+  render();
+}
+function bulkApproveRequests(){
+  if(!window._selReqs||!window._selReqs.size)return;
+  const ids=Array.from(window._selReqs);
+  const toApprove=requests.filter(r=>ids.includes(r.id)&&r.status!=='Approved');
+  if(!confirm('Approve '+toApprove.length+' request(s)? This will create a booking record for each.'))return;
+  const today=new Date().toLocaleDateString('en-AU');
+  toApprove.forEach(r=>{
+    requests=requests.map(x=>x.id===r.id?{...x,status:'Approved'}:x);
+    if(!bookings.find(b=>b.requestId===r.id)){
+      bookings.push({id:Date.now()+Math.random(),requestId:r.id,employee:r.employee,department:r.department||'',course:r.course,reason:r.reason||'',priority:r.priority||'Medium',participants:r.participants||[],provider:'',date:'',cost:'',seats:'',notes:'',status:'To Be Booked',approver:'',created:today});
+    }
+  });
+  persist('requests',requests);persist('bookings',bookings);
+  window._selReqs=new Set();
+  showToast(toApprove.length+' approved — booking records created');
+  render();
+}
+
+// ── Duplicate course ────────────────────────────────────────────────
+function duplicateCourse(id){
+  const src=courses.find(x=>x.id===id);if(!src)return;
+  openModal('duplicate-course',id);
+}
+
+// ── Settings persist ────────────────────────────────────────────────
+
+
+
+
+
+
+function addParticipantFromRequest(){
+  window._returnToAddRequest=true;
+  openModal('add-participant');
+}
+
+function viewConvertedCourse(courseId){
+  currentTab='courses';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='courses'));
+  render();
+}
+
+function saveSettings(){
+  const d=getForm();
+  settings.apprenticeWarningDays=parseInt(d.apprenticeWarningDays)||180;
+  persist('settings',settings);
+  closeModal();render();showToast('Settings saved');
+}
+
+function safeOpenPdf(html){
+  const win=window.open('','_blank');
+  if(!win){showToast('Popup blocked — please allow popups for this page');return;}
+  win.document.write(html);win.document.close();
+}
+function safeOpenIframe(src){
+  safeOpenPdf('<iframe src="'+src+'" style="width:100%;height:100vh;border:none"></iframe>');
 }
 
 updateSyncUI();
 render();
-silentReconnect(0);
+silentReconnect();
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!document.getElementById('modal').classList.contains('hidden'))closeModal();});
 </script>
 </body>
 </html>
