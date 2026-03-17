@@ -1126,7 +1126,7 @@ function openModal(mode,idOrData){
  const p=getProgress(a),s=getStatus(a),d=daysLeft(a.endDate);
  title.textContent=a.name+' — Checklist';
  const items=(a.courses||[]).map((c,i)=>`<div class="chk-row"><div class="chk ${c.done?'done':''}" onclick="toggleCourse(${a.id},${i})">${c.done?'✓':''}</div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px"><span style="${c.done?'text-decoration:line-through;color:#9ca3af;':''}font-weight:600;font-size:13px">${c.name}</span>${c.code?`<span style="font-size:10px;font-weight:600;color:#6b7280;background:#f1f5f9;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace">${c.code}</span>`:''}</div>${c.date?`<div style="font-size:11px;color:#9ca3af;margin-top:1px">${c.date}</div>`:''}</div></div>`).join('');
- body.innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;padding:12px;background:#f8fafc;border-radius:10px"><div style="flex:1">${pb(p)}</div><span style="font-weight:800;font-size:19px">${p}%</span>${bdg(s)}</div>${d<=(warningDays||180)&&p<75?`<div class="alert-banner"> At Risk — ${d} days remaining, ${p}% complete.</div>`:''}<div style="font-size:11px;color:#6b7280;margin-bottom:9px">${(a.courses||[]).filter(c=>c.done).length} of ${(a.courses||[]).length} units · ${d>0?d+' days remaining':'Overdue'}</div><div>${items||'<div style="color:#9ca3af;font-size:13px">No units added.</div>'}</div><button class="btn-save" style="margin-top:13px" onclick="closeModal()">Done</button>`;
+ body.innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;padding:12px;background:#f8fafc;border-radius:10px"><div style="flex:1">${pb(p)}</div><span style="font-weight:800;font-size:19px">${p}%</span>${bdg(s)}</div>${d<=((settings&&settings.apprenticeWarningDays)||180)&&p<75?`<div class="alert-banner"> At Risk — ${d} days remaining, ${p}% complete.</div>`:''}<div style="font-size:11px;color:#6b7280;margin-bottom:9px">${(a.courses||[]).filter(c=>c.done).length} of ${(a.courses||[]).length} units · ${d>0?d+' days remaining':'Overdue'}</div><div>${items||'<div style="color:#9ca3af;font-size:13px">No units added.</div>'}</div><button class="btn-save" style="margin-top:13px" onclick="closeModal()">Done</button>`;
  }
 
  if(mode==='add-course'||mode==='edit-course'){
@@ -1445,6 +1445,8 @@ function closeModal(){
   window._claimPdf=null;window._claimPdfName=null;
   window._claimSoa=null;window._claimSoaName=null;
   window._claimDisplayId=null;window._claimNotes=null;window._claimData=null;
+  window._reqParticipants=null;
+  if(window._appDraftTimer){clearInterval(window._appDraftTimer);window._appDraftTimer=null;}
 }
 
 function getForm(){const d={};document.querySelectorAll('#modal-body input,#modal-body select,#modal-body textarea').forEach(i=>{if(i.name)d[i.name]=i.value;});return d;}
